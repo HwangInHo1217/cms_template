@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>관리자 페이지</title>
+        <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+        <link href="/css/styles.css" rel="stylesheet" />
+        <link href="/css/List.css" rel="stylesheet"/>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+    </head>
+    <body class="sb-nav-fixed">
+	<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+            <!-- Navbar Brand-->
+            <a class="navbar-brand ps-3" href="index.html">Administrator</a>
+            <!-- Sidebar Toggle-->
+            <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+            <!-- Navbar Search-->
+            <span class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+                <div class="input-group" style="color: white;">
+                    관리자님 환영 합니다.
+                </div>
+            </span>
+            <!-- Navbar-->
+            <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#!">MY INFO</a></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item" href="/admin/logoutok">로그아웃</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+     
+        <div id="layoutSidenav">
+            <div id="layoutSidenav_nav">
+                <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                    <div class="sb-sidenav-menu">
+                        <div class="nav">
+                            <a class="nav-link" href="./adminList.html">
+	                            <span class="material-symbols-outlined icon-button" style="color:rgba(255, 255, 255, 0.5);">account_circle</span>&nbsp;
+                                상담사 목록
+                            </a>
+
+                            <a class="nav-link" href="./applyList.html">
+                                <span class="material-symbols-outlined">list_alt</span>	&nbsp;
+                                상담 신청 내역
+                            </a>
+                           
+                            <a class="nav-link collapsed" href="./counselorSchedule.html">
+                                <span class="material-symbols-outlined">calendar_month</span>&nbsp;
+                                상담 일정 관리
+                            </a>
+
+                            <a class="nav-link" href="./boardManagement.html">
+                                <span class="material-symbols-outlined">jamboard_kiosk</span>&nbsp;
+                                게시판 관리
+                            </a>
+                            <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+                                <span class="material-symbols-outlined">category</span>&nbsp;
+                                페이지 관리
+                            </a>
+                            <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
+                                        배너관리
+                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                    </a>
+                                </nav>
+                            </div>
+                            <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
+                                        대메뉴 관리
+                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                    </a>
+                                </nav>
+                            </div>
+                            <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
+                                        소메뉴 관리
+                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                    </a>
+                                </nav>
+                            </div>
+                            <a class="nav-link" href="tables.html">
+                                <span class="material-symbols-outlined">monitoring</span>&nbsp;
+                                상담 통계
+                            </a>
+                            <a class="nav-link" href="tables.html">
+                               <span class="material-symbols-outlined">logout</span>&nbsp;
+                                로그아웃
+                            </a>
+                        </div>
+                    </div>
+                    <div class="sb-sidenav-footer">
+                        <div class="small"></div>
+                    </div>
+                </nav>
+            </div>
+<div id="layoutSidenav_content">
+	<main>
+     <h1>상담 신청내역</h1>
+          <!-- 상담사 리스트 레이어팝업 -->
+            <div id="counselorPopup" class="modal" style="display:none; position:fixed; z-index:1050; left:0; top:0; width:100vw; height:100vh; background:rgba(0,0,0,0.4); align-items:center; justify-content:center;">
+                <div style="color: black; background:#fff; border-radius:8px; max-width:800px; width:90%; margin:auto; padding:24px; position:relative;">
+                    <h5 style="margin-bottom:16px;">상담사 리스트</h5>
+                    <table style="width:100%; border-collapse:collapse;">
+                        <thead>
+                            <tr>
+                                <th style="border-bottom:1px solid #ddd; padding:8px;">상담사명</th>
+                                <th style="border-bottom:1px solid #ddd; padding:8px;">소속</th>
+                                <th style="border-bottom:1px solid #ddd; padding:8px;">전화번호</th>
+                                <th style="border-bottom:1px solid #ddd; padding:8px;">선택</th>
+                            </tr>
+                        </thead>
+                        <tbody id="counselorList">
+                            <!-- 예시 데이터, JS로 동적 생성 가능 -->
+                            <tr>
+                                <td style="padding:8px;">김상담</td>
+                                <td style="padding:8px;">심리상담센터</td>
+                                <td style="padding:8px;">01012345678</td>
+                                <td style="padding:8px;"><button type="button" class="btn btn-success btn-sm select-counselor">선택</button></td>
+                            </tr>
+                            <tr>
+                                <td style="padding:8px;">이상담</td>
+                                <td style="padding:8px;">심리상담센터</td>
+                                <td style="padding:8px;">01087654321</td>
+                                <td style="padding:8px;"><button type="button" class="btn btn-success btn-sm select-counselor">선택</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button type="button" id="closeCounselorPopup" style="position:absolute; top:12px; right:12px; background:none; border:none; font-size:20px;">&times;</button>
+                </div>
+            </div>
+    <form id="admin_apply_frm">
+                    <div class="search-bar">
+                        <select style="text-align: left;">
+                            <option>신청인 이름</option>
+                            <option>학번</option>
+                        </select>
+                        <input type="text" placeholder="검색어 입력">
+                        <button type="submit">검색</button>
+                        <select name="status" style="margin-left: auto; text-align: left;">
+                            <option value="apply">신청일순</option>
+                            <option value="gender">성별순</option>
+                            <option value="name">이름순</option>
+                        </select>
+                    </div>
+                </form>
+
+<main>
+<table id="applyTable" class="table table-striped table-bordered" style="width: 100%;">
+    <thead class="thead-dark">
+        <tr class="table-header">
+            <th style="text-align: center;">NO</th>
+            <th style="text-align: center;">이름</th>
+            <th style="text-align: center;">성별</th>
+            <th style="text-align: center;">학번</th>
+            <th style="text-align: center;">학과</th>
+            <th style="text-align: center;">상담분류</th>
+            <th style="text-align: center;">이메일</th>
+            <th style="text-align: center;">전화번호</th>
+            <th style="text-align: center;">신청일</th>
+            <th style="text-align: center;">현황</th>
+        </tr>
+    </thead>
+    <tbody class="table-body">
+        <tr>
+           <td style="text-align: center;">3</td>
+           <td style="text-align: center;">홍길동</td>
+           <td style="text-align: center;">남</td>
+           <td style="text-align: center;">25102522</td>
+           <td style="text-align: center;">경영학과</td>
+           <td style="text-align: center;">심리상담</td>
+           <td style="text-align: center;">hong@nate.com</td>
+           <td style="text-align: center;">01022231234</td>
+           <td style="text-align: center;">2025-05-28</td>
+        <td style="text-align: center;">
+            <button type="button" class="btn btn-primary btn-sm">대기상태</button>
+        </td>
+        </tr>
+        <tr>
+           <td style="text-align: center;">2</td>
+           <td style="text-align: center;">홍길동</td>
+           <td style="text-align: center;">남</td>
+           <td style="text-align: center;">25102522</td>
+           <td style="text-align: center;">경영학과</td>
+           <td style="text-align: center;">심리상담</td>
+           <td style="text-align: center;">hong@nate.com</td>
+           <td style="text-align: center;">01022231234</td>
+           <td style="text-align: center;">2025-05-28</td>
+        <td style="text-align: center;">
+            <button type="button" class="btn btn-primary btn-sm" style="background-color: #440af3; border-color: #440af3;">배정완료</button>
+        </td>
+        </tr>
+            <tr>
+           <td style="text-align: center;">1</td>
+           <td style="text-align: center;">홍길동</td>
+           <td style="text-align: center;">남</td>
+           <td style="text-align: center;">25102522</td>
+           <td style="text-align: center;">경영학과</td>
+           <td style="text-align: center;">심리상담</td>
+           <td style="text-align: center;">hong@nate.com</td>
+           <td style="text-align: center;">01022231234</td>
+           <td style="text-align: center;">2025-05-28</td>
+        <td style="text-align: center;">
+            <button type="button" class="btn btn-primary btn-sm" style="background-color: #000; border-color: #000;">상담완료</button>
+        </td>
+        </tr>
+    </tbody>
+</table>
+                <div class="container">
+                    <div class="pagination">
+                        <a class="page-link">&laquo;</a>
+                        <a class="page-link">&lsaquo;</a>
+                        <a class="page-link">1</a>
+                        <a class="page-link">&rsaquo;</a>
+                        <a class="page-link">&raquo;</a>
+                    </div>
+                </div>
+    </main>
+    
+                <footer class="py-4 bg-light mt-auto">
+                    <div class="container-fluid px-4">
+                        <div class="d-flex align-items-center justify-content-between small">
+                            <div class="text-muted">Copyright &copy; Your Website 2025</div>
+                        </div>
+                    </div>
+                </footer>
+
+        </div>
+        </div>
+       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+       <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // 대기상태 버튼 클릭시 팝업 오픈
+                document.querySelectorAll('.btn-primary.btn-sm').forEach(function(btn) {
+                    if(btn.textContent.trim() === '대기상태') {
+                        btn.addEventListener('click', function() {
+                            document.getElementById('counselorPopup').style.display = 'flex';
+                        });
+                    }
+                });
+                // 팝업 닫기
+                document.getElementById('closeCounselorPopup').onclick = function() {
+                    document.getElementById('counselorPopup').style.display = 'none';
+                };
+                // 선택 버튼 클릭시 팝업 닫기 (추후 상담사 배정 로직 추가 가능)
+                document.querySelectorAll('.select-counselor').forEach(function(btn) {
+                    btn.onclick = function() {
+                        document.getElementById('counselorPopup').style.display = 'none';
+                        // 상담사 배정 처리 로직 추가 가능
+                    };
+                });
+            });
+            </script>
+    </body>
+
+</html>
+            

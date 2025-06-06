@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<title>관리자 - 대메뉴 관리</title>
+<link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
+<link href="/css/styles.css" rel="stylesheet" />
+<link href="/css/List.css" rel="stylesheet"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+<script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+<script src="/js/menuList.js" defer></script>
+<link rel="stylesheet" href="/css/menuList.css" />
+</head>
+<body class="sb-nav-fixed">
+	<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+            <!-- Navbar Brand-->
+            <a class="navbar-brand ps-3" href="index.html">Administrator</a>
+            <!-- Sidebar Toggle-->
+            <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+            <!-- Navbar Search-->
+            <span class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+                <div class="input-group" style="color: white;">
+                    관리자님 환영 합니다.
+                </div>
+            </span>
+            <!-- Navbar-->
+            <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="#!">MY INFO</a></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item" href="/admin/logoutok">로그아웃</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+
+	<div id="layoutSidenav">
+		  <div id="layoutSidenav_nav">
+                <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                    <div class="sb-sidenav-menu">
+                        <div class="nav">
+
+                            <a class="nav-link" href="./adminList.html">
+	                            <span class="material-symbols-outlined icon-button" style="color:rgba(255, 255, 255, 0.5);">account_circle</span>&nbsp;
+                                상담사 목록
+                            </a>
+
+                            <a class="nav-link" href="./applyList.html">
+                                <span class="material-symbols-outlined">list_alt</span>	&nbsp;
+                                상담 신청 내역
+                            </a>
+                           
+                            <a class="nav-link collapsed" href="./counselorSchedule.html">
+                                <span class="material-symbols-outlined">calendar_month</span>&nbsp;
+                                상담 일정 관리
+                            </a>
+
+                            <a class="nav-link" href="./boardManagement.html">
+                                <span class="material-symbols-outlined">jamboard_kiosk</span>&nbsp;
+                                게시판 관리
+                            </a>
+                            <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+                                <span class="material-symbols-outlined">category</span>&nbsp;
+                                페이지 관리
+                            </a>
+                            <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
+                                        배너관리
+                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                    </a>
+                                </nav>
+                            </div>
+                            <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
+                                        대메뉴 관리
+                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                    </a>
+                                </nav>
+                            </div>
+                            <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+                                <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages">
+                                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="false" aria-controls="pagesCollapseAuth">
+                                        소메뉴 관리
+                                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                                    </a>
+                                </nav>
+                            </div>
+                            <a class="nav-link" href="tables.html">
+                                <span class="material-symbols-outlined">monitoring</span>&nbsp;
+                                상담 통계
+                            </a>
+                            <a class="nav-link" href="tables.html">
+                               <span class="material-symbols-outlined">logout</span>&nbsp;
+                                로그아웃
+                            </a>
+                        </div>
+                    </div>
+                    <div class="sb-sidenav-footer">
+                        <div class="small"></div>
+                    </div>
+                </nav>
+            </div>   
+
+		<div id="layoutSidenav_content">
+			<main>
+				<h1>대메뉴 목록 (<span>0</span>건)</h1>
+				<select class="page-selector" style="text-align: left;">
+					<option value="">전체보기</option>
+					<option value="1">메인페이지</option>
+					<option value="2">상담사페이지</option>
+				</select>
+					<div class="search-bar">
+						<form>
+							<select style="text-align: left;">
+								<option>메뉴명</option>
+								<option>메뉴 코드</option>
+							</select> 
+							<input type="text" placeholder="대메뉴 검색">
+							<button style="vertical-align : bottom;">
+								<span class="material-symbols-outlined">search</span>
+							</button>
+						</form>
+						<button id="openModalBtn" style="margin-left: auto;">대메뉴 등록</button>
+					</div>
+				<table id="counselorTable">
+					<thead>
+						<tr>
+							<th>대메뉴 번호</th>
+							<th>대메뉴 코드</th>
+							<th>대메뉴명</th>
+							<th>노출순서</th>
+							<th>노출여부</th>
+							<th>연결 URL</th>
+							<th>대메뉴 관리</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>1</td>
+							<td>menu_1</td>
+							<td>센터소개</td>
+							<td>1</td>
+							<td>사용</td>
+							<td>./center_info.html</td>
+							<td>
+								<button id="btn_modify" class="button">수정</button>
+								<button id="btn_delete" class="button">삭제</button>
+								<button id="btn_C_menu" class="button" onclick="location.href='./menuList-C.html';">소메뉴 리스트</button>
+							</td>
+						</tr>
+						<!-- 추가적인 데이터 행을 여기에 추가하세요 -->
+					</tbody>
+				</table>
+				<!-- 대메뉴 신규등록 -->
+				<div id="modal" class="catecory modal">
+					<span class="close">&times;</span>
+					<h3 style="text-align: center; margin-bottom: 40px;">대메뉴 등록 및 수정</h3>
+					<table id="menu_create_table">
+						<tr>
+							<th style="width: 200px;">페이지 구분</th>
+							<td>
+								<select class="page-selector" style="text-align: left;">
+									<option value="3">메인 페이지</option>
+									<option value="2">상담사 페이지</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<th>대메뉴 코드</th>
+							<td class="search-bar">
+								<input type="text" readonly>
+								<input type="button" value="재생성하기">
+							</td>
+						</tr>
+						<tr>
+							<th>대메뉴명</th>
+							<td><input type="text"></td>
+						</tr>
+						<tr>
+							<th>노출 순서</th>
+							<td><input type="number">
+							<span class="text-danger" id="warning_text" style="display : none; text-align: left;"><small>이미 사용 중인 노출 순서입니다.</small></span>
+							</td>
+						</tr>
+						<tr>
+							<th>노출 여부</th>
+							<td><input type="checkbox" value="N"> 숨기기</td>
+						</tr>
+						<tr>
+							<th>연결 Url</th>
+							<td><input type="text"></td>
+						</tr>
+					</table>
+					<div class="button-container">
+						<button type="button" id="btn_menuRegistor" class="button">등록</button>
+					</div>
+				</div>
+				<!-- 대메뉴 신규등록 끝 -->
+				<!-- 대메뉴 수정 버튼 클릭시에만 출력됨-->
+				<div id="modal2" class="catecory modal" style="display : none;">
+		        <span class="close">&times;</span>
+		        <h3 style="text-align: center; margin-bottom: 40px;">대메뉴 수정</h3>
+		        <table id="menu_modify_table">
+		            <tr>
+		                <th style="width: 200px;">페이지 구분</th>
+		                <td id='menu_section'>전체 또는 메인, 상담사 로 구분됨</td>
+		            </tr>
+		            <tr>
+		                <th>대메뉴 코드</th>
+		                <td class="search-bar">
+		                    <input type="text" readonly>
+		                </td>
+		            </tr>
+		            <tr>
+		                <th>대메뉴명</th>
+		                <td><input type="text"></td>
+		            </tr>
+		            <tr>
+		                <th>노출 순서</th>
+		                <td>
+		                <input type="number">
+		                <span class="text-danger" id="modify_warning_text" style="display : none; text-align: left;"><small>이미 사용 중인 노출 순서입니다.</small></span>
+		                </td>
+		            </tr>
+		            <tr>
+		                <th>노출 여부</th>
+		                <td><input type="checkbox" value="N"> 숨기기</td>
+		            </tr>
+		            <tr>
+		                <th>연결 Url</th>
+		                <td><input type="text"></td>
+		            </tr>
+		        </table>
+		        <div class="button-container">
+		            <button type="button" class="button">수정</button>&nbsp;&nbsp;
+					<button type="button" class="button">삭제</button>
+		        </div>
+		    </div>
+				<!-- 대메뉴 수정 끝-->
+				<div id="overlay" class="overlay"></div>
+			</main>
+			        <footer class="py-4 bg-light mt-auto">
+                    <div class="container-fluid px-4">
+                        <div class="d-flex align-items-center justify-content-between small">
+                            <div class="text-muted">Copyright &copy; Your Website 2025</div>
+                        </div>
+                    </div>
+            </footer>
+		</div>
+	</div>
+</body>
+	<script>
+	// 상세 및 수정 버튼 클릭 이벤트 바인딩
+	document.addEventListener('DOMContentLoaded', function() {
+		document.querySelectorAll('#btn_modify').forEach(function(btn) {
+			btn.addEventListener('click', function(e) {
+				// 모달 표시
+				document.getElementById('modal2').style.display = 'block';
+				document.getElementById('overlay').style.display = 'block';
+			});
+		});
+		// 모달 닫기
+		document.querySelector('#modal2 .close').addEventListener('click', function() {
+			document.getElementById('modal2').style.display = 'none';
+			document.getElementById('overlay').style.display = 'none';
+		});
+		// 바깥 클릭시 닫기 (선택)
+		window.addEventListener('click', function(event) {
+			const modal = document.getElementById('modal2');
+			if (event.target === modal) {
+				modal.style.display = 'none';
+				document.getElementById('overlay').style.display = 'none';
+			}
+		});
+	});
+	</script>
+</html>
