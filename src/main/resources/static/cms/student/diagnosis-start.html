@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>핵심역량 진단검사</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="p-4">
+  <div class="container">
+    <h2 class="mb-4">핵심역량 진단검사</h2>
+
+    <!-- 사용자 안내 -->
+    <div class="alert alert-info" role="alert">
+      총 10문항에 응답해 주세요. 각 문항은 5지선다형입니다.
+    </div>
+
+    <!-- 문항 반복 -->
+    <form id="diagnosisForm">
+      <div class="mb-4">
+        <label class="form-label fw-bold">1. 글에서 중요한 내용을 파악하여 요약할 수 있다.</label>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="q1" value="1" required>
+          <label class="form-check-label">전혀 아니다</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="q1" value="2">
+          <label class="form-check-label">아니다</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="q1" value="3">
+          <label class="form-check-label">보통이다</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="q1" value="4">
+          <label class="form-check-label">그렇다</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="q1" value="5">
+          <label class="form-check-label">매우 그렇다</label>
+        </div>
+      </div>
+
+      <!-- 예시로 문항 1개만 표기 / 실제론 반복 -->
+      <!-- 여기에 q2 ~ q10 반복 -->
+
+      <!-- 제출 버튼 -->
+      <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-success">제출하기</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Bootstrap Script -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- 간단한 제출 처리 -->
+  <script>
+    document.getElementById("diagnosisForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      alert("진단이 제출되었습니다. 결과 페이지로 이동합니다.");
+      // 실제 구현 시 fetch 또는 form POST 처리
+    });
+  </script>
+</body>
+</html>

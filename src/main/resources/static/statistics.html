@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html th:fragment="main" lang="ko" xmlns:th="http://www.thymeleaf.org">
     <head>
+    <meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+<meta name="description" content="" />
+<meta name="author" content="" />
     	<title>관리자 - 상담 통계</title>
         <th:block th:replace="~{layouts/adminHeader :: head}"></th:block>
 		<script src="https://uicdn.toast.com/chart/latest/toastui-chart.min.js" defer></script>
@@ -12,7 +17,10 @@
 		<script src="/js/statisticsDaily.js" defer></script>
     </head>
     <body class="sb-nav-fixed">
-        <th:block th:replace="~{layouts/adminHeader :: nav}"></th:block>      
+    <!-- 
+        <th:block th:replace="~{layouts/adminHeader :: nav}"></th:block>   
+         -->   
+         
         <div id="layoutSidenav">
             <th:block th:replace="~{layouts/adminSidebar :: sidebar}"></th:block>         
             <div id="layoutSidenav_content">
@@ -29,7 +37,8 @@
                 	</table>
                 	          		
                 </main>
-        <th:block th:replace="~{layouts/adminFooter :: footer}"></th:block>
+                <!-- 
+        <th:block th:replace="~{layouts/adminFooter :: footer}"></th:block> -->
             </div>
         </div>
     </body>
