@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학과 관리</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .table-container {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .action-buttons {
+            white-space: nowrap;
+        }
+        .search-section {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .stats-card {
+            border-left: 4px solid #198754;
+        }
+        .count-badge {
+            font-size: 0.8em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid py-4">
+        <!-- 헤더 -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2><i class="bi bi-mortarboard"></i> 학과 관리</h2>
+                    <div>
+                        <a href="department-manage.html" class="btn btn-outline-primary me-2">
+                            <i class="bi bi-building"></i> 부서 관리
+                        </a>
+                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#majorModal" onclick="openAddModal()">
+                            <i class="bi bi-plus-circle"></i> 학과 추가
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 검색 및 통계 섹션 -->
+        <div class="search-section">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">학과명 검색</label>
+                            <input type="text" class="form-control" id="searchInput" placeholder="학과명을 입력하세요">
+                        </div>
+                        <div class="col-md-6 d-flex align-items-end">
+                            <button class="btn btn-primary me-2" onclick="searchMajors()">
+                                <i class="bi bi-search"></i> 검색
+                            </button>
+                            <button class="btn btn-secondary" onclick="resetSearch()">
+                                <i class="bi bi-arrow-clockwise"></i> 초기화
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card stats-card h-100">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">전체 학과 수</h5>
+                            <h3 class="text-success" id="totalMajors">0</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 학과 목록 테이블 -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">학과 목록</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-container">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light sticky-top">
+                            <tr>
+                                <th width="8%">번호</th>
+                                <th width="25%">학과명</th>
+                                <th width="15%">교수 수</th>
+                                <th width="15%">학생 수</th>
+                                <th width="12%">총 인원</th>
+                                <th width="15%">등록일</th>
+                                <th width="10%">관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="majorTableBody">
+                            <!-- 데이터가 여기에 동적으로 추가됩니다 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 학과 추가/수정 모달 -->
+    <div class="modal fade" id="majorModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">학과 추가</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="majorForm">
+                        <input type="hidden" id="majorId">
+                        <div class="mb-3">
+                            <label for="majorName" class="form-label">학과명 <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="majorName" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="professorCount" class="form-label">교수 수</label>
+                                    <input type="number" class="form-control" id="professorCount" min="0" value="0">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="studentCount" class="form-label">학생 수</label>
+                                    <input type="number" class="form-control" id="studentCount" min="0" value="0">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-success" onclick="saveMajor()">저장</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 삭제 확인 모달 -->
+    <div class="modal fade" id="deleteModal" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">삭제 확인</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>정말로 이 학과를 삭제하시겠습니까?</p>
+                    <p class="text-muted small">삭제된 데이터는 복구할 수 없습니다.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-danger" onclick="confirmDelete()">삭제</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 학과 데이터 저장소
+        let majors = [
+            { id: 1, name: '컴퓨터공학과', professorCount: 12, studentCount: 180, createdAt: '2024-01-15' },
+            { id: 2, name: '경영학과', professorCount: 15, studentCount: 220, createdAt: '2024-01-20' },
+            { id: 3, name: '기계공학과', professorCount: 10, studentCount: 150, createdAt: '2024-02-01' },
+            { id: 4, name: '영어영문학과', professorCount: 8, studentCount: 120, createdAt: '2024-02-10' },
+            { id: 5, name: '화학과', professorCount: 9, studentCount: 95, createdAt: '2024-02-15' }
+        ];
+
+        let nextId = 6;
+        let deleteTargetId = null;
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            renderMajors();
+            updateStats();
+        });
+
+        // 학과 목록 렌더링
+        function renderMajors(data = majors) {
+            const tbody = document.getElementById('majorTableBody');
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center py-4 text-muted">
+                            등록된 학과가 없습니다.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            data.forEach((major, index) => {
+                const totalCount = major.professorCount + major.studentCount;
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td><strong>${major.name}</strong></td>
+                        <td>
+                            <span class="badge bg-info rounded-pill count-badge">${major.professorCount}명</span>
+                        </td>
+                        <td>
+                            <span class="badge bg-warning rounded-pill count-badge">${major.studentCount}명</span>
+                        </td>
+                        <td>
+                            <span class="badge bg-success rounded-pill">${totalCount}명</span>
+                        </td>
+                        <td>${major.createdAt}</td>
+                        <td class="action-buttons">
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editMajor(${major.id})" title="수정">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteMajor(${major.id})" title="삭제">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // 통계 업데이트
+        function updateStats() {
+            document.getElementById('totalMajors').textContent = majors.length;
+        }
+
+        // 학과 검색
+        function searchMajors() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            
+            if (searchTerm === '') {
+                renderMajors();
+                return;
+            }
+
+            const filteredMajors = majors.filter(major => 
+                major.name.toLowerCase().includes(searchTerm)
+            );
+            
+            renderMajors(filteredMajors);
+        }
+
+        // 검색 초기화
+        function resetSearch() {
+            document.getElementById('searchInput').value = '';
+            renderMajors();
+        }
+
+        // 엔터 키로 검색
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchMajors();
+            }
+        });
+
+        // 추가 모달 열기
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = '학과 추가';
+            document.getElementById('majorForm').reset();
+            document.getElementById('majorId').value = '';
+        }
+
+        // 수정 모달 열기
+        function editMajor(id) {
+            const major = majors.find(m => m.id === id);
+            if (!major) return;
+
+            document.getElementById('modalTitle').textContent = '학과 수정';
+            document.getElementById('majorId').value = major.id;
+            document.getElementById('majorName').value = major.name;
+            document.getElementById('professorCount').value = major.professorCount;
+            document.getElementById('studentCount').value = major.studentCount;
+
+            new bootstrap.Modal(document.getElementById('majorModal')).show();
+        }
+
+        // 학과 저장
+        function saveMajor() {
+            const form = document.getElementById('majorForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const id = document.getElementById('majorId').value;
+            const name = document.getElementById('majorName').value.trim();
+            const professorCount = parseInt(document.getElementById('professorCount').value) || 0;
+            const studentCount = parseInt(document.getElementById('studentCount').value) || 0;
+
+            // 중복 이름 체크
+            const existingMajor = majors.find(m => m.name === name && m.id != id);
+            if (existingMajor) {
+                alert('이미 존재하는 학과명입니다.');
+                return;
+            }
+
+            if (id) {
+                // 수정
+                const index = majors.findIndex(m => m.id == id);
+                if (index !== -1) {
+                    majors[index] = {
+                        ...majors[index],
+                        name,
+                        professorCount,
+                        studentCount
+                    };
+                }
+            } else {
+                // 추가
+                majors.push({
+                    id: nextId++,
+                    name,
+                    professorCount,
+                    studentCount,
+                    createdAt: new Date().toISOString().split('T')[0]
+                });
+            }
+
+            renderMajors();
+            updateStats();
+            bootstrap.Modal.getInstance(document.getElementById('majorModal')).hide();
+            
+            // 성공 메시지
+            showToast(id ? '학과가 수정되었습니다.' : '학과가 추가되었습니다.', 'success');
+        }
+
+        // 삭제 확인
+        function deleteMajor(id) {
+            deleteTargetId = id;
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        }
+
+        // 삭제 실행
+        function confirmDelete() {
+            if (deleteTargetId) {
+                majors = majors.filter(m => m.id !== deleteTargetId);
+                renderMajors();
+                updateStats();
+                bootstrap.Modal.getInstance(document.getElementById('deleteModal')).hide();
+                showToast('학과가 삭제되었습니다.', 'success');
+                deleteTargetId = null;
+            }
+        }
+
+        // 토스트 메시지 표시
+        function showToast(message, type = 'info') {
+            // 간단한 알림 구현
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'info'} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>핵심역량 진단 선택</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .main-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .student-info-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .assessment-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .assessment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+        
+        .assessment-card.completed {
+            border-color: #28a745;
+            background: linear-gradient(135deg, #f8fff9 0%, #e8f5e8 100%);
+        }
+        
+        .assessment-card.in-progress {
+            border-color: #ffc107;
+            background: linear-gradient(135deg, #fffdf8 0%, #fff3cd 100%);
+        }
+        
+        .assessment-card.available {
+            border-color: #007bff;
+            background: linear-gradient(135deg, #f8fbff 0%, #e3f2fd 100%);
+        }
+        
+        .assessment-card.locked {
+            background: #f8f9fa;
+            border-color: #dee2e6;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .status-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .status-completed {
+            background: #28a745;
+            color: white;
+        }
+        
+        .status-in-progress {
+            background: #ffc107;
+            color: #212529;
+        }
+        
+        .status-available {
+            background: #007bff;
+            color: white;
+        }
+        
+        .status-locked {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .assessment-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .icon-completed {
+            background: #28a745;
+            color: white;
+        }
+        
+        .icon-in-progress {
+            background: #ffc107;
+            color: #212529;
+        }
+        
+        .icon-available {
+            background: #007bff;
+            color: white;
+        }
+        
+        .icon-locked {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .assessment-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+        }
+        
+        .assessment-description {
+            color: #6c757d;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .assessment-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #495057;
+            font-size: 0.9rem;
+        }
+        
+        .progress-info {
+            background: rgba(0, 123, 255, 0.1);
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .progress-bar-custom {
+            height: 8px;
+            border-radius: 4px;
+            background: #e9ecef;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #007bff, #0056b3);
+            transition: width 0.3s ease;
+        }
+        
+        .action-button {
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+            font-weight: bold;
+            border: none;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-start {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+        }
+        
+        .btn-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.4);
+            color: white;
+        }
+        
+        .btn-continue {
+            background: linear-gradient(45deg, #ffc107, #e0a800);
+            color: #212529;
+        }
+        
+        .btn-continue:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.4);
+            color: #212529;
+        }
+        
+        .btn-view {
+            background: linear-gradient(45deg, #28a745, #1e7e34);
+            color: white;
+        }
+        
+        .btn-view:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+            color: white;
+        }
+        
+        .btn-locked {
+            background: #6c757d;
+            color: white;
+            cursor: not-allowed;
+        }
+        
+        .filter-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stats-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stats-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stats-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .assessment-details {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .action-button {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <div class="main-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="text-white mb-0">
+                        <i class="bi bi-clipboard-check"></i> 핵심역량 진단
+                    </h1>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <button class="btn btn-outline-light" onclick="showHelp()">
+                        <i class="bi bi-question-circle"></i> 도움말
+                    </button>
+                    <button class="btn btn-outline-light ms-2" onclick="logout()">
+                        <i class="bi bi-box-arrow-right"></i> 로그아웃
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 학생 정보 -->
+        <div class="student-info-card">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-sm-6 col-md-3 mb-2">
+                            <strong>학번:</strong> <span id="studentId">2024123456</span>
+                        </div>
+                        <div class="col-sm-6 col-md-3 mb-2">
+                            <strong>이름:</strong> <span id="studentName">홍길동</span>
+                        </div>
+                        <div class="col-sm-6 col-md-3 mb-2">
+                            <strong>학과:</strong> <span id="studentMajor">컴퓨터공학과</span>
+                        </div>
+                        <div class="col-sm-6 col-md-3 mb-2">
+                            <strong>학년:</strong> <span id="studentGrade">3학년</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <div class="stats-card d-inline-block">
+                        <div class="stats-number" id="completionRate">75%</div>
+                        <div class="stats-label">완료율</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 필터 섹션 -->
+        <div class="filter-section">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h5 class="mb-3 mb-md-0">진단 목록</h5>
+                </div>
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <select class="form-select" id="statusFilter" onchange="filterAssessments()">
+                                <option value="all">전체 상태</option>
+                                <option value="available">응시 가능</option>
+                                <option value="in-progress">진행 중</option>
+                                <option value="completed">완료</option>
+                                <option value="locked">잠김</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <select class="form-select" id="competencyFilter" onchange="filterAssessments()">
+                                <option value="all">전체 역량</option>
+                                <option value="creative">창의융합형</option>
+                                <option value="challenge">도전지향형</option>
+                                <option value="practical">현장실무형</option>
+                                <option value="character">나우리형</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 진단 목록 -->
+        <div class="row" id="assessmentList">
+            <!-- 진단 카드들이 여기에 동적으로 추가됩니다 -->
+        </div>
+    </div>
+
+    <!-- 도움말 모달 -->
+    <div class="modal fade" id="helpModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-question-circle"></i> 핵심역량 진단 도움말
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6><i class="bi bi-info-circle text-primary"></i> 진단 상태 안내</h6>
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <span class="badge bg-primary">응시 가능</span> 
+                                    새로운 진단을 시작할 수 있습니다
+                                </li>
+                                <li class="mb-2">
+                                    <span class="badge bg-warning text-dark">진행 중</span> 
+                                    이전에 시작한 진단을 계속할 수 있습니다
+                                </li>
+                                <li class="mb-2">
+                                    <span class="badge bg-success">완료</span> 
+                                    진단이 완료되어 결과를 확인할 수 있습니다
+                                </li>
+                                <li class="mb-2">
+                                    <span class="badge bg-secondary">잠김</span> 
+                                    아직 응시할 수 없는 진단입니다
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6><i class="bi bi-lightbulb text-warning"></i> 진단 팁</h6>
+                            <ul>
+                                <li>진단은 한 번에 완료하는 것을 권장합니다</li>
+                                <li>솔직하고 정확하게 응답해주세요</li>
+                                <li>진단 중 페이지를 새로고침하지 마세요</li>
+                                <li>결과는 진단 완료 후 즉시 확인 가능합니다</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">확인</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 진단 시작 확인 모달 -->
+    <div class="modal fade" id="startModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">진단 시작 확인</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center mb-3">
+                        <i class="bi bi-clipboard-check text-primary" style="font-size: 3rem;"></i>
+                    </div>
+                    <h6 id="modalAssessmentTitle" class="text-center mb-3"></h6>
+                    <div class="alert alert-info">
+                        <h6><i class="bi bi-info-circle"></i> 진단 안내</h6>
+                        <ul class="mb-0">
+                            <li>예상 소요 시간: <strong id="modalDuration"></strong></li>
+                            <li>총 문항 수: <strong id="modalQuestions"></strong></li>
+                            <li>진단 중 페이지를 벗어나지 마세요</li>
+                            <li>모든 문항에 성실히 응답해주세요</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" id="confirmStartBtn">시작하기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 진단 데이터
+        const assessments = [
+            {
+                id: 1,
+                title: "2024년 1학기 핵심역량 진단",
+                description: "창의융합형 문제해결역량, 도전지향형 학습리더역량, 현장실무형 전공역량, 나우리형 인성역량을 종합적으로 진단합니다.",
+                competencyType: "all",
+                status: "completed",
+                progress: 100,
+                questions: 20,
+                duration: "15-20분",
+                startDate: "2024-03-01",
+                endDate: "2024-03-31",
+                completedDate: "2024-03-15",
+                score: 85
+            },
+            {
+                id: 2,
+                title: "창의융합형 문제해결역량 심화 진단",
+                description: "창의적 사고, 융합적 사고, 문제해결 능력을 세밀하게 진단하여 개인별 맞춤 피드백을 제공합니다.",
+                competencyType: "creative",
+                status: "in-progress",
+                progress: 65,
+                questions: 15,
+                duration: "10-15분",
+                startDate: "2024-04-01",
+                endDate: "2024-04-30",
+                lastAccess: "2024-04-10"
+            },
+            {
+                id: 3,
+                title: "도전지향형 학습리더역량 진단",
+                description: "자기주도적 학습능력, 리더십, 글로벌 역량을 평가하여 학습 방향을 제시합니다.",
+                competencyType: "challenge",
+                status: "available",
+                progress: 0,
+                questions: 18,
+                duration: "12-18분",
+                startDate: "2024-04-15",
+                endDate: "2024-05-15"
+            },
+            {
+                id: 4,
+                title: "현장실무형 전공역량 진단",
+                description: "전공 기초 지식, 전문성, 실무 적용 능력을 종합적으로 평가합니다.",
+                competencyType: "practical",
+                status: "available",
+                progress: 0,
+                questions: 22,
+                duration: "15-20분",
+                startDate: "2024-05-01",
+                endDate: "2024-05-31"
+            },
+            {
+                id: 5,
+                title: "나우리형 인성역량 진단",
+                description: "자기관리, 소통협력, 나눔배려 등 인성 역량을 진단하여 인격적 성장을 돕습니다.",
+                competencyType: "character",
+                status: "locked",
+                progress: 0,
+                questions: 16,
+                duration: "10-15분",
+                startDate: "2024-06-01",
+                endDate: "2024-06-30"
+            },
+            {
+                id: 6,
+                title: "종합 핵심역량 진단 (기말)",
+                description: "한 학기 동안의 학습 성과를 종합적으로 평가하는 최종 진단입니다.",
+                competencyType: "all",
+                status: "locked",
+                progress: 0,
+                questions: 25,
+                duration: "20-25분",
+                startDate: "2024-06-15",
+                endDate: "2024-06-30"
+            }
+        ];
+
+        let filteredAssessments = [...assessments];
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAssessments();
+            updateCompletionRate();
+        });
+
+        // 진단 목록 렌더링
+        function renderAssessments() {
+            const container = document.getElementById('assessmentList');
+            container.innerHTML = '';
+
+            filteredAssessments.forEach(assessment => {
+                const card = createAssessmentCard(assessment);
+                container.appendChild(card);
+            });
+        }
+
+        // 진단 카드 생성
+        function createAssessmentCard(assessment) {
+            const col = document.createElement('div');
+            col.className = 'col-lg-6 col-xl-4';
+
+            const statusInfo = getStatusInfo(assessment.status);
+            const progressHtml = assessment.status === 'in-progress' ? 
+                `<div class="progress-info">
+                    <div class="d-flex justify-content-between mb-1">
+                        <small>진행률</small>
+                        <small>${assessment.progress}%</small>
+                    </div>
+                    <div class="progress-bar-custom">
+                        <div class="progress-fill" style="width: ${assessment.progress}%"></div>
+                    </div>
+                </div>` : '';
+
+            col.innerHTML = `
+                <div class="assessment-card ${assessment.status}" onclick="handleCardClick(${assessment.id})">
+                    <div class="status-badge ${statusInfo.badgeClass}">
+                        ${statusInfo.text}
+                    </div>
+                    
+                    <div class="assessment-icon ${statusInfo.iconClass}">
+                        <i class="bi ${statusInfo.icon}"></i>
+                    </div>
+                    
+                    <div class="assessment-title">${assessment.title}</div>
+                    <div class="assessment-description">${assessment.description}</div>
+                    
+                    ${progressHtml}
+                    
+                    <div class="assessment-details">
+                        <div class="detail-item">
+                            <i class="bi bi-clock"></i>
+                            <span>${assessment.duration}</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="bi bi-list-check"></i>
+                            <span>${assessment.questions}문항</span>
+                        </div>
+                        <div class="detail-item">
+                            <i class="bi bi-calendar"></i>
+                            <span>${formatDateRange(assessment.startDate, assessment.endDate)}</span>
+                        </div>
+                    </div>
+                    
+                    ${getActionButton(assessment)}
+                </div>
+            `;
+
+            return col;
+        }
+
+        // 상태 정보 반환
+        function getStatusInfo(status) {
+            const statusMap = {
+                'available': {
+                    text: '응시 가능',
+                    badgeClass: 'status-available',
+                    iconClass: 'icon-available',
+                    icon: 'bi-play-circle'
+                },
+                'in-progress': {
+                    text: '진행 중',
+                    badgeClass: 'status-in-progress',
+                    iconClass: 'icon-in-progress',
+                    icon: 'bi-pause-circle'
+                },
+                'completed': {
+                    text: '완료',
+                    badgeClass: 'status-completed',
+                    iconClass: 'icon-completed',
+                    icon: 'bi-check-circle'
+                },
+                'locked': {
+                    text: '잠김',
+                    badgeClass: 'status-locked',
+                    iconClass: 'icon-locked',
+                    icon: 'bi-lock'
+                }
+            };
+            return statusMap[status];
+        }
+
+        // 액션 버튼 생성
+        function getActionButton(assessment) {
+            switch (assessment.status) {
+                case 'available':
+                    return `<button class="action-button btn-start" onclick="event.stopPropagation(); startAssessment(${assessment.id})">
+                        <i class="bi bi-play-circle"></i> 시작하기
+                    </button>`;
+                case 'in-progress':
+                    return `<button class="action-button btn-continue" onclick="event.stopPropagation(); continueAssessment(${assessment.id})">
+                        <i class="bi bi-arrow-right-circle"></i> 계속하기
+                    </button>`;
+                case 'completed':
+                    return `<button class="action-button btn-view" onclick="event.stopPropagation(); viewResults(${assessment.id})">
+                        <i class="bi bi-graph-up"></i> 결과 보기
+                    </button>`;
+                case 'locked':
+                    return `<button class="action-button btn-locked" disabled>
+                        <i class="bi bi-lock"></i> 잠김
+                    </button>`;
+                default:
+                    return '';
+            }
+        }
+
+        // 날짜 범위 포맷
+        function formatDateRange(startDate, endDate) {
+            const start = new Date(startDate).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' });
+            const end = new Date(endDate).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' });
+            return `${start} ~ ${end}`;
+        }
+
+        // 완료율 업데이트
+        function updateCompletionRate() {
+            const completed = assessments.filter(a => a.status === 'completed').length;
+            const total = assessments.length;
+            const rate = Math.round((completed / total) * 100);
+            document.getElementById('completionRate').textContent = `${rate}%`;
+        }
+
+        // 진단 필터링
+        function filterAssessments() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const competencyFilter = document.getElementById('competencyFilter').value;
+
+            filteredAssessments = assessments.filter(assessment => {
+                const statusMatch = statusFilter === 'all' || assessment.status === statusFilter;
+                const competencyMatch = competencyFilter === 'all' || assessment.competencyType === competencyFilter;
+                return statusMatch && competencyMatch;
+            });
+
+            renderAssessments();
+        }
+
+        // 카드 클릭 처리
+        function handleCardClick(id) {
+            const assessment = assessments.find(a => a.id === id);
+            if (assessment.status === 'locked') {
+                showLockedMessage();
+                return;
+            }
+            
+            // 상태에 따른 기본 동작
+            switch (assessment.status) {
+                case 'available':
+                    startAssessment(id);
+                    break;
+                case 'in-progress':
+                    continueAssessment(id);
+                    break;
+                case 'completed':
+                    viewResults(id);
+                    break;
+            }
+        }
+
+        // 진단 시작
+        function startAssessment(id) {
+            const assessment = assessments.find(a => a.id === id);
+            showStartModal(assessment);
+        }
+
+        // 진단 계속하기
+        function continueAssessment(id) {
+            const assessment = assessments.find(a => a.id === id);
+            if (confirm(`"${assessment.title}" 진단을 계속하시겠습니까?\n\n현재 진행률: ${assessment.progress}%`)) {
+                window.location.href = `competency-assessment.html?id=${id}&continue=true`;
+            }
+        }
+
+        // 결과 보기
+        function viewResults(id) {
+            const assessment = assessments.find(a => a.id === id);
+            window.location.href = `competency-results.html?id=${id}`;
+        }
+
+        // 시작 모달 표시
+        function showStartModal(assessment) {
+            document.getElementById('modalAssessmentTitle').textContent = assessment.title;
+            document.getElementById('modalDuration').textContent = assessment.duration;
+            document.getElementById('modalQuestions').textContent = `${assessment.questions}문항`;
+            
+            document.getElementById('confirmStartBtn').onclick = () => {
+                bootstrap.Modal.getInstance(document.getElementById('startModal')).hide();
+                window.location.href = `competency-assessment.html?id=${assessment.id}`;
+            };
+            
+            new bootstrap.Modal(document.getElementById('startModal')).show();
+        }
+
+        // 잠긴 진단 메시지
+        function showLockedMessage() {
+            alert('아직 응시할 수 없는 진단입니다.\n응시 기간을 확인해주세요.');
+        }
+
+        // 도움말 표시
+        function showHelp() {
+            new bootstrap.Modal(document.getElementById('helpModal')).show();
+        }
+
+        // 로그아웃
+        function logout() {
+            if (confirm('로그아웃 하시겠습니까?')) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // 검색 기능 (추가)
+        function searchAssessments(query) {
+            filteredAssessments = assessments.filter(assessment => 
+                assessment.title.toLowerCase().includes(query.toLowerCase()) ||
+                assessment.description.toLowerCase().includes(query.toLowerCase())
+            );
+            renderAssessments();
+        }
+    </script>
+</body>
+</html>

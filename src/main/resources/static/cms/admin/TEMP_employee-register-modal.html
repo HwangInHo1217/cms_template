@@ -1,0 +1,68 @@
+<!-- 교직원 등록 모달 -->
+<div class="modal fade" id="employeeRegisterModal" tabindex="-1" aria-labelledby="employeeRegisterModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form>
+        <div class="modal-header">
+          <h5 class="modal-title" id="employeeRegisterModalLabel">👥 교직원 계정 등록</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">사번</label>
+              <input type="text" class="form-control" placeholder="예: EMP2023001">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">이름</label>
+              <input type="text" class="form-control" placeholder="예: 홍길동">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">학과</label>
+              <select class="form-select">
+                <option selected disabled>학과 선택</option>
+                <option value="CS">컴퓨터공학과</option>
+                <option value="PSY">상담심리학과</option>
+                <option value="BUS">경영학과</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">역할</label>
+              <select class="form-select">
+                <option selected disabled>역할 선택</option>
+                <option value="PROF">교수</option>
+                <option value="STAFF">교직원</option>
+                <option value="COUNSELOR">상담사</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">이메일</label>
+              <input type="email" class="form-control" placeholder="example@school.ac.kr">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">상태</label>
+              <select class="form-select">
+                <option value="ACTIVE">재직</option>
+                <option value="INACTIVE">비활성</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">비밀번호</label>
+              <input type="password" class="form-control" placeholder="초기 비밀번호 설정">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">비밀번호 확인</label>
+              <input type="password" class="form-control" placeholder="비밀번호 재입력">
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="reset" class="btn btn-secondary">초기화</button>
+          <button type="submit" class="btn btn-primary">등록</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

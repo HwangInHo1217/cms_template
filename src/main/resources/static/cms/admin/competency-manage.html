@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>핵심역량 관리</title>
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
+	rel="stylesheet">
+<style>
+body {
+	
+	font-family: 'Malgun Gothic', sans-serif;
+}
+/* 사이드바 너비만큼 왼쪽에 여백 */
+@media ( min-width : 992px) {
+	.container-fluid {
+		margin-left: 260px; /* 사이드바 너비만큼 좌측 여백 */
+	}
+}
+
+.section-header {
+	background-color: #ff8c00;
+	color: white;
+	padding: 8px 15px;
+	font-weight: bold;
+	border-left: 4px solid #ff6600;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.section-header-sub {
+	background-color: #ffa500;
+	color: white;
+	padding: 8px 15px;
+	font-weight: bold;
+	border-left: 4px solid #ff6600;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.table-container {
+	border: 1px solid #dee2e6;
+	margin-bottom: 20px;
+}
+
+.competency-table {
+	margin-bottom: 0;
+}
+
+.competency-table th {
+	background-color: #f8f9fa;
+	font-size: 0.9em;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.competency-table td {
+	vertical-align: middle;
+	font-size: 0.9em;
+}
+
+.selected-row {
+	background-color: #007bff !important;
+	color: white;
+}
+
+.btn-group-sm .btn {
+	padding: 0.25rem 0.5rem;
+	font-size: 0.75rem;
+}
+
+.description-panel {
+	border: 1px solid #dee2e6;
+	border-radius: 0.25rem;
+	height: 200px;
+	padding: 15px;
+	overflow-y: auto;
+	background-color: #fff;
+	margin-bottom: 20px;
+}
+
+.description-title {
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+
+.checkbox-centered {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.action-buttons {
+	display: flex;
+	gap: 5px;
+}
+
+.action-buttons .btn {
+	padding: 0.25rem 0.5rem;
+	font-size: 0.75rem;
+}
+
+.usage-check {
+	width: 18px;
+	height: 18px;
+}
+
+.comment-panel {
+	border: 1px solid #dee2e6;
+	border-radius: 0.25rem;
+	height: 150px;
+	padding: 15px;
+	overflow-y: auto;
+	background-color: #fff;
+	margin-bottom: 20px;
+}
+</style>
+</head>
+<body>
+	<!-- 헤더 포함 -->
+	<div id="admin-header-placeholder"></div>
+
+	<!-- 사이드바 포함 -->
+	<div id="admin-sidebar-placeholder"></div>
+	<div class="container-fluid py-3">
+		<!-- 핵심역량 섹션 -->
+		<div class="row mb-3">
+			<div class="col-md-8">
+				<div class="section-header">
+					<span>핵심역량 <span class="badge bg-light text-dark ms-2">4
+							건</span></span>
+					<div class="action-buttons">
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox"
+								id="deleteSubCheck"> <label
+								class="form-check-label text-white" for="deleteSubCheck">하위삭제여부</label>
+						</div>
+						<button class="btn btn-success btn-sm">
+							<i class="bi bi-plus-circle"></i> 신규
+						</button>
+						<button class="btn btn-danger btn-sm">
+							<i class="bi bi-trash"></i> 삭제
+						</button>
+						<button class="btn btn-primary btn-sm">
+							<i class="bi bi-save"></i> 저장
+						</button>
+						<button class="btn btn-secondary btn-sm">
+							<i class="bi bi-file-earmark-excel"></i> 엑셀
+						</button>
+					</div>
+				</div>
+				<div class="table-container">
+					<table class="table table-hover competency-table">
+						<thead>
+							<tr>
+								<th style="width: 5%"><input type="checkbox"
+									class="form-check-input"></th>
+								<th style="width: 10%">코드</th>
+								<th style="width: 70%">핵심역량명</th>
+								<th style="width: 15%">사용</th>
+							</tr>
+						</thead>
+						<tbody id="coreCompetencyTableBody">
+							<!-- 데이터가 여기에 동적으로 추가됩니다 -->
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="description-panel">
+					<div class="description-title">내용</div>
+					<p id="coreCompetencyDescription">다양한 분야의 지식을 지속적으로 습득하고 분야 간
+						연관성을 파악하여 실제 문제 상황에 적용, 최적의 해결안을 도출할 수 있는 역량</p>
+				</div>
+			</div>
+		</div>
+
+		<!-- 하위핵심역량 섹션 -->
+		<div class="row mb-3">
+			<div class="col-md-8">
+				<div class="section-header-sub">
+					<span>하위핵심역량 <span class="badge bg-light text-dark ms-2">3
+							건</span></span>
+					<div class="action-buttons">
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox"
+								id="deleteSubCheck2"> <label
+								class="form-check-label text-white" for="deleteSubCheck2">하위삭제여부</label>
+						</div>
+						<button class="btn btn-success btn-sm">
+							<i class="bi bi-plus-circle"></i> 신규
+						</button>
+						<button class="btn btn-danger btn-sm">
+							<i class="bi bi-trash"></i> 삭제
+						</button>
+						<button class="btn btn-primary btn-sm">
+							<i class="bi bi-save"></i> 저장
+						</button>
+						<button class="btn btn-secondary btn-sm">
+							<i class="bi bi-file-earmark-excel"></i> 엑셀
+						</button>
+					</div>
+				</div>
+				<div class="table-container">
+					<table class="table table-hover competency-table">
+						<thead>
+							<tr>
+								<th style="width: 5%"><input type="checkbox"
+									class="form-check-input"></th>
+								<th style="width: 10%">코드</th>
+								<th style="width: 70%">하위역량명</th>
+								<th style="width: 15%">사용</th>
+							</tr>
+						</thead>
+						<tbody id="subCompetencyTableBody">
+							<!-- 데이터가 여기에 동적으로 추가됩니다 -->
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="description-panel">
+					<div class="description-title">내용</div>
+					<p id="subCompetencyDescription">의사소통 상황과 타인에 대한 이해를 바탕으로, 적절한
+						언어와 비언어적 도구를 활용하여 메시지를 전달, 이해할 수 있는 능력</p>
+				</div>
+			</div>
+		</div>
+
+		<!-- 행동지표 섹션 -->
+		<div class="row mb-3">
+			<div class="col-md-8">
+				<div class="section-header-sub">
+					<span>행동지표 <span class="badge bg-light text-dark ms-2">3
+							건</span></span>
+					<div class="action-buttons">
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox"
+								id="deleteSubCheck3"> <label
+								class="form-check-label text-white" for="deleteSubCheck3">하위삭제여부</label>
+						</div>
+						<button class="btn btn-success btn-sm">
+							<i class="bi bi-plus-circle"></i> 신규
+						</button>
+						<button class="btn btn-danger btn-sm">
+							<i class="bi bi-trash"></i> 삭제
+						</button>
+						<button class="btn btn-primary btn-sm">
+							<i class="bi bi-save"></i> 저장
+						</button>
+						<button class="btn btn-secondary btn-sm">
+							<i class="bi bi-file-earmark-excel"></i> 엑셀
+						</button>
+					</div>
+				</div>
+				<div class="table-container">
+					<table class="table table-hover competency-table">
+						<thead>
+							<tr>
+								<th style="width: 5%"><input type="checkbox"
+									class="form-check-input"></th>
+								<th style="width: 10%">코드</th>
+								<th style="width: 70%">행동지표명</th>
+								<th style="width: 15%">사용</th>
+							</tr>
+						</thead>
+						<tbody id="behaviorTableBody">
+							<!-- 데이터가 여기에 동적으로 추가됩니다 -->
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="col-md-4">
+				<div class="description-panel">
+					<div class="description-title">내용</div>
+					<p id="behaviorDescription">정자(듣자)가 전해있는 상황과 의사소통 참여자의 사회적 관계를
+						고려하여 적절한 언어와 소통방식을 활용할 수 있는 능력</p>
+				</div>
+				<div class="comment-panel">
+					<div class="description-title">경가방법안내</div>
+					<p id="evaluationMethod">당신은 학교 동아리에 새롭게 가입하여 친구, 선후배와 동료를 만나게
+						되었습니다. 이 번 학기 동아리 활동을 위해 소그룹으로 나누어서 활동을 해야 하고 싶은 활동을 투표하고 전체적으로
+						의견을 조율하는 상황에서 당신의 생각과 많이 다른 의견을 가진 동아리원들이 함께 있습니다. 이런 상황에서 다음의 문항을
+						잘 읽고, 자신의 행동을 평가해 보시기 바랍니다.</p>
+				</div>
+			</div>
+		</div>
+
+		<!-- 문항 섹션 -->
+		<div class="row">
+			<div class="col-12">
+				<div class="section-header-sub">
+					<span>문항 <span class="badge bg-light text-dark ms-2">3
+							건</span></span>
+					<div class="action-buttons">
+						<button class="btn btn-success btn-sm">
+							<i class="bi bi-plus-circle"></i> 신규
+						</button>
+						<button class="btn btn-danger btn-sm">
+							<i class="bi bi-trash"></i> 삭제
+						</button>
+						<button class="btn btn-primary btn-sm">
+							<i class="bi bi-save"></i> 저장
+						</button>
+						<button class="btn btn-secondary btn-sm">
+							<i class="bi bi-file-earmark-excel"></i> 엑셀
+						</button>
+					</div>
+				</div>
+				<div class="table-container">
+					<table class="table table-hover competency-table">
+						<thead>
+							<tr>
+								<th style="width: 5%"><input type="checkbox"
+									class="form-check-input"></th>
+								<th style="width: 8%">번호</th>
+								<th style="width: 62%">설문문항명</th>
+								<th style="width: 15%">선택문항</th>
+								<th style="width: 10%">사용</th>
+							</tr>
+						</thead>
+						<tbody id="questionTableBody">
+							<!-- 데이터가 여기에 동적으로 추가됩니다 -->
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- 모달: 핵심역량 추가/수정 -->
+	<div class="modal fade" id="competencyModal" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">핵심역량 추가</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+					<form id="competencyForm">
+						<div class="mb-3">
+							<label for="competencyCode" class="form-label">코드</label> <input
+								type="text" class="form-control" id="competencyCode">
+						</div>
+						<div class="mb-3">
+							<label for="competencyName" class="form-label">핵심역량명</label> <input
+								type="text" class="form-control" id="competencyName">
+						</div>
+						<div class="mb-3">
+							<label for="competencyDescription" class="form-label">설명</label>
+							<textarea class="form-control" id="competencyDescription"
+								rows="3"></textarea>
+						</div>
+						<div class="form-check mb-3">
+							<input class="form-check-input" type="checkbox"
+								id="competencyUsage" checked> <label
+								class="form-check-label" for="competencyUsage"> 사용 </label>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-bs-dismiss="modal">취소</button>
+					<button type="button" class="btn btn-primary">저장</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script>
+          // 상단 헤더 삽입
+  fetch('/cms/admin/layouts/admin-header.html')
+    .then(res => res.text())
+    .then(html => {
+      document.getElementById('admin-header-placeholder').innerHTML = html;
+    });
+
+  // 사이드바 삽입
+  fetch('/cms/admin/layouts/admin-sidebar.html')
+    .then(res => res.text())
+    .then(html => {
+      document.getElementById('admin-sidebar-placeholder').innerHTML = html;
+    });
+        // 샘플 데이터
+        const coreCompetencies = [
+            { id: 1, code: "1", name: "1. 창의융합형 문제해결역량", description: "다양한 분야의 지식을 지속적으로 습득하고 분야 간 연관성을 파악하여 실제 문제 상황에 적용, 최적의 해결안을 도출할 수 있는 역량", isUsed: true },
+            { id: 2, code: "2", name: "2. 도전지향형 학습리더역량", description: "목표 달성을 위해 지속적으로 노력하고 자기주도적 학습을 통해 성장하는 역량", isUsed: true },
+            { id: 3, code: "3", name: "3. 현장실무형 전공역량", description: "전공 분야의 전문 지식과 기술을 습득하고 현장에서 실무적으로 적용할 수 있는 역량", isUsed: false },
+            { id: 4, code: "4", name: "4. 나우리형 인성역량", description: "타인을 배려하고 공동체 의식을 바탕으로 사회적 책임을 다하는 역량", isUsed: true }
+        ];
+
+        const subCompetencies = [
+            { id: 11, code: "11", name: "1-1. 다학제간 융합", description: "다양한 학문 분야의 지식을 융합하여 새로운 관점을 도출하는 능력", isUsed: true, parentId: 1 },
+            { id: 12, code: "12", name: "1-2. 문제해결", description: "문제 상황을 정확히 인식하고 효과적인 해결책을 찾아내는 능력", isUsed: true, parentId: 1 },
+            { id: 13, code: "13", name: "1-3. 의사소통", description: "의사소통 상황과 타인에 대한 이해를 바탕으로, 적절한 언어와 비언어적 도구를 활용하여 메시지를 전달, 이해할 수 있는 능력", isUsed: true, parentId: 1 }
+        ];
+
+        const behaviors = [
+            { id: 131, code: "131", name: "의사소통 상황과 타인 이해 능력", description: "정자(듣자)가 전해있는 상황과 의사소통 참여자의 사회적 관계를 고려하여 적절한 언어와 소통방식을 활용할 수 있는 능력", isUsed: true, parentId: 13, evaluationMethod: "당신은 학교 동아리에 새롭게 가입하여 친구, 선후배와 동료를 만나게 되었습니다. 이 번 학기 동아리 활동을 위해 소그룹으로 나누어서 활동을 해야 하고 싶은 활동을 투표하고 전체적으로 의견을 조율하는 상황에서 당신의 생각과 많이 다른 의견을 가진 동아리원들이 함께 있습니다. 이런 상황에서 다음의 문항을 잘 읽고, 자신의 행동을 평가해 보시기 바랍니다." },
+            { id: 132, code: "132", name: "메시지 구성 및 전달 능력", description: "상황에 맞는 적절한 메시지를 구성하고 효과적으로 전달하는 능력", isUsed: true, parentId: 13 },
+            { id: 133, code: "133", name: "기호 및 매체 사용 능력", description: "다양한 기호와 매체를 활용하여 의사소통하는 능력", isUsed: true, parentId: 13 }
+        ];
+
+        const questions = [
+            { id: 1, number: "1", content: "나는 타인과의 대화에서 상대방의 요구와 관심을 고려하여 내 생각이나 의견을 명확하게 전달한다.", option: "리커트척도7", isUsed: true, parentId: 131 }
+        ];
+
+        // 선택된 항목 ID
+        let selectedCoreId = 1;
+        let selectedSubId = 13;
+        let selectedBehaviorId = 131;
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCoreCompetencies();
+            renderSubCompetencies();
+            renderBehaviors();
+            renderQuestions();
+        });
+
+        // 핵심역량 테이블 렌더링
+        function renderCoreCompetencies() {
+            const tbody = document.getElementById('coreCompetencyTableBody');
+            tbody.innerHTML = '';
+
+            coreCompetencies.forEach(comp => {
+                const isSelected = comp.id === selectedCoreId;
+                const row = `
+                    <tr class="${isSelected ? 'selected-row' : ''}" onclick="selectCoreCompetency(${comp.id})">
+                        <td class="text-center">
+                            <input type="checkbox" class="form-check-input" onclick="event.stopPropagation()">
+                        </td>
+                        <td class="text-center">${comp.code}</td>
+                        <td>${comp.name}</td>
+                        <td class="text-center">
+                            <input type="checkbox" class="form-check-input usage-check" ${comp.isUsed ? 'checked' : ''} onclick="event.stopPropagation()">
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+
+            // 선택된 핵심역량의 설명 업데이트
+            const selectedCore = coreCompetencies.find(c => c.id === selectedCoreId);
+            if (selectedCore) {
+                document.getElementById('coreCompetencyDescription').textContent = selectedCore.description;
+            }
+        }
+
+        // 하위역량 테이블 렌더링
+        function renderSubCompetencies() {
+            const tbody = document.getElementById('subCompetencyTableBody');
+            tbody.innerHTML = '';
+
+            const filteredSubs = subCompetencies.filter(sub => sub.parentId === selectedCoreId);
+            
+            filteredSubs.forEach(sub => {
+                const isSelected = sub.id === selectedSubId;
+                const row = `
+                    <tr class="${isSelected ? 'selected-row' : ''}" onclick="selectSubCompetency(${sub.id})">
+                        <td class="text-center">
+                            <input type="checkbox" class="form-check-input" onclick="event.stopPropagation()">
+                        </td>
+                        <td class="text-center">${sub.code}</td>
+                        <td>${sub.name}</td>
+                        <td class="text-center">
+                            <input type="checkbox" class="form-check-input usage-check" ${sub.isUsed ? 'checked' : ''} onclick="event.stopPropagation()">
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+
+            // 선택된 하위역량의 설명 업데이트
+            const selectedSub = subCompetencies.find(s => s.id === selectedSubId);
+            if (selectedSub) {
+                document.getElementById('subCompetencyDescription').textContent = selectedSub.description;
+            }
+        }
+
+        // 행동지표 테이블 렌더링
+        function renderBehaviors() {
+            const tbody = document.getElementById('behaviorTableBody');
+            tbody.innerHTML = '';
+
+            const filteredBehaviors = behaviors.filter(behavior => behavior.parentId === selectedSubId);
+            
+            filteredBehaviors.forEach(behavior => {
+                const isSelected = behavior.id === selectedBehaviorId;
+                const row = `
+                    <tr class="${isSelected ? 'selected-row' : ''}" onclick="selectBehavior(${behavior.id})">
+                        <td class="text-center">
+                            <input type="checkbox" class="form-check-input" onclick="event.stopPropagation()">
+                        </td>
+                        <td class="text-center">${behavior.code}</td>
+                        <td>${behavior.name}</td>
+                        <td class="text-center">
+                            <input type="checkbox" class="form-check-input usage-check" ${behavior.isUsed ? 'checked' : ''} onclick="event.stopPropagation()">
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+
+            // 선택된 행동지표의 설명 업데이트
+            const selectedBehavior = behaviors.find(b => b.id === selectedBehaviorId);
+            if (selectedBehavior) {
+                document.getElementById('behaviorDescription').textContent = selectedBehavior.description;
+                document.getElementById('evaluationMethod').textContent = selectedBehavior.evaluationMethod || '';
+            }
+        }
+
+        // 문항 테이블 렌더링
+        function renderQuestions() {
+            const tbody = document.getElementById('questionTableBody');
+            tbody.innerHTML = '';
+
+            const filteredQuestions = questions.filter(question => question.parentId === selectedBehaviorId);
+            
+            filteredQuestions.forEach(question => {
+                const row = `
+                    <tr>
+                        <td class="text-center">
+                            <input type="checkbox" class="form-check-input">
+                        </td>
+                        <td class="text-center">${question.number}</td>
+                        <td>${question.content}</td>
+                        <td class="text-center">${question.option}</td>
+                        <td class="text-center">
+                            <input type="checkbox" class="form-check-input usage-check" ${question.isUsed ? 'checked' : ''}>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // 핵심역량 선택
+        function selectCoreCompetency(id) {
+            selectedCoreId = id;
+            // 하위역량 기본 선택
+            const firstSub = subCompetencies.find(s => s.parentId === id);
+            if (firstSub) {
+                selectedSubId = firstSub.id;
+                // 행동지표 기본 선택
+                const firstBehavior = behaviors.find(b => b.parentId === firstSub.id);
+                if (firstBehavior) {
+                    selectedBehaviorId = firstBehavior.id;
+                }
+            }
+            
+            renderCoreCompetencies();
+            renderSubCompetencies();
+            renderBehaviors();
+            renderQuestions();
+        }
+
+        // 하위역량 선택
+        function selectSubCompetency(id) {
+            selectedSubId = id;
+            // 행동지표 기본 선택
+            const firstBehavior = behaviors.find(b => b.parentId === id);
+            if (firstBehavior) {
+                selectedBehaviorId = firstBehavior.id;
+            }
+            
+            renderSubCompetencies();
+            renderBehaviors();
+            renderQuestions();
+        }
+
+        // 행동지표 선택
+        function selectBehavior(id) {
+            selectedBehaviorId = id;
+            renderBehaviors();
+            renderQuestions();
+        }
+    </script>
+</body>
+</html>

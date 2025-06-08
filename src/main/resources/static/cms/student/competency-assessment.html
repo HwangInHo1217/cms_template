@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>핵심역량 진단</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .assessment-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .progress-container {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .question-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            border-left: 5px solid #667eea;
+        }
+        
+        .competency-badge {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        
+        .question-number {
+            background: #667eea;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .scenario-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .scenario-title {
+            color: #1976d2;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .likert-scale {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .scale-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            min-width: 80px;
+        }
+        
+        .scale-option:hover {
+            background: #e9ecef;
+        }
+        
+        .scale-option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .scale-label {
+            font-size: 0.8rem;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .scale-number {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 0.25rem;
+        }
+        
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+        
+        .btn-custom {
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-prev {
+            background: #6c757d;
+            border: none;
+            color: white;
+        }
+        
+        .btn-prev:hover {
+            background: #5a6268;
+            color: white;
+        }
+        
+        .btn-next {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+        }
+        
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            color: white;
+        }
+        
+        .completion-card {
+            background: white;
+            border-radius: 15px;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        
+        .completion-icon {
+            font-size: 4rem;
+            color: #28a745;
+            margin-bottom: 1rem;
+        }
+        
+        .student-info {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .required-indicator {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .likert-scale {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .scale-option {
+                flex-direction: row;
+                min-width: 100%;
+                justify-content: space-between;
+            }
+            
+            .navigation-buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="assessment-header">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <h1><i class="bi bi-clipboard-check"></i> 핵심역량 진단</h1>
+                    <p class="lead mb-0">자신의 핵심역량을 진단하고 발전 방향을 찾아보세요</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 학생 정보 -->
+        <div class="student-info">
+            <div class="row">
+                <div class="col-md-3">
+                    <strong>학번:</strong> <span id="studentId">2024123456</span>
+                </div>
+                <div class="col-md-3">
+                    <strong>이름:</strong> <span id="studentName">홍길동</span>
+                </div>
+                <div class="col-md-3">
+                    <strong>학과:</strong> <span id="studentMajor">컴퓨터공학과</span>
+                </div>
+                <div class="col-md-3">
+                    <strong>학년:</strong> <span id="studentGrade">3학년</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 진행률 표시 -->
+        <div class="progress-container">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">진행률</h5>
+                <span class="badge bg-primary" id="progressText">1 / 20</span>
+            </div>
+            <div class="progress" style="height: 10px;">
+                <div class="progress-bar bg-gradient" id="progressBar" role="progressbar" style="width: 5%"></div>
+            </div>
+            <div class="mt-2 text-muted small">
+                <span id="currentCompetency">창의융합형 문제해결역량</span> 진단 중
+            </div>
+        </div>
+
+        <!-- 문항 카드 -->
+        <div class="question-card" id="questionCard">
+            <div class="d-flex align-items-start mb-3">
+                <div class="question-number" id="questionNumber">1</div>
+                <div class="ms-3 flex-grow-1">
+                    <div class="competency-badge" id="competencyBadge">
+                        창의융합형 문제해결역량 > 의사소통
+                    </div>
+                </div>
+            </div>
+
+            <!-- 상황 설명 (필요한 경우) -->
+            <div class="scenario-box" id="scenarioBox">
+                <div class="scenario-title">
+                    <i class="bi bi-lightbulb"></i> 상황 설명
+                </div>
+                <p id="scenarioText">
+                    당신은 학교 동아리에 새롭게 가입하여 친구, 선후배와 동료를 만나게 되었습니다. 
+                    이번 학기 동아리 활동을 위해 소그룹으로 나누어서 활동을 해야 하고 싶은 활동을 투표하고 
+                    전체적으로 의견을 조율하는 상황에서 당신의 생각과 많이 다른 의견을 가진 동아리원들이 함께 있습니다. 
+                    이런 상황에서 다음의 문항을 잘 읽고, 자신의 행동을 평가해 보시기 바랍니다.
+                </p>
+            </div>
+
+            <!-- 문항 내용 -->
+            <div class="question-content">
+                <h5 class="mb-3" id="questionText">
+                    나는 타인과의 대화에서 상대방의 요구와 관심을 고려하여 내 생각이나 의견을 명확하게 전달한다.
+                    <span class="required-indicator">*</span>
+                </h5>
+
+                <!-- 리커트 척도 -->
+                <div class="likert-scale" id="likertScale">
+                    <div class="scale-option" onclick="selectOption(1)">
+                        <input type="radio" name="answer" value="1" id="option1">
+                        <div class="scale-number">1</div>
+                        <div class="scale-label">전혀<br>그렇지 않다</div>
+                    </div>
+                    <div class="scale-option" onclick="selectOption(2)">
+                        <input type="radio" name="answer" value="2" id="option2">
+                        <div class="scale-number">2</div>
+                        <div class="scale-label">그렇지<br>않다</div>
+                    </div>
+                    <div class="scale-option" onclick="selectOption(3)">
+                        <input type="radio" name="answer" value="3" id="option3">
+                        <div class="scale-number">3</div>
+                        <div class="scale-label">약간<br>그렇지 않다</div>
+                    </div>
+                    <div class="scale-option" onclick="selectOption(4)">
+                        <input type="radio" name="answer" value="4" id="option4">
+                        <div class="scale-number">4</div>
+                        <div class="scale-label">보통<br>이다</div>
+                    </div>
+                    <div class="scale-option" onclick="selectOption(5)">
+                        <input type="radio" name="answer" value="5" id="option5">
+                        <div class="scale-number">5</div>
+                        <div class="scale-label">약간<br>그렇다</div>
+                    </div>
+                    <div class="scale-option" onclick="selectOption(6)">
+                        <input type="radio" name="answer" value="6" id="option6">
+                        <div class="scale-number">6</div>
+                        <div class="scale-label">그렇다</div>
+                    </div>
+                    <div class="scale-option" onclick="selectOption(7)">
+                        <input type="radio" name="answer" value="7" id="option7">
+                        <div class="scale-number">7</div>
+                        <div class="scale-label">매우<br>그렇다</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 네비게이션 버튼 -->
+            <div class="navigation-buttons">
+                <button class="btn btn-prev btn-custom" id="prevBtn" onclick="previousQuestion()" disabled>
+                    <i class="bi bi-chevron-left"></i> 이전
+                </button>
+                <button class="btn btn-next btn-custom" id="nextBtn" onclick="nextQuestion()" disabled>
+                    다음 <i class="bi bi-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 완료 화면 -->
+        <div class="completion-card d-none" id="completionCard">
+            <div class="completion-icon">
+                <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <h2 class="mb-3">진단이 완료되었습니다!</h2>
+            <p class="text-muted mb-4">
+                총 <strong>20개</strong> 문항에 대한 응답이 완료되었습니다.<br>
+                진단 결과를 확인해보세요.
+            </p>
+            <div class="d-flex justify-content-center gap-3">
+                <button class="btn btn-outline-primary btn-custom" onclick="reviewAnswers()">
+                    <i class="bi bi-eye"></i> 응답 검토
+                </button>
+                <button class="btn btn-success btn-custom" onclick="viewResults()">
+                    <i class="bi bi-graph-up"></i> 결과 보기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 진행 확인 모달 -->
+    <div class="modal fade" id="exitModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">진단 종료 확인</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>진단을 종료하시겠습니까?</p>
+                    <p class="text-muted small">현재까지의 응답 내용이 저장되지 않을 수 있습니다.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">계속 진행</button>
+                    <button type="button" class="btn btn-danger" onclick="exitAssessment()">종료</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 진단 문항 데이터
+        const assessmentData = [
+            {
+                id: 1,
+                competency: "창의융합형 문제해결역량",
+                subCompetency: "의사소통",
+                scenario: "당신은 학교 동아리에 새롭게 가입하여 친구, 선후배와 동료를 만나게 되었습니다. 이번 학기 동아리 활동을 위해 소그룹으로 나누어서 활동을 해야 하고 싶은 활동을 투표하고 전체적으로 의견을 조율하는 상황에서 당신의 생각과 많이 다른 의견을 가진 동아리원들이 함께 있습니다. 이런 상황에서 다음의 문항을 잘 읽고, 자신의 행동을 평가해 보시기 바랍니다.",
+                question: "나는 타인과의 대화에서 상대방의 요구와 관심을 고려하여 내 생각이나 의견을 명확하게 전달한다.",
+                type: "likert7"
+            },
+            {
+                id: 2,
+                competency: "창의융합형 문제해결역량",
+                subCompetency: "의사소통",
+                question: "나는 상대방의 말을 주의 깊게 듣고 이해하려고 노력한다.",
+                type: "likert7"
+            },
+            {
+                id: 3,
+                competency: "창의융합형 문제해결역량",
+                subCompetency: "문제해결",
+                question: "나는 문제 상황에서 다양한 해결 방안을 생각해본다.",
+                type: "likert7"
+            },
+            {
+                id: 4,
+                competency: "창의융합형 문제해결역량",
+                subCompetency: "문제해결",
+                question: "나는 복잡한 문제를 단계별로 나누어 해결한다.",
+                type: "likert7"
+            },
+            {
+                id: 5,
+                competency: "도전지향형 학습리더역량",
+                subCompetency: "학습지도",
+                question: "나는 새로운 것을 배우는 것에 적극적이다.",
+                type: "likert7"
+            },
+            {
+                id: 6,
+                competency: "도전지향형 학습리더역량",
+                subCompetency: "학습지도",
+                question: "나는 어려운 과제에도 포기하지 않고 끝까지 해결하려고 노력한다.",
+                type: "likert7"
+            },
+            {
+                id: 7,
+                competency: "도전지향형 학습리더역량",
+                subCompetency: "글로벌",
+                question: "나는 다른 문화에 대해 관심이 많고 이해하려고 노력한다.",
+                type: "likert7"
+            },
+            {
+                id: 8,
+                competency: "도전지향형 학습리더역량",
+                subCompetency: "글로벌",
+                question: "나는 외국어 학습에 적극적으로 참여한다.",
+                type: "likert7"
+            },
+            {
+                id: 9,
+                competency: "현장실무형 전공역량",
+                subCompetency: "전공기초활용",
+                question: "나는 전공 관련 기초 지식을 잘 이해하고 있다.",
+                type: "likert7"
+            },
+            {
+                id: 10,
+                competency: "현장실무형 전공역량",
+                subCompetency: "전공기초활용",
+                question: "나는 전공 지식을 실제 상황에 적용할 수 있다.",
+                type: "likert7"
+            },
+            {
+                id: 11,
+                competency: "현장실무형 전공역량",
+                subCompetency: "전공전문성",
+                question: "나는 전공 분야의 최신 동향을 파악하고 있다.",
+                type: "likert7"
+            },
+            {
+                id: 12,
+                competency: "현장실무형 전공역량",
+                subCompetency: "전공전문성",
+                question: "나는 전공 관련 심화 지식을 습득하려고 노력한다.",
+                type: "likert7"
+            },
+            {
+                id: 13,
+                competency: "현장실무형 전공역량",
+                subCompetency: "실무활용",
+                question: "나는 이론적 지식을 실무에 적용하는 능력이 있다.",
+                type: "likert7"
+            },
+            {
+                id: 14,
+                competency: "현장실무형 전공역량",
+                subCompetency: "실무활용",
+                question: "나는 현장에서 요구하는 실무 능력을 갖추고 있다.",
+                type: "likert7"
+            },
+            {
+                id: 15,
+                competency: "나우리형 인성역량",
+                subCompetency: "자기관리",
+                question: "나는 계획을 세우고 그에 따라 행동한다.",
+                type: "likert7"
+            },
+            {
+                id: 16,
+                competency: "나우리형 인성역량",
+                subCompetency: "자기관리",
+                question: "나는 스트레스를 건전하게 관리할 수 있다.",
+                type: "likert7"
+            },
+            {
+                id: 17,
+                competency: "나우리형 인성역량",
+                subCompetency: "소통협력",
+                question: "나는 팀 활동에서 다른 사람들과 잘 협력한다.",
+                type: "likert7"
+            },
+            {
+                id: 18,
+                competency: "나우리형 인성역량",
+                subCompetency: "소통협력",
+                question: "나는 갈등 상황에서 원만한 해결책을 찾으려고 노력한다.",
+                type: "likert7"
+            },
+            {
+                id: 19,
+                competency: "나우리형 인성역량",
+                subCompetency: "나눔배려",
+                question: "나는 다른 사람을 배려하고 도움을 주려고 한다.",
+                type: "likert7"
+            },
+            {
+                id: 20,
+                competency: "나우리형 인성역량",
+                subCompetency: "나눔배려",
+                question: "나는 사회적 책임감을 가지고 행동한다.",
+                type: "likert7"
+            }
+        ];
+
+        // 현재 상태
+        let currentQuestionIndex = 0;
+        let answers = {};
+        let startTime = new Date();
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            loadQuestion();
+            
+            // 페이지 이탈 시 경고
+            window.addEventListener('beforeunload', (e) => {
+                if (currentQuestionIndex < assessmentData.length) {
+                    e.preventDefault();
+                    e.returnValue = '';
+                }
+            });
+        });
+
+        // 문항 로드
+        function loadQuestion() {
+            const question = assessmentData[currentQuestionIndex];
+            
+            // 문항 번호 업데이트
+            document.getElementById('questionNumber').textContent = currentQuestionIndex + 1;
+            
+            // 역량 배지 업데이트
+            document.getElementById('competencyBadge').textContent = 
+                `${question.competency} > ${question.subCompetency}`;
+            
+            // 상황 설명 표시/숨김
+            const scenarioBox = document.getElementById('scenarioBox');
+            if (question.scenario) {
+                scenarioBox.style.display = 'block';
+                document.getElementById('scenarioText').textContent = question.scenario;
+            } else {
+                scenarioBox.style.display = 'none';
+            }
+            
+            // 문항 내용 업데이트
+            document.getElementById('questionText').innerHTML = 
+                question.question + ' <span class="required-indicator">*</span>';
+            
+            // 진행률 업데이트
+            updateProgress();
+            
+            // 이전 답변 복원
+            if (answers[question.id]) {
+                selectOption(answers[question.id], false);
+            } else {
+                clearSelection();
+            }
+            
+            // 버튼 상태 업데이트
+            updateButtons();
+        }
+
+        // 진행률 업데이트
+        function updateProgress() {
+            const progress = ((currentQuestionIndex + 1) / assessmentData.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('progressText').textContent = 
+                `${currentQuestionIndex + 1} / ${assessmentData.length}`;
+            
+            const currentCompetency = assessmentData[currentQuestionIndex].competency;
+            document.getElementById('currentCompetency').textContent = currentCompetency;
+        }
+
+        // 옵션 선택
+        function selectOption(value, saveAnswer = true) {
+            // 모든 옵션 선택 해제
+            document.querySelectorAll('input[name="answer"]').forEach(input => {
+                input.checked = false;
+                input.parentElement.style.background = '';
+            });
+            
+            // 선택된 옵션 활성화
+            const selectedInput = document.getElementById(`option${value}`);
+            selectedInput.checked = true;
+            selectedInput.parentElement.style.background = '#e3f2fd';
+            
+            if (saveAnswer) {
+                // 답변 저장
+                const questionId = assessmentData[currentQuestionIndex].id;
+                answers[questionId] = value;
+                
+                // 다음 버튼 활성화
+                document.getElementById('nextBtn').disabled = false;
+            }
+        }
+
+        // 선택 해제
+        function clearSelection() {
+            document.querySelectorAll('input[name="answer"]').forEach(input => {
+                input.checked = false;
+                input.parentElement.style.background = '';
+            });
+            document.getElementById('nextBtn').disabled = true;
+        }
+
+        // 버튼 상태 업데이트
+        function updateButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            
+            // 이전 버튼
+            prevBtn.disabled = currentQuestionIndex === 0;
+            
+            // 다음 버튼
+            const questionId = assessmentData[currentQuestionIndex].id;
+            const hasAnswer = answers[questionId];
+            nextBtn.disabled = !hasAnswer;
+            
+            // 마지막 문항인 경우 버튼 텍스트 변경
+            if (currentQuestionIndex === assessmentData.length - 1) {
+                nextBtn.innerHTML = '완료 <i class="bi bi-check-circle"></i>';
+            } else {
+                nextBtn.innerHTML = '다음 <i class="bi bi-chevron-right"></i>';
+            }
+        }
+
+        // 이전 문항
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+
+        // 다음 문항
+        function nextQuestion() {
+            if (currentQuestionIndex < assessmentData.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                // 진단 완료
+                completeAssessment();
+            }
+        }
+
+        // 진단 완료
+        function completeAssessment() {
+            document.getElementById('questionCard').classList.add('d-none');
+            document.getElementById('completionCard').classList.remove('d-none');
+            
+            // 진행률 100%로 설정
+            document.getElementById('progressBar').style.width = '100%';
+            document.getElementById('progressText').textContent = `${assessmentData.length} / ${assessmentData.length}`;
+            
+            // 결과 저장 (실제로는 서버에 전송)
+            saveResults();
+        }
+
+        // 결과 저장
+        function saveResults() {
+            const endTime = new Date();
+            const duration = Math.round((endTime - startTime) / 1000 / 60); // 분 단위
+            
+            const results = {
+                studentId: document.getElementById('studentId').textContent,
+                studentName: document.getElementById('studentName').textContent,
+                answers: answers,
+                startTime: startTime,
+                endTime: endTime,
+                duration: duration
+            };
+            
+            console.log('진단 결과:', results);
+            
+            // 실제로는 서버에 POST 요청
+            // fetch('/api/assessment/submit', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify(results)
+            // });
+        }
+
+        // 응답 검토
+        function reviewAnswers() {
+            // 첫 번째 문항으로 이동
+            currentQuestionIndex = 0;
+            document.getElementById('completionCard').classList.add('d-none');
+            document.getElementById('questionCard').classList.remove('d-none');
+            loadQuestion();
+        }
+
+        // 결과 보기
+        function viewResults() {
+            // 결과 페이지로 이동
+            window.location.href = 'competency-results.html';
+        }
+
+        // 진단 종료
+        function exitAssessment() {
+            window.location.href = 'dashboard.html';
+        }
+
+        // 키보드 단축키
+        document.addEventListener('keydown', (e) => {
+            if (e.key >= '1' && e.key <= '7') {
+                const value = parseInt(e.key);
+                selectOption(value);
+            } else if (e.key === 'ArrowLeft' && !document.getElementById('prevBtn').disabled) {
+                previousQuestion();
+            } else if (e.key === 'ArrowRight' && !document.getElementById('nextBtn').disabled) {
+                nextQuestion();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!-- 학생 계정 등록 모달 -->
+<div class="modal fade" id="studentRegisterModal" tabindex="-1" aria-labelledby="studentRegisterLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title fw-bold" id="studentRegisterLabel">👨‍🎓 학생 계정 등록</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="studentRegisterForm">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">학번</label>
+              <input type="text" class="form-control" name="stdNo" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">이름</label>
+              <input type="text" class="form-control" name="stdName" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">학과</label>
+              <select class="form-select" name="deptCd" required>
+                <option value="">학과 선택</option>
+                <option value="CSE">컴퓨터공학과</option>
+                <option value="BUS">경영학과</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">입학년도</label>
+              <input type="number" class="form-control" name="entrYr" placeholder="2023" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">이메일</label>
+              <input type="email" class="form-control" name="email" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">전화번호</label>
+              <input type="text" class="form-control" name="phone">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">주소</label>
+              <input type="text" class="form-control" name="address">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">계정 상태</label>
+              <select class="form-select" name="status">
+                <option value="USER" selected>활성(USER)</option>
+                <option value="GRADUATED">졸업생(GRADUATED)</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="form-label">비밀번호</label>
+              <input type="password" class="form-control" name="password" required>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+        <button type="submit" class="btn btn-primary" form="studentRegisterForm">등록</button>
+      </div>
+    </div>
+  </div>
+</div>
