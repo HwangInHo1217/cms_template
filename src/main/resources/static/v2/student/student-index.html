@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>교육 관리 시스템</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: linear-gradient(135deg, var(--primary-color), #34495e);
+            color: white;
+            z-index: 1000;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-brand {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 0;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .nav-link.active {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .nav-link i {
+            margin-right: 0.75rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .header-time {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .widget-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, var(--secondary-color), #5dade2);
+            color: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .notice-item {
+            padding: 1rem;
+            border-bottom: 1px solid #e9ecef;
+            transition: background-color 0.2s ease;
+        }
+
+        .notice-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .notice-item:last-child {
+            border-bottom: none;
+        }
+
+        .badge-new {
+            background-color: var(--danger-color);
+            font-size: 0.7rem;
+        }
+
+        .attendance-btn {
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            border: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+        }
+
+        .btn-checkin {
+            background: linear-gradient(135deg, var(--success-color), #58d68d);
+            color: white;
+        }
+
+        .btn-checkout {
+            background: linear-gradient(135deg, var(--warning-color), #f7dc6f);
+            color: white;
+        }
+
+        .program-card {
+            border-left: 4px solid var(--secondary-color);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: white;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .counseling-card {
+            border-left: 4px solid var(--success-color);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: white;
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="sidebar-brand">
+                <i class="bi bi-mortarboard-fill me-2"></i>
+                교육 관리 시스템
+            </a>
+        </div>
+        
+        <div class="sidebar-nav">
+            <div class="nav-item">
+                <a href="index.html" class="nav-link active">
+                    <i class="bi bi-house"></i>
+                    메인화면
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="mypage.html" class="nav-link">
+                    <i class="bi bi-person"></i>
+                    마이페이지
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="notice.html" class="nav-link">
+                    <i class="bi bi-megaphone"></i>
+                    공지사항
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="competency-diagnosis.html" class="nav-link">
+                    <i class="bi bi-clipboard-data"></i>
+                    학생역량진단
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="extracurricular-programs.html" class="nav-link">
+                    <i class="bi bi-calendar-event"></i>
+                    비교과 프로그램
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="counseling.html" class="nav-link">
+                    <i class="bi bi-chat-dots"></i>
+                    상담관리
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="mileage.html" class="nav-link">
+                    <i class="bi bi-star"></i>
+                    마일리지 조회
+                </a>
+            </div>
+            
+            <!-- 관리자 메뉴 (권한에 따라 표시) -->
+            <div class="nav-item mt-3" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
+                <small class="text-muted px-3">관리자 메뉴</small>
+            </div>
+            
+            <div class="nav-item">
+                <a href="admin-users.html" class="nav-link">
+                    <i class="bi bi-people"></i>
+                    사용자/조직 관리
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="admin-competency.html" class="nav-link">
+                    <i class="bi bi-graph-up"></i>
+                    학생역량진단 관리
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="admin-programs.html" class="nav-link">
+                    <i class="bi bi-calendar-check"></i>
+                    비교과 프로그램 관리
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="admin-counseling.html" class="nav-link">
+                    <i class="bi bi-chat-square-dots"></i>
+                    상담 관리
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="admin-mileage.html" class="nav-link">
+                    <i class="bi bi-award"></i>
+                    마일리지 관리
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="admin-notice.html" class="nav-link">
+                    <i class="bi bi-clipboard-plus"></i>
+                    공지사항 관리
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="d-flex align-items-center">
+                <button class="btn btn-link d-md-none me-3" onclick="toggleSidebar()">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div class="header-time">
+                    <i class="bi bi-clock me-1"></i>
+                    <span id="currentTime"></span>
+                </div>
+            </div>
+            
+            <div class="header-user">
+                <div class="attendance-buttons">
+                    <button class="attendance-btn btn-checkin" onclick="checkIn()">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>
+                        출근
+                    </button>
+                    <button class="attendance-btn btn-checkout" onclick="checkOut()">
+                        <i class="bi bi-box-arrow-right me-1"></i>
+                        퇴근
+                    </button>
+                </div>
+                
+                <div class="user-avatar">
+                    <i class="bi bi-person"></i>
+                </div>
+                
+                <div>
+                    <div class="fw-medium">김학생</div>
+                    <small class="text-muted">컴퓨터공학과 3학년</small>
+                </div>
+                
+                <div class="dropdown">
+                    <button class="btn btn-link" data-bs-toggle="dropdown">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="mypage.html">마이페이지</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout()">로그아웃</a></li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="container-fluid p-4">
+            <!-- Welcome Section -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="dashboard-card">
+                        <h2 class="mb-3">안녕하세요, 김학생님! 👋</h2>
+                        <p class="text-muted mb-0">오늘도 좋은 하루 되세요. 새로운 비교과 프로그램과 상담 일정을 확인해보세요.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="row mb-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="stats-card">
+                        <div class="h4 mb-0">1,250</div>
+                        <div>보유 마일리지</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stats-card" style="background: linear-gradient(135deg, var(--success-color), #58d68d);">
+                        <div class="h4 mb-0">3</div>
+                        <div>참여 프로그램</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stats-card" style="background: linear-gradient(135deg, var(--warning-color), #f7dc6f);">
+                        <div class="h4 mb-0">2</div>
+                        <div>예정된 상담</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stats-card" style="background: linear-gradient(135deg, #9b59b6, #bb8fce);">
+                        <div class="h4 mb-0">85%</div>
+                        <div>역량진단 점수</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Widgets -->
+            <div class="row">
+                <!-- 공지사항 위젯 -->
+                <div class="col-lg-6">
+                    <div class="widget-card">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">
+                                <i class="bi bi-megaphone me-2"></i>
+                                최근 공지사항
+                            </h5>
+                            <a href="notice.html" class="btn btn-sm btn-outline-primary">전체보기</a>
+                        </div>
+                        
+                        <div class="notice-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center mb-1">
+                                        <span class="badge badge-new me-2">NEW</span>
+                                        <h6 class="mb-0">2024학년도 1학기 수강신청 안내</h6>
+                                    </div>
+                                    <p class="text-muted mb-1 small">수강신청 일정 및 유의사항을 안내드립니다.</p>
+                                    <small class="text-muted">2024-01-15</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="notice-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">도서관 이용시간 변경 안내</h6>
+                                    <p class="text-muted mb-1 small">2024년 1월부터 도서관 이용시간이 변경됩니다.</p>
+                                    <small class="text-muted">2024-01-10</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="notice-item">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1">장학금 신청 안내</h6>
+                                    <p class="text-muted mb-1 small">2024년 1학기 장학금 신청을 받습니다.</p>
+                                    <small class="text-muted">2024-01-08</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 나의 비교과 프로그램 신청 현황 -->
+                <div class="col-lg-6">
+                    <div class="widget-card">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">
+                                <i class="bi bi-calendar-event me-2"></i>
+                                나의 비교과 프로그램
+                            </h5>
+                            <a href="extracurricular-programs.html" class="btn btn-sm btn-outline-primary">전체보기</a>
+                        </div>
+                        
+                        <div class="program-card">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <span class="badge bg-success me-2">진행중</span>
+                                        <h6 class="mb-0">창업 아이디어 경진대회</h6>
+                                    </div>
+                                    <p class="text-muted mb-1 small">혁신적인 창업 아이디어 발굴 프로그램</p>
+                                    <small class="text-muted">
+                                        <i class="bi bi-calendar me-1"></i>2024.01.15 ~ 2024.03.15
+                                        <i class="bi bi-star ms-2 me-1"></i>150점
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="program-card">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <span class="badge bg-warning me-2">신청완료</span>
+                                        <h6 class="mb-0">글로벌 리더십 워크숍</h6>
+                                    </div>
+                                    <p class="text-muted mb-1 small">국제적 감각과 리더십 역량 강화</p>
+                                    <small class="text-muted">
+                                        <i class="bi bi-calendar me-1"></i>2024.02.01 ~ 2024.02.28
+                                        <i class="bi bi-star ms-2 me-1"></i>100점
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="program-card">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <span class="badge bg-secondary me-2">완료</span>
+                                        <h6 class="mb-0">지역사회 봉사활동</h6>
+                                    </div>
+                                    <p class="text-muted mb-1 small">지역 아동센터 학습 지도</p>
+                                    <small class="text-muted">
+                                        <i class="bi bi-calendar me-1"></i>2023.09.01 ~ 2023.12.31
+                                        <i class="bi bi-star ms-2 me-1"></i>80점
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 상담 예약 현황 -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="widget-card">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">
+                                <i class="bi bi-chat-dots me-2"></i>
+                                나의 상담 예약 현황
+                            </h5>
+                            <a href="counseling.html" class="btn btn-sm btn-outline-primary">상담 신청</a>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="counseling-card">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <span class="badge bg-primary me-2">예정</span>
+                                                <h6 class="mb-0">진로 상담</h6>
+                                            </div>
+                                            <p class="text-muted mb-1 small">취업 준비 방향 및 진로 설계</p>
+                                            <small class="text-muted">
+                                                <i class="bi bi-calendar me-1"></i>2024-01-25 (목) 14:00
+                                                <i class="bi bi-person ms-2 me-1"></i>김교수
+                                            </small>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-danger" onclick="cancelCounseling(1)">
+                                            취소
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-6">
+                                <div class="counseling-card">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <span class="badge bg-success me-2">완료</span>
+                                                <h6 class="mb-0">학업 상담</h6>
+                                            </div>
+                                            <p class="text-muted mb-1 small">학습 방법 및 성적 향상 방안</p>
+                                            <small class="text-muted">
+                                                <i class="bi bi-calendar me-1"></i>2024-01-18 (목) 10:00
+                                                <i class="bi bi-person ms-2 me-1"></i>이상담사
+                                            </small>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="viewCounselingResult(1)">
+                                            결과보기
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 현재 시간 표시
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('ko-KR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('currentTime').textContent = timeString;
+        }
+
+        // 1초마다 시간 업데이트
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // 사이드바 토글 (모바일)
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('show');
+        }
+
+        // 출근 처리
+        function checkIn() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('ko-KR');
+            alert(`출근 처리되었습니다.\n시간: ${timeString}`);
+        }
+
+        // 퇴근 처리
+        function checkOut() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('ko-KR');
+            alert(`퇴근 처리되었습니다.\n시간: ${timeString}`);
+        }
+
+        // 상담 취소
+        function cancelCounseling(id) {
+            if (confirm('상담 예약을 취소하시겠습니까?')) {
+                alert('상담 예약이 취소되었습니다.');
+            }
+        }
+
+        // 상담 결과 보기
+        function viewCounselingResult(id) {
+            alert('상담 결과 페이지로 이동합니다.');
+        }
+
+        // 로그아웃
+        function logout() {
+            if (confirm('로그아웃 하시겠습니까?')) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // 사이드바 외부 클릭 시 닫기 (모바일)
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const isClickInsideSidebar = sidebar.contains(event.target);
+            const isToggleButton = event.target.closest('.btn-link');
+            
+            if (!isClickInsideSidebar && !isToggleButton && window.innerWidth <= 768) {
+                sidebar.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>

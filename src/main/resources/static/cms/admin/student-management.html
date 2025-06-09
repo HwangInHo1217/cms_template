@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학생 관리</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            background-color: #f8f9fa;
+        }
+        
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .stats-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            border-left: 4px solid #667eea;
+        }
+        
+        .stats-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stats-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .filter-section {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .table-header {
+            background: #f8f9fa;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+        
+        .student-table {
+            margin-bottom: 0;
+        }
+        
+        .student-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            border-bottom: 2px solid #dee2e6;
+            vertical-align: middle;
+        }
+        
+        .student-table td {
+            vertical-align: middle;
+        }
+        
+        .status-badge {
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-active {
+            background-color: #d1edff;
+            color: #0c63e4;
+        }
+        
+        .status-inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .role-badge {
+            padding: 0.25rem 0.5rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .role-student {
+            background-color: #e7f3ff;
+            color: #0066cc;
+        }
+        
+        .role-graduate {
+            background-color: #f0f9ff;
+            color: #0891b2;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 0.25rem;
+        }
+        
+        .btn-sm-custom {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            border-radius: 4px;
+        }
+        
+        .bulk-actions {
+            background: #e3f2fd;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        
+        .bulk-actions.show {
+            display: block;
+        }
+        
+        .search-highlight {
+            background-color: #fff3cd;
+            padding: 0.1rem 0.2rem;
+            border-radius: 3px;
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .form-floating label {
+            color: #6c757d;
+        }
+        
+        .pagination-container {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #dee2e6;
+        }
+        
+        @media (max-width: 768px) {
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .table-responsive {
+                font-size: 0.875rem;
+            }
+            
+            .stats-card {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 페이지 헤더 -->
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1><i class="bi bi-people"></i> 학생 관리</h1>
+                    <p class="mb-0">학생 계정 생성, 권한 관리 및 상태 변경</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <button class="btn btn-light me-2" onclick="exportStudents()">
+                        <i class="bi bi-download"></i> 내보내기
+                    </button>
+                    <button class="btn btn-warning me-2" onclick="importStudents()">
+                        <i class="bi bi-upload"></i> 가져오기
+                    </button>
+                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#studentModal" onclick="openAddModal()">
+                        <i class="bi bi-person-plus"></i> 학생 추가
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <!-- 통계 카드 -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number" id="totalStudents">0</div>
+                    <div class="stats-label">전체 학생</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number text-success" id="activeStudents">0</div>
+                    <div class="stats-label">활성 계정</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number text-warning" id="pendingStudents">0</div>
+                    <div class="stats-label">승인 대기</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number text-info" id="graduateStudents">0</div>
+                    <div class="stats-label">졸업생</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 필터 및 검색 섹션 -->
+        <div class="filter-section">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">검색</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="searchInput" placeholder="학번, 이름, 이메일 검색">
+                        <button class="btn btn-outline-secondary" onclick="searchStudents()">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">상태</label>
+                    <select class="form-select" id="statusFilter" onchange="filterStudents()">
+                        <option value="all">전체</option>
+                        <option value="active">활성</option>
+                        <option value="inactive">비활성</option>
+                        <option value="pending">승인대기</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">권한</label>
+                    <select class="form-select" id="roleFilter" onchange="filterStudents()">
+                        <option value="all">전체</option>
+                        <option value="student">일반학생</option>
+                        <option value="graduate">졸업생</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">학과</label>
+                    <select class="form-select" id="majorFilter" onchange="filterStudents()">
+                        <option value="all">전체</option>
+                        <option value="computer">컴퓨터공학과</option>
+                        <option value="business">경영학과</option>
+                        <option value="mechanical">기계공학과</option>
+                        <option value="english">영어영문학과</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">학년</label>
+                    <select class="form-select" id="gradeFilter" onchange="filterStudents()">
+                        <option value="all">전체</option>
+                        <option value="1">1학년</option>
+                        <option value="2">2학년</option>
+                        <option value="3">3학년</option>
+                        <option value="4">4학년</option>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <label class="form-label">&nbsp;</label>
+                    <button class="btn btn-secondary w-100" onclick="resetFilters()">
+                        <i class="bi bi-arrow-clockwise"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 일괄 작업 섹션 -->
+        <div class="bulk-actions" id="bulkActions">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <span class="fw-bold">선택된 항목: <span id="selectedCount">0</span>개</span>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="btn-group">
+                        <button class="btn btn-success btn-sm" onclick="bulkActivate()">
+                            <i class="bi bi-check-circle"></i> 일괄 활성화
+                        </button>
+                        <button class="btn btn-warning btn-sm" onclick="bulkDeactivate()">
+                            <i class="bi bi-pause-circle"></i> 일괄 비활성화
+                        </button>
+                        <button class="btn btn-danger btn-sm" onclick="bulkDelete()">
+                            <i class="bi bi-trash"></i> 일괄 삭제
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 학생 목록 테이블 -->
+        <div class="table-container">
+            <div class="table-header">
+                <h5 class="mb-0">학생 목록</h5>
+                <div class="d-flex align-items-center">
+                    <span class="text-muted me-3">총 <span id="filteredCount">0</span>명</span>
+                    <select class="form-select form-select-sm" style="width: auto;" id="pageSize" onchange="changePageSize()">
+                        <option value="10">10개씩</option>
+                        <option value="25" selected>25개씩</option>
+                        <option value="50">50개씩</option>
+                        <option value="100">100개씩</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-hover student-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">
+                                <input type="checkbox" class="form-check-input" id="selectAll" onchange="toggleSelectAll()">
+                            </th>
+                            <th style="width: 100px;">학번</th>
+                            <th style="width: 100px;">이름</th>
+                            <th style="width: 200px;">이메일</th>
+                            <th style="width: 120px;">학과</th>
+                            <th style="width: 80px;">학년</th>
+                            <th style="width: 100px;">상태</th>
+                            <th style="width: 100px;">권한</th>
+                            <th style="width: 120px;">등록일</th>
+                            <th style="width: 120px;">최종접속</th>
+                            <th style="width: 150px;">관리</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody">
+                        <!-- 데이터가 여기에 동적으로 추가됩니다 -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 페이지네이션 -->
+            <div class="pagination-container">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <span class="text-muted">
+                            <span id="pageInfo">1-25 of 100</span> 항목 표시
+                        </span>
+                    </div>
+                    <div class="col-md-6">
+                        <nav>
+                            <ul class="pagination pagination-sm justify-content-end mb-0" id="pagination">
+                                <!-- 페이지네이션이 여기에 동적으로 추가됩니다 -->
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 학생 추가/수정 모달 -->
+    <div class="modal fade" id="studentModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">학생 추가</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="studentForm">
+                        <input type="hidden" id="studentId">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="studentNumber" required>
+                                    <label for="studentNumber">학번 *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="studentName" required>
+                                    <label for="studentName">이름 *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="email" class="form-control" id="studentEmail" required>
+                                    <label for="studentEmail">이메일 *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="tel" class="form-control" id="studentPhone">
+                                    <label for="studentPhone">전화번호</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select class="form-select" id="studentMajor" required>
+                                        <option value="">선택하세요</option>
+                                        <option value="computer">컴퓨터공학과</option>
+                                        <option value="business">경영학과</option>
+                                        <option value="mechanical">기계공학과</option>
+                                        <option value="english">영어영문학과</option>
+                                    </select>
+                                    <label for="studentMajor">학과 *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select class="form-select" id="studentGrade" required>
+                                        <option value="">선택하세요</option>
+                                        <option value="1">1학년</option>
+                                        <option value="2">2학년</option>
+                                        <option value="3">3학년</option>
+                                        <option value="4">4학년</option>
+                                    </select>
+                                    <label for="studentGrade">학년 *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select class="form-select" id="studentStatus" required>
+                                        <option value="active">활성</option>
+                                        <option value="inactive">비활성</option>
+                                        <option value="pending">승인대기</option>
+                                    </select>
+                                    <label for="studentStatus">상태 *</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select class="form-select" id="studentRole" required>
+                                        <option value="student">일반학생</option>
+                                        <option value="graduate">졸업생</option>
+                                    </select>
+                                    <label for="studentRole">권한 *</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <textarea class="form-control" id="studentNotes" style="height: 100px;"></textarea>
+                                    <label for="studentNotes">비고</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" onclick="saveStudent()">저장</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 가져오기 모달 -->
+    <div class="modal fade" id="importModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">학생 데이터 가져오기</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="importFile" class="form-label">Excel 파일 선택</label>
+                        <input type="file" class="form-control" id="importFile" accept=".xlsx,.xls,.csv">
+                        <div class="form-text">지원 형식: Excel (.xlsx, .xls), CSV (.csv)</div>
+                    </div>
+                    <div class="alert alert-info">
+                        <h6><i class="bi bi-info-circle"></i> 가져오기 형식</h6>
+                        <p class="mb-0">학번, 이름, 이메일, 학과, 학년 순서로 데이터를 준비해주세요.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" onclick="processImport()">가져오기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 학생 데이터
+        let students = [
+            {
+                id: 1,
+                studentNumber: "2024001001",
+                name: "김철수",
+                email: "kim.cs@university.ac.kr",
+                phone: "010-1234-5678",
+                major: "computer",
+                majorName: "컴퓨터공학과",
+                grade: "3",
+                status: "active",
+                role: "student",
+                registeredDate: "2024-03-01",
+                lastAccess: "2024-04-15",
+                notes: ""
+            },
+            {
+                id: 2,
+                studentNumber: "2023002001",
+                name: "이영희",
+                email: "lee.yh@university.ac.kr",
+                phone: "010-2345-6789",
+                major: "business",
+                majorName: "경영학과",
+                grade: "4",
+                status: "active",
+                role: "student",
+                registeredDate: "2023-03-01",
+                lastAccess: "2024-04-14",
+                notes: ""
+            },
+            {
+                id: 3,
+                studentNumber: "2022003001",
+                name: "박민수",
+                email: "park.ms@university.ac.kr",
+                phone: "010-3456-7890",
+                major: "mechanical",
+                majorName: "기계공학과",
+                grade: "4",
+                status: "inactive",
+                role: "graduate",
+                registeredDate: "2022-03-01",
+                lastAccess: "2024-02-28",
+                notes: "졸업 예정"
+            },
+            {
+                id: 4,
+                studentNumber: "2024004001",
+                name: "정수진",
+                email: "jung.sj@university.ac.kr",
+                phone: "010-4567-8901",
+                major: "english",
+                majorName: "영어영문학과",
+                grade: "2",
+                status: "pending",
+                role: "student",
+                registeredDate: "2024-04-01",
+                lastAccess: null,
+                notes: "외부 시스템 연동 계정"
+            },
+            {
+                id: 5,
+                studentNumber: "2023005001",
+                name: "최동현",
+                email: "choi.dh@university.ac.kr",
+                phone: "010-5678-9012",
+                major: "computer",
+                majorName: "컴퓨터공학과",
+                grade: "3",
+                status: "active",
+                role: "student",
+                registeredDate: "2023-03-01",
+                lastAccess: "2024-04-16",
+                notes: ""
+            }
+        ];
+
+        let filteredStudents = [...students];
+        let selectedStudents = new Set();
+        let currentPage = 1;
+        let pageSize = 25;
+        let editingStudent = null;
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            renderStudents();
+            updateStats();
+            updatePagination();
+            
+            // 검색 입력 이벤트
+            document.getElementById('searchInput').addEventListener('input', debounce(searchStudents, 300));
+        });
+
+        // 학생 목록 렌더링
+        function renderStudents() {
+            const tbody = document.getElementById('studentTableBody');
+            tbody.innerHTML = '';
+
+            const startIndex = (currentPage - 1) * pageSize;
+            const endIndex = startIndex + pageSize;
+            const pageStudents = filteredStudents.slice(startIndex, endIndex);
+
+            if (pageStudents.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="11" class="text-center py-4 text-muted">
+                            검색 결과가 없습니다.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            pageStudents.forEach(student => {
+                const row = `
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="form-check-input student-checkbox" 
+                                   value="${student.id}" onchange="toggleStudentSelection(${student.id})">
+                        </td>
+                        <td>${student.studentNumber}</td>
+                        <td>${student.name}</td>
+                        <td>${student.email}</td>
+                        <td>${student.majorName}</td>
+                        <td>${student.grade}학년</td>
+                        <td>
+                            <span class="status-badge ${getStatusClass(student.status)}">
+                                ${getStatusText(student.status)}
+                            </span>
+                        </td>
+                        <td>
+                            <span class="role-badge ${getRoleClass(student.role)}">
+                                ${getRoleText(student.role)}
+                            </span>
+                        </td>
+                        <td>${formatDate(student.registeredDate)}</td>
+                        <td>${student.lastAccess ? formatDate(student.lastAccess) : '-'}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-outline-primary btn-sm-custom" onclick="editStudent(${student.id})" title="수정">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn btn-outline-${student.status === 'active' ? 'warning' : 'success'} btn-sm-custom" 
+                                        onclick="toggleStatus(${student.id})" title="${student.status === 'active' ? '비활성화' : '활성화'}">
+                                    <i class="bi bi-${student.status === 'active' ? 'pause' : 'play'}-circle"></i>
+                                </button>
+                                <button class="btn btn-outline-danger btn-sm-custom" onclick="deleteStudent(${student.id})" title="삭제">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+
+            updateFilteredCount();
+        }
+
+        // 상태 클래스 반환
+        function getStatusClass(status) {
+            const statusMap = {
+                'active': 'status-active',
+                'inactive': 'status-inactive',
+                'pending': 'status-pending'
+            };
+            return statusMap[status] || '';
+        }
+
+        // 상태 텍스트 반환
+        function getStatusText(status) {
+            const statusMap = {
+                'active': '활성',
+                'inactive': '비활성',
+                'pending': '승인대기'
+            };
+            return statusMap[status] || status;
+        }
+
+        // 권한 클래스 반환
+        function getRoleClass(role) {
+            const roleMap = {
+                'student': 'role-student',
+                'graduate': 'role-graduate'
+            };
+            return roleMap[role] || '';
+        }
+
+        // 권한 텍스트 반환
+        function getRoleText(role) {
+            const roleMap = {
+                'student': '일반학생',
+                'graduate': '졸업생'
+            };
+            return roleMap[role] || role;
+        }
+
+        // 날짜 포맷
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            return new Date(dateString).toLocaleDateString('ko-KR');
+        }
+
+        // 통계 업데이트
+        function updateStats() {
+            document.getElementById('totalStudents').textContent = students.length;
+            document.getElementById('activeStudents').textContent = students.filter(s => s.status === 'active').length;
+            document.getElementById('pendingStudents').textContent = students.filter(s => s.status === 'pending').length;
+            document.getElementById('graduateStudents').textContent = students.filter(s => s.role === 'graduate').length;
+        }
+
+        // 필터링된 개수 업데이트
+        function updateFilteredCount() {
+            document.getElementById('filteredCount').textContent = filteredStudents.length;
+        }
+
+        // 학생 검색
+        function searchStudents() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            applyFilters();
+        }
+
+        // 필터 적용
+        function filterStudents() {
+            applyFilters();
+        }
+
+        // 모든 필터 적용
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const roleFilter = document.getElementById('roleFilter').value;
+            const majorFilter = document.getElementById('majorFilter').value;
+            const gradeFilter = document.getElementById('gradeFilter').value;
+
+            filteredStudents = students.filter(student => {
+                const matchesSearch = !searchTerm || 
+                    student.studentNumber.toLowerCase().includes(searchTerm) ||
+                    student.name.toLowerCase().includes(searchTerm) ||
+                    student.email.toLowerCase().includes(searchTerm);
+
+                const matchesStatus = statusFilter === 'all' || student.status === statusFilter;
+                const matchesRole = roleFilter === 'all' || student.role === roleFilter;
+                const matchesMajor = majorFilter === 'all' || student.major === majorFilter;
+                const matchesGrade = gradeFilter === 'all' || student.grade === gradeFilter;
+
+                return matchesSearch && matchesStatus && matchesRole && matchesMajor && matchesGrade;
+            });
+
+            currentPage = 1;
+            renderStudents();
+            updatePagination();
+        }
+
+        // 필터 초기화
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('statusFilter').value = 'all';
+            document.getElementById('roleFilter').value = 'all';
+            document.getElementById('majorFilter').value = 'all';
+            document.getElementById('gradeFilter').value = 'all';
+            
+            filteredStudents = [...students];
+            currentPage = 1;
+            renderStudents();
+            updatePagination();
+        }
+
+        // 학생 선택 토글
+        function toggleStudentSelection(id) {
+            if (selectedStudents.has(id)) {
+                selectedStudents.delete(id);
+            } else {
+                selectedStudents.add(id);
+            }
+            updateBulkActions();
+            updateSelectAllCheckbox();
+        }
+
+        // 전체 선택 토글
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.student-checkbox');
+            
+            if (selectAll.checked) {
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = true;
+                    selectedStudents.add(parseInt(checkbox.value));
+                });
+            } else {
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                    selectedStudents.delete(parseInt(checkbox.value));
+                });
+            }
+            updateBulkActions();
+        }
+
+        // 전체 선택 체크박스 상태 업데이트
+        function updateSelectAllCheckbox() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.student-checkbox');
+            const checkedBoxes = document.querySelectorAll('.student-checkbox:checked');
+            
+            if (checkedBoxes.length === 0) {
+                selectAll.indeterminate = false;
+                selectAll.checked = false;
+            } else if (checkedBoxes.length === checkboxes.length) {
+                selectAll.indeterminate = false;
+                selectAll.checked = true;
+            } else {
+                selectAll.indeterminate = true;
+                selectAll.checked = false;
+            }
+        }
+
+        // 일괄 작업 UI 업데이트
+        function updateBulkActions() {
+            const bulkActions = document.getElementById('bulkActions');
+            const selectedCount = document.getElementById('selectedCount');
+            
+            selectedCount.textContent = selectedStudents.size;
+            
+            if (selectedStudents.size > 0) {
+                bulkActions.classList.add('show');
+            } else {
+                bulkActions.classList.remove('show');
+            }
+        }
+
+        // 페이지네이션 업데이트
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredStudents.length / pageSize);
+            const pagination = document.getElementById('pagination');
+            const pageInfo = document.getElementById('pageInfo');
+            
+            // 페이지 정보 업데이트
+            const startItem = (currentPage - 1) * pageSize + 1;
+            const endItem = Math.min(currentPage * pageSize, filteredStudents.length);
+            pageInfo.textContent = `${startItem}-${endItem} of ${filteredStudents.length}`;
+            
+            // 페이지네이션 버튼 생성
+            pagination.innerHTML = '';
+            
+            // 이전 버튼
+            const prevLi = document.createElement('li');
+            prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+            prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1})">이전</a>`;
+            pagination.appendChild(prevLi);
+            
+            // 페이지 번호
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, currentPage + 2);
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const li = document.createElement('li');
+                li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
+                pagination.appendChild(li);
+            }
+            
+            // 다음 버튼
+            const nextLi = document.createElement('li');
+            nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+            nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1})">다음</a>`;
+            pagination.appendChild(nextLi);
+        }
+
+        // 페이지 변경
+        function changePage(page) {
+            const totalPages = Math.ceil(filteredStudents.length / pageSize);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                renderStudents();
+                updatePagination();
+                selectedStudents.clear();
+                updateBulkActions();
+            }
+        }
+
+        // 페이지 크기 변경
+        function changePageSize() {
+            pageSize = parseInt(document.getElementById('pageSize').value);
+            currentPage = 1;
+            renderStudents();
+            updatePagination();
+        }
+
+        // 학생 추가 모달 열기
+        function openAddModal() {
+            editingStudent = null;
+            document.getElementById('modalTitle').textContent = '학생 추가';
+            document.getElementById('studentForm').reset();
+            document.getElementById('studentId').value = '';
+        }
+
+        // 학생 수정
+        function editStudent(id) {
+            editingStudent = students.find(s => s.id === id);
+            if (!editingStudent) return;
+
+            document.getElementById('modalTitle').textContent = '학생 수정';
+            document.getElementById('studentId').value = editingStudent.id;
+            document.getElementById('studentNumber').value = editingStudent.studentNumber;
+            document.getElementById('studentName').value = editingStudent.name;
+            document.getElementById('studentEmail').value = editingStudent.email;
+            document.getElementById('studentPhone').value = editingStudent.phone || '';
+            document.getElementById('studentMajor').value = editingStudent.major;
+            document.getElementById('studentGrade').value = editingStudent.grade;
+            document.getElementById('studentStatus').value = editingStudent.status;
+            document.getElementById('studentRole').value = editingStudent.role;
+            document.getElementById('studentNotes').value = editingStudent.notes || '';
+
+            new bootstrap.Modal(document.getElementById('studentModal')).show();
+        }
+
+        // 학생 저장
+        function saveStudent() {
+            const form = document.getElementById('studentForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            const studentData = {
+                studentNumber: document.getElementById('studentNumber').value,
+                name: document.getElementById('studentName').value,
+                email: document.getElementById('studentEmail').value,
+                phone: document.getElementById('studentPhone').value,
+                major: document.getElementById('studentMajor').value,
+                majorName: getMajorName(document.getElementById('studentMajor').value),
+                grade: document.getElementById('studentGrade').value,
+                status: document.getElementById('studentStatus').value,
+                role: document.getElementById('studentRole').value,
+                notes: document.getElementById('studentNotes').value
+            };
+
+            // 중복 학번 체크
+            const existingStudent = students.find(s => 
+                s.studentNumber === studentData.studentNumber && 
+                s.id !== (editingStudent ? editingStudent.id : null)
+            );
+            
+            if (existingStudent) {
+                alert('이미 존재하는 학번입니다.');
+                return;
+            }
+
+            if (editingStudent) {
+                // 수정
+                const index = students.findIndex(s => s.id === editingStudent.id);
+                students[index] = { ...students[index], ...studentData };
+            } else {
+                // 추가
+                const newStudent = {
+                    id: Math.max(...students.map(s => s.id)) + 1,
+                    ...studentData,
+                    registeredDate: new Date().toISOString().split('T')[0],
+                    lastAccess: null
+                };
+                students.push(newStudent);
+            }
+
+            applyFilters();
+            updateStats();
+            bootstrap.Modal.getInstance(document.getElementById('studentModal')).hide();
+            
+            showToast(editingStudent ? '학생 정보가 수정되었습니다.' : '새 학생이 추가되었습니다.', 'success');
+        }
+
+        // 학과명 반환
+        function getMajorName(majorCode) {
+            const majorMap = {
+                'computer': '컴퓨터공학과',
+                'business': '경영학과',
+                'mechanical': '기계공학과',
+                'english': '영어영문학과'
+            };
+            return majorMap[majorCode] || majorCode;
+        }
+
+        // 상태 토글
+        function toggleStatus(id) {
+            const student = students.find(s => s.id === id);
+            if (!student) return;
+
+            const newStatus = student.status === 'active' ? 'inactive' : 'active';
+            const action = newStatus === 'active' ? '활성화' : '비활성화';
+            
+            if (confirm(`"${student.name}" 학생을 ${action}하시겠습니까?`)) {
+                student.status = newStatus;
+                applyFilters();
+                updateStats();
+                showToast(`학생이 ${action}되었습니다.`, 'success');
+            }
+        }
+
+        // 학생 삭제
+        function deleteStudent(id) {
+            const student = students.find(s => s.id === id);
+            if (!student) return;
+
+            if (confirm(`"${student.name}" 학생을 삭제하시겠습니까?\n\n삭제된 데이터는 복구할 수 없습니다.`)) {
+                students = students.filter(s => s.id !== id);
+                selectedStudents.delete(id);
+                applyFilters();
+                updateStats();
+                updateBulkActions();
+                showToast('학생이 삭제되었습니다.', 'success');
+            }
+        }
+
+        // 일괄 활성화
+        function bulkActivate() {
+            if (selectedStudents.size === 0) return;
+            
+            if (confirm(`선택된 ${selectedStudents.size}명의 학생을 활성화하시겠습니까?`)) {
+                selectedStudents.forEach(id => {
+                    const student = students.find(s => s.id === id);
+                    if (student) student.status = 'active';
+                });
+                
+                selectedStudents.clear();
+                applyFilters();
+                updateStats();
+                updateBulkActions();
+                showToast('선택된 학생들이 활성화되었습니다.', 'success');
+            }
+        }
+
+        // 일괄 비활성화
+        function bulkDeactivate() {
+            if (selectedStudents.size === 0) return;
+            
+            if (confirm(`선택된 ${selectedStudents.size}명의 학생을 비활성화하시겠습니까?`)) {
+                selectedStudents.forEach(id => {
+                    const student = students.find(s => s.id === id);
+                    if (student) student.status = 'inactive';
+                });
+                
+                selectedStudents.clear();
+                applyFilters();
+                updateStats();
+                updateBulkActions();
+                showToast('선택된 학생들이 비활성화되었습니다.', 'success');
+            }
+        }
+
+        // 일괄 삭제
+        function bulkDelete() {
+            if (selectedStudents.size === 0) return;
+            
+            if (confirm(`선택된 ${selectedStudents.size}명의 학생을 삭제하시겠습니까?\n\n삭제된 데이터는 복구할 수 없습니다.`)) {
+                students = students.filter(s => !selectedStudents.has(s.id));
+                selectedStudents.clear();
+                applyFilters();
+                updateStats();
+                updateBulkActions();
+                showToast('선택된 학생들이 삭제되었습니다.', 'success');
+            }
+        }
+
+        // 데이터 내보내기
+        function exportStudents() {
+            const csvContent = generateCSV(filteredStudents);
+            downloadCSV(csvContent, 'students.csv');
+            showToast('학생 데이터가 내보내기되었습니다.', 'success');
+        }
+
+        // CSV 생성
+        function generateCSV(data) {
+            const headers = ['학번', '이름', '이메일', '전화번호', '학과', '학년', '상태', '권한', '등록일', '최종접속'];
+            const rows = data.map(student => [
+                student.studentNumber,
+                student.name,
+                student.email,
+                student.phone || '',
+                student.majorName,
+                student.grade + '학년',
+                getStatusText(student.status),
+                getRoleText(student.role),
+                student.registeredDate,
+                student.lastAccess || ''
+            ]);
+            
+            return [headers, ...rows].map(row => row.join(',')).join('\n');
+        }
+
+        // CSV 다운로드
+        function downloadCSV(content, filename) {
+            const blob = new Blob(['\uFEFF' + content], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename;
+            link.click();
+        }
+
+        // 데이터 가져오기
+        function importStudents() {
+            new bootstrap.Modal(document.getElementById('importModal')).show();
+        }
+
+        // 가져오기 처리
+        function processImport() {
+            const fileInput = document.getElementById('importFile');
+            if (!fileInput.files[0]) {
+                alert('파일을 선택해주세요.');
+                return;
+            }
+            
+            // 실제로는 파일을 읽어서 처리
+            alert('가져오기 기능은 실제 구현에서 파일 파싱 로직이 필요합니다.');
+            bootstrap.Modal.getInstance(document.getElementById('importModal')).hide();
+        }
+
+        // 토스트 메시지
+        function showToast(message, type = 'info') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'info'} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 3000);
+        }
+
+        // 디바운스 함수
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>학생 관리 - 교육 관리 시스템</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 0.75rem 1rem;
+            margin: 0.25rem 0;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            color: white;
+            background-color: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+        .main-content {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 25px;
+            padding: 0.5rem 1.5rem;
+        }
+        .table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+        }
+        .badge-status {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+        .search-box {
+            border-radius: 25px;
+            border: 2px solid #e9ecef;
+            padding: 0.75rem 1.5rem;
+        }
+        .search-box:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- 사이드바 -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <h4 class="text-white">
+                            <i class="fas fa-graduation-cap me-2"></i>
+                            관리자
+                        </h4>
+                    </div>
+                    
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="admin-index.html">
+                                <i class="fas fa-tachometer-alt me-2"></i>
+                                대시보드
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#" data-bs-toggle="collapse" data-bs-target="#userManagement">
+                                <i class="fas fa-users me-2"></i>
+                                사용자/조직 관리
+                                <i class="fas fa-chevron-down ms-auto"></i>
+                            </a>
+                            <div class="collapse show" id="userManagement">
+                                <ul class="nav flex-column ms-3">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" href="admin-student-management.html">
+                                            <i class="fas fa-user-graduate me-2"></i>
+                                            학생 관리
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="admin-faculty-management.html">
+                                            <i class="fas fa-chalkboard-teacher me-2"></i>
+                                            교직원 관리
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="admin-department-management.html">
+                                            <i class="fas fa-building me-2"></i>
+                                            학과/부서 관리
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="admin-permission-management.html">
+                                            <i class="fas fa-key me-2"></i>
+                                            권한 관리
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="admin-diagnosis-management.html">
+                                <i class="fas fa-chart-line me-2"></i>
+                                역량진단 관리
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="admin-program-management.html">
+                                <i class="fas fa-calendar-alt me-2"></i>
+                                비교과 프로그램 관리
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="admin-counseling-management.html">
+                                <i class="fas fa-comments me-2"></i>
+                                상담 관리
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="admin-mileage-management.html">
+                                <i class="fas fa-coins me-2"></i>
+                                마일리지 관리
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="admin-notice-management.html">
+                                <i class="fas fa-bullhorn me-2"></i>
+                                공지사항 관리
+                            </a>
+                        </li>
+                    </ul>
+
+                    <hr class="my-3" style="border-color: rgba(255,255,255,0.3);">
+                    
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="login.html">
+                                <i class="fas fa-sign-out-alt me-2"></i>
+                                로그아웃
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- 메인 콘텐츠 -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">
+                        <i class="fas fa-user-graduate me-2"></i>
+                        학생 관리
+                    </h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+                                <i class="fas fa-plus me-2"></i>
+                                학생 추가
+                            </button>
+                            <button type="button" class="btn btn-outline-primary">
+                                <i class="fas fa-download me-2"></i>
+                                엑셀 다운로드
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 검색 및 필터 -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <input type="text" class="form-control search-box" placeholder="학번, 이름으로 검색..." id="searchInput">
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-select" id="departmentFilter">
+                                    <option value="">전체 학과</option>
+                                    <option value="컴퓨터공학과">컴퓨터공학과</option>
+                                    <option value="경영학과">경영학과</option>
+                                    <option value="기계공학과">기계공학과</option>
+                                    <option value="전자공학과">전자공학과</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-select" id="gradeFilter">
+                                    <option value="">전체 학년</option>
+                                    <option value="1">1학년</option>
+                                    <option value="2">2학년</option>
+                                    <option value="3">3학년</option>
+                                    <option value="4">4학년</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <select class="form-select" id="statusFilter">
+                                    <option value="">전체 상태</option>
+                                    <option value="재학">재학</option>
+                                    <option value="휴학">휴학</option>
+                                    <option value="졸업">졸업</option>
+                                    <option value="제적">제적</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button class="btn btn-primary w-100" onclick="searchStudents()">
+                                    <i class="fas fa-search me-2"></i>
+                                    검색
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 통계 카드 -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title text-primary">전체 학생</h5>
+                                <h2 class="text-primary">1,247</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title text-success">재학생</h5>
+                                <h2 class="text-success">1,156</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title text-warning">휴학생</h5>
+                                <h2 class="text-warning">67</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title text-info">신입생</h5>
+                                <h2 class="text-info">324</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 학생 목록 테이블 -->
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
+                                        </th>
+                                        <th>학번</th>
+                                        <th>이름</th>
+                                        <th>학과</th>
+                                        <th>학년</th>
+                                        <th>연락처</th>
+                                        <th>이메일</th>
+                                        <th>상태</th>
+                                        <th>등록일</th>
+                                        <th>관리</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="studentTableBody">
+                                    <tr>
+                                        <td><input type="checkbox" class="student-checkbox" value="20230001"></td>
+                                        <td>20230001</td>
+                                        <td>김학생</td>
+                                        <td>컴퓨터공학과</td>
+                                        <td>1학년</td>
+                                        <td>010-1234-5678</td>
+                                        <td>student1@university.ac.kr</td>
+                                        <td><span class="badge badge-status bg-success">재학</span></td>
+                                        <td>2023-03-02</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editStudent('20230001')">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-info me-1" onclick="viewStudent('20230001')">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" onclick="deleteStudent('20230001')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox" class="student-checkbox" value="20230002"></td>
+                                        <td>20230002</td>
+                                        <td>이학생</td>
+                                        <td>경영학과</td>
+                                        <td>2학년</td>
+                                        <td>010-2345-6789</td>
+                                        <td>student2@university.ac.kr</td>
+                                        <td><span class="badge badge-status bg-warning">휴학</span></td>
+                                        <td>2022-03-02</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editStudent('20230002')">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-info me-1" onclick="viewStudent('20230002')">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" onclick="deleteStudent('20230002')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type="checkbox" class="student-checkbox" value="20230003"></td>
+                                        <td>20230003</td>
+                                        <td>박학생</td>
+                                        <td>기계공학과</td>
+                                        <td>3학년</td>
+                                        <td>010-3456-7890</td>
+                                        <td>student3@university.ac.kr</td>
+                                        <td><span class="badge badge-status bg-success">재학</span></td>
+                                        <td>2021-03-02</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editStudent('20230003')">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-info me-1" onclick="viewStudent('20230003')">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" onclick="deleteStudent('20230003')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 페이징 -->
+                        <nav aria-label="학생 목록 페이징">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1">이전</a>
+                                </li>
+                                <li class="page-item active">
+                                    <a class="page-link" href="#">1</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">2</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">3</a>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">다음</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- 학생 추가 모달 -->
+    <div class="modal fade" id="addStudentModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-user-plus me-2"></i>
+                        학생 추가
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addStudentForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="studentId" class="form-label">학번 *</label>
+                                <input type="text" class="form-control" id="studentId" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="studentName" class="form-label">이름 *</label>
+                                <input type="text" class="form-control" id="studentName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="department" class="form-label">학과 *</label>
+                                <select class="form-select" id="department" required>
+                                    <option value="">학과 선택</option>
+                                    <option value="컴퓨터공학과">컴퓨터공학과</option>
+                                    <option value="경영학과">경영학과</option>
+                                    <option value="기계공학과">기계공학과</option>
+                                    <option value="전자공학과">전자공학과</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="grade" class="form-label">학년 *</label>
+                                <select class="form-select" id="grade" required>
+                                    <option value="">학년 선택</option>
+                                    <option value="1">1학년</option>
+                                    <option value="2">2학년</option>
+                                    <option value="3">3학년</option>
+                                    <option value="4">4학년</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="phone" class="form-label">연락처</label>
+                                <input type="tel" class="form-control" id="phone">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="email" class="form-label">이메일 *</label>
+                                <input type="email" class="form-control" id="email" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="birthDate" class="form-label">생년월일</label>
+                                <input type="date" class="form-control" id="birthDate">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="status" class="form-label">상태 *</label>
+                                <select class="form-select" id="status" required>
+                                    <option value="재학">재학</option>
+                                    <option value="휴학">휴학</option>
+                                    <option value="졸업">졸업</option>
+                                    <option value="제적">제적</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label for="address" class="form-label">주소</label>
+                                <textarea class="form-control" id="address" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" onclick="addStudent()">
+                        <i class="fas fa-save me-2"></i>
+                        저장
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 전체 선택/해제
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.student-checkbox');
+            
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAll.checked;
+            });
+        }
+
+        // 학생 검색
+        function searchStudents() {
+            const searchInput = document.getElementById('searchInput').value;
+            const departmentFilter = document.getElementById('departmentFilter').value;
+            const gradeFilter = document.getElementById('gradeFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            
+            console.log('검색 조건:', {
+                search: searchInput,
+                department: departmentFilter,
+                grade: gradeFilter,
+                status: statusFilter
+            });
+            
+            // 실제 구현에서는 서버 API 호출
+            alert('검색 기능이 실행되었습니다.');
+        }
+
+        // 학생 추가
+        function addStudent() {
+            const form = document.getElementById('addStudentForm');
+            const formData = new FormData(form);
+            
+            // 폼 유효성 검사
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            
+            // 실제 구현에서는 서버 API 호출
+            alert('학생이 추가되었습니다.');
+            
+            // 모달 닫기
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addStudentModal'));
+            modal.hide();
+            
+            // 폼 초기화
+            form.reset();
+        }
+
+        // 학생 수정
+        function editStudent(studentId) {
+            alert(`학생 ${studentId} 수정 기능을 실행합니다.`);
+            // 실제 구현에서는 수정 모달 열기
+        }
+
+        // 학생 상세보기
+        function viewStudent(studentId) {
+            alert(`학생 ${studentId} 상세정보를 조회합니다.`);
+            // 실제 구현에서는 상세보기 모달 열기
+        }
+
+        // 학생 삭제
+        function deleteStudent(studentId) {
+            if (confirm(`학생 ${studentId}를 정말 삭제하시겠습니까?`)) {
+                alert(`학생 ${studentId}가 삭제되었습니다.`);
+                // 실제 구현에서는 서버 API 호출
+            }
+        }
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('학생 관리 페이지가 로드되었습니다.');
+        });
+    </script>
+</body>
+</html>

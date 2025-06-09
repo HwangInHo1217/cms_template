@@ -1,0 +1,2029 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>비교과 프로그램 관리 - 교육 관리 시스템</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --admin-color: #c0392b;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: linear-gradient(135deg, var(--admin-color), #e74c3c);
+            color: white;
+            z-index: 1000;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-brand {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 0;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .nav-link.active {
+            background-color: rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        .nav-link i {
+            margin-right: 0.75rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .header-time {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--admin-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--admin-color), #e74c3c);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        /* Content Cards */
+        .content-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .stats-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        /* Program Cards */
+        .program-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .program-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .program-card.featured {
+            border-left-color: var(--warning-color);
+            background: linear-gradient(135deg, #fff, #fffbf0);
+        }
+
+        .program-card.popular {
+            border-left-color: var(--success-color);
+            background: linear-gradient(135deg, #fff, #f0fff4);
+        }
+
+        .program-card.urgent {
+            border-left-color: var(--danger-color);
+            background: linear-gradient(135deg, #fff, #fff5f5);
+        }
+
+        .program-header {
+            display: flex;
+            justify-content: between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .program-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .program-category {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .category-leadership {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .category-creativity {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .category-career {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .category-volunteer {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .category-academic {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .program-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .program-description {
+            color: #495057;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .program-footer {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .mileage-badge {
+            background: linear-gradient(135deg, var(--warning-color), #f7dc6f);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-recruiting {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .status-deadline-soon {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .status-closed {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .status-ongoing {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .status-completed {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .status-pending {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .status-approved {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .status-rejected {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .filter-btn {
+            border: 2px solid #e9ecef;
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            background: white;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--secondary-color);
+            color: var(--secondary-color);
+        }
+
+        .filter-btn.active {
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: white;
+        }
+
+        /* Search Box */
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            border-radius: 25px;
+            border: 2px solid #e9ecef;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+
+        /* Tabs */
+        .nav-tabs .nav-link {
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: #6c757d;
+            font-weight: 500;
+            padding: 0.75rem 1rem;
+        }
+
+        .nav-tabs .nav-link:hover {
+            border-color: transparent;
+            color: var(--admin-color);
+        }
+
+        .nav-tabs .nav-link.active {
+            border-color: var(--admin-color);
+            color: var(--admin-color);
+            background-color: transparent;
+        }
+
+        /* Form Controls */
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 0.75rem 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: var(--admin-color);
+            border-color: var(--admin-color);
+        }
+
+        .btn-primary:hover {
+            background: #b03a2e;
+            border-color: #b03a2e;
+        }
+
+        .btn-outline-primary {
+            color: var(--admin-color);
+            border-color: var(--admin-color);
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--admin-color);
+            border-color: var(--admin-color);
+            color: white;
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        .table {
+            min-width: 800px;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .table td {
+            vertical-align: middle;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            height: 300px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+
+            .program-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .program-footer {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="sidebar-brand">
+                <i class="bi bi-shield-check me-2"></i>
+                교육 관리 시스템
+            </a>
+            <small class="text-white-50">최고관리자 모드</small>
+        </div>
+        
+        <div class="sidebar-nav">
+            <div class="nav-item">
+                <a href="admin-index.html" class="nav-link">
+                    <i class="bi bi-speedometer2"></i>
+                    대시보드
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="mypage.html" class="nav-link">
+                    <i class="bi bi-person"></i>
+                    마이페이지
+                </a>
+            </div>
+            
+            <!-- 관리자 전용 메뉴 -->
+            <div class="nav-item mt-3" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
+                <small class="text-white-50 px-3">시스템 관리</small>
+            </div>
+            
+            <div class="nav-item">
+                <a href="admin-users.html" class="nav-link">
+                    <i class="bi bi-people"></i>
+                    사용자/조직 관리
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="admin-diagnosis-management.html" class="nav-link">
+                    <i class="bi bi-graph-up"></i>
+                    학생역량진단 관리
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="admin-programs-management.html" class="nav-link active">
+                    <i class="bi bi-calendar-check"></i>
+                    비교과 프로그램 관리
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="admin-counseling.html" class="nav-link">
+                    <i class="bi bi-chat-square-dots"></i>
+                    상담 관리
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="admin-mileage.html" class="nav-link">
+                    <i class="bi bi-award"></i>
+                    마일리지 관리
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="admin-notice.html" class="nav-link">
+                    <i class="bi bi-clipboard-plus"></i>
+                    공지사항 관리
+                </a>
+            </div>
+            
+            <div class="nav-item mt-3" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
+                <small class="text-white-50 px-3">시스템 설정</small>
+            </div>
+            
+            <div class="nav-item">
+                <a href="admin-settings.html" class="nav-link">
+                    <i class="bi bi-gear"></i>
+                    시스템 설정
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="admin-logs.html" class="nav-link">
+                    <i class="bi bi-file-text"></i>
+                    시스템 로그
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="admin-backup.html" class="nav-link">
+                    <i class="bi bi-cloud-download"></i>
+                    백업/복원
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="d-flex align-items-center">
+                <button class="btn btn-link d-md-none me-3" onclick="toggleSidebar()">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div class="header-time">
+                    <i class="bi bi-clock me-1"></i>
+                    <span id="currentTime"></span>
+                </div>
+            </div>
+            
+            <div class="header-user">
+                <div class="user-avatar">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                
+                <div>
+                    <div class="fw-medium">관리자</div>
+                    <small class="text-muted">시스템 관리자</small>
+                </div>
+                
+                <div class="dropdown">
+                    <button class="btn btn-link" data-bs-toggle="dropdown">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="mypage.html">마이페이지</a></li>
+                        <li><a class="dropdown-item" href="admin-settings.html">시스템 설정</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout()">로그아웃</a></li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="container">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb text-white-50">
+                        <li class="breadcrumb-item"><a href="admin-index.html" class="text-white-50">홈</a></li>
+                        <li class="breadcrumb-item active text-white">비교과 프로그램 관리</li>
+                    </ol>
+                </nav>
+                <h1 class="mb-0"><i class="bi bi-calendar-check me-2"></i>비교과 프로그램 관리</h1>
+                <p class="mb-0 mt-2">비교과 프로그램을 등록, 관리하고 학생들의 참여 현황을 모니터링합니다</p>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- Statistics Overview -->
+            <div class="row mb-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="stats-card">
+                        <div class="stat-number">42</div>
+                        <div class="stat-label">전체 프로그램</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stats-card" style="border-left-color: var(--success-color);">
+                        <div class="stat-number text-success">18</div>
+                        <div class="stat-label">모집 중</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stats-card" style="border-left-color: var(--warning-color);">
+                        <div class="stat-number text-warning">12</div>
+                        <div class="stat-label">진행 중</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stats-card" style="border-left-color: var(--danger-color);">
+                        <div class="stat-number text-danger">5</div>
+                        <div class="stat-label">승인 대기</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <ul class="nav nav-tabs mb-4" id="programTabs">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#programListTab">
+                        <i class="bi bi-list me-1"></i>프로그램 목록
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#categoryTab">
+                        <i class="bi bi-tag me-1"></i>카테고리 관리
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#applicantsTab">
+                        <i class="bi bi-people me-1"></i>신청자 관리
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#mileageTab">
+                        <i class="bi bi-star me-1"></i>마일리지 관리
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#statsTab">
+                        <i class="bi bi-graph-up me-1"></i>통계 및 보고서
+                    </a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <!-- Program List Tab -->
+                <div class="tab-pane fade show active" id="programListTab">
+                    <!-- Filter and Search Section -->
+                    <div class="filter-section">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">검색</label>
+                                <div class="search-box">
+                                    <i class="bi bi-search search-icon"></i>
+                                    <input type="text" class="form-control search-input" id="searchInput" 
+                                           placeholder="프로그램명, 내용으로 검색하세요..." onkeyup="searchPrograms()">
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">정렬</label>
+                                <select class="form-select" id="sortSelect" onchange="sortPrograms()">
+                                    <option value="latest">최신순</option>
+                                    <option value="deadline">마감일순</option>
+                                    <option value="popular">인기순</option>
+                                    <option value="mileage">마일리지순</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">상태</label>
+                                <select class="form-select" id="statusFilter" onchange="filterByStatus()">
+                                    <option value="all">전체</option>
+                                    <option value="pending">승인 대기</option>
+                                    <option value="recruiting">모집중</option>
+                                    <option value="ongoing">진행중</option>
+                                    <option value="completed">완료</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <label class="form-label fw-bold">카테고리</label>
+                            <div class="filter-buttons">
+                                <button class="filter-btn active" data-category="all" onclick="filterByCategory('all')">
+                                    <i class="bi bi-grid me-1"></i>전체
+                                </button>
+                                <button class="filter-btn" data-category="leadership" onclick="filterByCategory('leadership')">
+                                    <i class="bi bi-people me-1"></i>리더십
+                                </button>
+                                <button class="filter-btn" data-category="creativity" onclick="filterByCategory('creativity')">
+                                    <i class="bi bi-lightbulb me-1"></i>창의성
+                                </button>
+                                <button class="filter-btn" data-category="career" onclick="filterByCategory('career')">
+                                    <i class="bi bi-briefcase me-1"></i>진로
+                                </button>
+                                <button class="filter-btn" data-category="volunteer" onclick="filterByCategory('volunteer')">
+                                    <i class="bi bi-heart me-1"></i>봉사
+                                </button>
+                                <button class="filter-btn" data-category="academic" onclick="filterByCategory('academic')">
+                                    <i class="bi bi-book me-1"></i>학술
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-3">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProgramModal">
+                                <i class="bi bi-plus-circle me-1"></i>프로그램 등록
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Program List -->
+                    <div id="programList">
+                        <!-- Pending Approval Program -->
+                        <div class="program-card urgent" data-category="leadership" data-status="pending" data-id="1">
+                            <div class="program-header">
+                                <div class="flex-grow-1">
+                                    <div class="program-category category-leadership">리더십</div>
+                                    <div class="program-title">글로벌 리더십 아카데미</div>
+                                    <div class="program-meta">
+                                        <span><i class="bi bi-calendar me-1"></i>2024.02.15 ~ 2024.03.15</span>
+                                        <span><i class="bi bi-people me-1"></i>20명 모집</span>
+                                        <span><i class="bi bi-geo-alt me-1"></i>국제관 세미나실</span>
+                                        <span><i class="bi bi-person me-1"></i>김교수 (국제학부)</span>
+                                    </div>
+                                </div>
+                                <span class="status-badge status-pending">승인 대기</span>
+                            </div>
+                            <div class="program-description">
+                                글로벌 시대에 필요한 리더십 역량을 기르는 4주 집중 프로그램입니다. 
+                                국제적 감각과 소통 능력, 팀 리더십을 체계적으로 학습하고 실습할 수 있습니다.
+                            </div>
+                            <div class="program-footer">
+                                <div class="mileage-badge">
+                                    <i class="bi bi-star-fill"></i>
+                                    <span>200P</span>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-primary btn-sm" onclick="viewProgramDetail(1)">
+                                        <i class="bi bi-eye me-1"></i>상세보기
+                                    </button>
+                                    <button class="btn btn-success btn-sm" onclick="approveProgram(1)">
+                                        <i class="bi bi-check-circle me-1"></i>승인
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="rejectProgram(1)">
+                                        <i class="bi bi-x-circle me-1"></i>거부
+                                    </button>
+                                    <button class="btn btn-secondary btn-sm" onclick="editProgram(1)">
+                                        <i class="bi bi-pencil me-1"></i>수정
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recruiting Program -->
+                        <div class="program-card" data-category="creativity" data-status="recruiting" data-id="2">
+                            <div class="program-header">
+                                <div class="flex-grow-1">
+                                    <div class="program-category category-creativity">창의성</div>
+                                    <div class="program-title">창의적 사고와 혁신 워크숍</div>
+                                    <div class="program-meta">
+                                        <span><i class="bi bi-calendar me-1"></i>2024.02.20 ~ 2024.02.22</span>
+                                        <span><i class="bi bi-people me-1"></i>30명 모집</span>
+                                        <span><i class="bi bi-geo-alt me-1"></i>창의관 메이커스페이스</span>
+                                        <span><i class="bi bi-person me-1"></i>박박사 (디자인학과)</span>
+                                    </div>
+                                </div>
+                                <span class="status-badge status-recruiting">모집중</span>
+                            </div>
+                            <div class="program-description">
+                                디자인 씽킹과 창의적 문제해결 기법을 배우는 3일간의 집중 워크숍입니다. 
+                                실제 프로젝트를 통해 아이디어 발상부터 프로토타입 제작까지 경험할 수 있습니다.
+                            </div>
+                            <div class="program-footer">
+                                <div class="mileage-badge">
+                                    <i class="bi bi-star-fill"></i>
+                                    <span>150P</span>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-primary btn-sm" onclick="viewProgramDetail(2)">
+                                        <i class="bi bi-eye me-1"></i>상세보기
+                                    </button>
+                                    <button class="btn btn-outline-success btn-sm" onclick="viewApplicants(2)">
+                                        <i class="bi bi-people me-1"></i>신청자 (12명)
+                                    </button>
+                                    <button class="btn btn-secondary btn-sm" onclick="editProgram(2)">
+                                        <i class="bi bi-pencil me-1"></i>수정
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteProgram(2)">
+                                        <i class="bi bi-trash me-1"></i>삭제
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ongoing Program -->
+                        <div class="program-card" data-category="career" data-status="ongoing" data-id="3">
+                            <div class="program-header">
+                                <div class="flex-grow-1">
+                                    <div class="program-category category-career">진로</div>
+                                    <div class="program-title">IT 기업 멘토링 프로그램</div>
+                                    <div class="program-meta">
+                                        <span><i class="bi bi-calendar me-1"></i>2024.01.15 ~ 2024.05.31</span>
+                                        <span><i class="bi bi-people me-1"></i>15명 참여중</span>
+                                        <span><i class="bi bi-geo-alt me-1"></i>온라인/오프라인 병행</span>
+                                        <span><i class="bi bi-person me-1"></i>이멘토 (컴퓨터공학과)</span>
+                                    </div>
+                                </div>
+                                <span class="status-badge status-ongoing">진행중</span>
+                            </div>
+                            <div class="program-description">
+                                현직 IT 기업 임직원과의 1:1 멘토링을 통해 실무 경험을 쌓고 진로를 구체화하는 프로그램입니다. 
+                                포트폴리오 리뷰, 면접 준비, 업계 트렌드 등을 학습할 수 있습니다.
+                            </div>
+                            <div class="program-footer">
+                                <div class="mileage-badge">
+                                    <i class="bi bi-star-fill"></i>
+                                    <span>300P</span>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-primary btn-sm" onclick="viewProgramDetail(3)">
+                                        <i class="bi bi-eye me-1"></i>상세보기
+                                    </button>
+                                    <button class="btn btn-outline-success btn-sm" onclick="viewParticipants(3)">
+                                        <i class="bi bi-people me-1"></i>참여자 (15명)
+                                    </button>
+                                    <button class="btn btn-info btn-sm" onclick="manageAttendance(3)">
+                                        <i class="bi bi-calendar-check me-1"></i>출석관리
+                                    </button>
+                                    <button class="btn btn-secondary btn-sm" onclick="editProgram(3)">
+                                        <i class="bi bi-pencil me-1"></i>수정
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Completed Program -->
+                        <div class="program-card" data-category="volunteer" data-status="completed" data-id="4">
+                            <div class="program-header">
+                                <div class="flex-grow-1">
+                                    <div class="program-category category-volunteer">봉사</div>
+                                    <div class="program-title">지역 아동센터 학습 지도</div>
+                                    <div class="program-meta">
+                                        <span><i class="bi bi-calendar me-1"></i>2023.09.01 ~ 2023.12.31</span>
+                                        <span><i class="bi bi-people me-1"></i>20명 참여</span>
+                                        <span><i class="bi bi-geo-alt me-1"></i>인근 지역 아동센터</span>
+                                        <span><i class="bi bi-person me-1"></i>최교수 (교육학과)</span>
+                                    </div>
+                                </div>
+                                <span class="status-badge status-completed">완료</span>
+                            </div>
+                            <div class="program-description">
+                                지역 아동센터에서 초등학생들의 학습을 도와주는 봉사활동입니다. 
+                                교육 재능기부를 통해 사회에 기여하고 교육 경험을 쌓을 수 있습니다.
+                            </div>
+                            <div class="program-footer">
+                                <div class="mileage-badge">
+                                    <i class="bi bi-star-fill"></i>
+                                    <span>시간당 20P</span>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-primary btn-sm" onclick="viewProgramDetail(4)">
+                                        <i class="bi bi-eye me-1"></i>상세보기
+                                    </button>
+                                    <button class="btn btn-outline-success btn-sm" onclick="viewParticipants(4)">
+                                        <i class="bi bi-people me-1"></i>참여자 (20명)
+                                    </button>
+                                    <button class="btn btn-warning btn-sm" onclick="manageMileage(4)">
+                                        <i class="bi bi-star me-1"></i>마일리지 부여
+                                    </button>
+                                    <button class="btn btn-info btn-sm" onclick="generateReport(4)">
+                                        <i class="bi bi-file-earmark-text me-1"></i>결과보고서
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Academic Program -->
+                        <div class="program-card" data-category="academic" data-status="recruiting" data-id="5">
+                            <div class="program-header">
+                                <div class="flex-grow-1">
+                                    <div class="program-category category-academic">학술</div>
+                                    <div class="program-title">학부생 연구 프로그램</div>
+                                    <div class="program-meta">
+                                        <span><i class="bi bi-calendar me-1"></i>2024.03.01 ~ 2024.11.30</span>
+                                        <span><i class="bi bi-people me-1"></i>10명 모집</span>
+                                        <span><i class="bi bi-geo-alt me-1"></i>각 학과 연구실</span>
+                                        <span><i class="bi bi-person me-1"></i>정교수 (물리학과)</span>
+                                    </div>
+                                </div>
+                                <span class="status-badge status-recruiting">모집중</span>
+                            </div>
+                            <div class="program-description">
+                                교수님과 함께 실제 연구 프로젝트에 참여하여 학술 연구 경험을 쌓는 프로그램입니다. 
+                                논문 작성, 학회 발표 등의 기회를 제공합니다.
+                            </div>
+                            <div class="program-footer">
+                                <div class="mileage-badge">
+                                    <i class="bi bi-star-fill"></i>
+                                    <span>500P</span>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-primary btn-sm" onclick="viewProgramDetail(5)">
+                                        <i class="bi bi-eye me-1"></i>상세보기
+                                    </button>
+                                    <button class="btn btn-outline-success btn-sm" onclick="viewApplicants(5)">
+                                        <i class="bi bi-people me-1"></i>신청자 (8명)
+                                    </button>
+                                    <button class="btn btn-secondary btn-sm" onclick="editProgram(5)">
+                                        <i class="bi bi-pencil me-1"></i>수정
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="deleteProgram(5)">
+                                        <i class="bi bi-trash me-1"></i>삭제
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <nav aria-label="Page navigation" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">이전</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">다음</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
+                <!-- Category Management Tab -->
+                <div class="tab-pane fade" id="categoryTab">
+                    <div class="content-card">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="mb-0">
+                                <i class="bi bi-tag me-2"></i>카테고리 관리
+                            </h5>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                                <i class="bi bi-plus-circle me-1"></i>카테고리 추가
+                            </button>
+                        </div>
+
+                        <div class="table-container">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 5%">#</th>
+                                        <th style="width: 15%">카테고리명</th>
+                                        <th style="width: 15%">색상</th>
+                                        <th style="width: 30%">설명</th>
+                                        <th style="width: 15%">프로그램 수</th>
+                                        <th style="width: 20%">관리</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>리더십</td>
+                                        <td>
+                                            <span class="badge category-leadership">리더십</span>
+                                        </td>
+                                        <td>리더십 역량 강화를 위한 프로그램</td>
+                                        <td>8개</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editCategory(1)">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" onclick="deleteCategory(1)">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>창의성</td>
+                                        <td>
+                                            <span class="badge category-creativity">창의성</span>
+                                        </td>
+                                        <td>창의적 사고와 문제해결 능력 향상 프로그램</td>
+                                        <td>12개</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editCategory(2)">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" onclick="deleteCategory(2)">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>3</td>
+                                        <td>진로</td>
+                                        <td>
+                                            <span class="badge category-career">진로</span>
+                                        </td>
+                                        <td>진로 탐색 및 취업 역량 강화 프로그램</td>
+                                        <td>10개</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editCategory(3)">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" onclick="deleteCategory(3)">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>4</td>
+                                        <td>봉사</td>
+                                        <td>
+                                            <span class="badge category-volunteer">봉사</span>
+                                        </td>
+                                        <td>사회 공헌 및 봉사활동 프로그램</td>
+                                        <td>6개</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editCategory(4)">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" onclick="deleteCategory(4)">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>5</td>
+                                        <td>학술</td>
+                                        <td>
+                                            <span class="badge category-academic">학술</span>
+                                        </td>
+                                        <td>학술 연구 및 학문적 역량 강화 프로그램</td>
+                                        <td>6개</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editCategory(5)">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" onclick="deleteCategory(5)">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="mt-4">
+                            <h6 class="mb-3">카테고리별 프로그램 분포</h6>
+                            <div class="chart-container">
+                                <div class="text-center">
+                                    <div class="alert alert-info">
+                                        <i class="bi bi-info-circle me-2"></i>
+                                        실제 구현 시 Chart.js 등의 라이브러리를 사용하여 차트를 표시합니다.
+                                    </div>
+                                    <span class="text-muted">카테고리별 프로그램 분포 차트 영역</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Applicants Management Tab -->
+                <div class="tab-pane fade" id="applicantsTab">
+                    <div class="content-card">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="mb-0">
+                                <i class="bi bi-people me-2"></i>신청자 관리
+                            </h5>
+                            <div>
+                                <select class="form-select" id="programSelect" onchange="loadApplicants()">
+                                    <option value="">프로그램 선택</option>
+                                    <option value="1">글로벌 리더십 아카데미</option>
+                                    <option value="2">창의적 사고와 혁신 워크숍</option>
+                                    <option value="3">IT 기업 멘토링 프로그램</option>
+                                    <option value="5">학부생 연구 프로그램</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info mb-4">
+                            <i class="bi bi-info-circle me-2"></i>
+                            프로그램을 선택하면 해당 프로그램의 신청자 목록이 표시됩니다.
+                        </div>
+
+                        <div class="table-container">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 5%">#</th>
+                                        <th style="width: 15%">이름</th>
+                                        <th style="width: 15%">학번</th>
+                                        <th style="width: 15%">학과</th>
+                                        <th style="width: 15%">신청일</th>
+                                        <th style="width: 15%">상태</th>
+                                        <th style="width: 20%">관리</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="applicantsList">
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4">
+                                            프로그램을 선택하면 신청자 목록이 표시됩니다.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <button class="btn btn-outline-success" onclick="approveAllApplicants()">
+                                <i class="bi bi-check-all me-1"></i>전체 승인
+                            </button>
+                            <div>
+                                <button class="btn btn-outline-primary me-2" onclick="exportApplicantsList()">
+                                    <i class="bi bi-download me-1"></i>목록 다운로드
+                                </button>
+                                <button class="btn btn-outline-secondary" onclick="sendNotification()">
+                                    <i class="bi bi-envelope me-1"></i>알림 발송
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mileage Management Tab -->
+                <div class="tab-pane fade" id="mileageTab">
+                    <div class="content-card">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h5 class="mb-0">
+                                <i class="bi bi-star me-2"></i>마일리지 관리
+                            </h5>
+                            <div>
+                                <select class="form-select" id="mileageProgramSelect" onchange="loadMileageProgram()">
+                                    <option value="">프로그램 선택</option>
+                                    <option value="3">IT 기업 멘토링 프로그램</option>
+                                    <option value="4">지역 아동센터 학습 지도</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info mb-4">
+                            <i class="bi bi-info-circle me-2"></i>
+                            프로그램을 선택하면 해당 프로그램의 참여자 목록과 마일리지 부여 현황이 표시됩니다.
+                        </div>
+
+                        <div class="table-container">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 5%">#</th>
+                                        <th style="width: 15%">이름</th>
+                                        <th style="width: 15%">학번</th>
+                                        <th style="width: 15%">학과</th>
+                                        <th style="width: 15%">참여율</th>
+                                        <th style="width: 15%">부여 마일리지</th>
+                                        <th style="width: 20%">관리</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="mileageList">
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4">
+                                            프로그램을 선택하면 참여자 목록이 표시됩니다.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <button class="btn btn-outline-warning" onclick="calculateMileage()">
+                                <i class="bi bi-calculator me-1"></i>마일리지 자동 계산
+                            </button>
+                            <div>
+                                <button class="btn btn-outline-primary me-2" onclick="exportMileageList()">
+                                    <i class="bi bi-download me-1"></i>목록 다운로드
+                                </button>
+                                <button class="btn btn-outline-success" onclick="confirmMileage()">
+                                    <i class="bi bi-check-circle me-1"></i>마일리지 확정
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-card mt-4">
+                        <h5 class="mb-4">
+                            <i class="bi bi-gear me-2"></i>마일리지 설정
+                        </h5>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">카테고리별 기본 마일리지</label>
+                                    <div class="table-container">
+                                        <table class="table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>카테고리</th>
+                                                    <th>기본 마일리지</th>
+                                                    <th>관리</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>리더십</td>
+                                                    <td>200P</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary" onclick="editMileageSetting('leadership')">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>창의성</td>
+                                                    <td>150P</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary" onclick="editMileageSetting('creativity')">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>진로</td>
+                                                    <td>300P</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary" onclick="editMileageSetting('career')">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>봉사</td>
+                                                    <td>시간당 20P</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary" onclick="editMileageSetting('volunteer')">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>학술</td>
+                                                    <td>500P</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary" onclick="editMileageSetting('academic')">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">마일리지 계산 규칙</label>
+                                    <div class="table-container">
+                                        <table class="table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>조건</th>
+                                                    <th>마일리지 조정</th>
+                                                    <th>관리</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>출석률 90% 이상</td>
+                                                    <td>기본 마일리지 100%</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary" onclick="editMileageRule(1)">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>출석률 80~89%</td>
+                                                    <td>기본 마일리지 80%</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary" onclick="editMileageRule(2)">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>출석률 70~79%</td>
+                                                    <td>기본 마일리지 60%</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary" onclick="editMileageRule(3)">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>출석률 70% 미만</td>
+                                                    <td>마일리지 없음</td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-primary" onclick="editMileageRule(4)">
+                                                            <i class="bi bi-pencil"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Tab -->
+                <div class="tab-pane fade" id="statsTab">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="content-card">
+                                <h5 class="mb-4">
+                                    <i class="bi bi-graph-up me-2"></i>프로그램 참여 통계
+                                </h5>
+                                <div class="chart-container">
+                                    <div class="text-center">
+                                        <div class="alert alert-info">
+                                            <i class="bi bi-info-circle me-2"></i>
+                                            실제 구현 시 Chart.js 등의 라이브러리를 사용하여 차트를 표시합니다.
+                                        </div>
+                                        <span class="text-muted">월별 프로그램 참여 현황 차트 영역</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="content-card">
+                                <h5 class="mb-4">
+                                    <i class="bi bi-pie-chart me-2"></i>카테고리별 참여 분포
+                                </h5>
+                                <div class="chart-container">
+                                    <div class="text-center">
+                                        <div class="alert alert-info">
+                                            <i class="bi bi-info-circle me-2"></i>
+                                            실제 구현 시 Chart.js 등의 라이브러리를 사용하여 차트를 표시합니다.
+                                        </div>
+                                        <span class="text-muted">카테고리별 참여 분포 파이 차트 영역</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h5 class="mb-4">
+                            <i class="bi bi-table me-2"></i>프로그램별 상세 통계
+                        </h5>
+                        <div class="table-container">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>프로그램명</th>
+                                        <th>카테고리</th>
+                                        <th>신청자 수</th>
+                                        <th>참여자 수</th>
+                                        <th>완료율</th>
+                                        <th>평균 만족도</th>
+                                        <th>부여 마일리지</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>글로벌 리더십 아카데미</td>
+                                        <td><span class="badge category-leadership">리더십</span></td>
+                                        <td>25명</td>
+                                        <td>20명</td>
+                                        <td>80%</td>
+                                        <td>4.5/5.0</td>
+                                        <td>4,000P</td>
+                                    </tr>
+                                    <tr>
+                                        <td>창의적 사고와 혁신 워크숍</td>
+                                        <td><span class="badge category-creativity">창의성</span></td>
+                                        <td>35명</td>
+                                        <td>30명</td>
+                                        <td>86%</td>
+                                        <td>4.3/5.0</td>
+                                        <td>4,500P</td>
+                                    </tr>
+                                    <tr>
+                                        <td>IT 기업 멘토링 프로그램</td>
+                                        <td><span class="badge category-career">진로</span></td>
+                                        <td>20명</td>
+                                        <td>15명</td>
+                                        <td>75%</td>
+                                        <td>4.8/5.0</td>
+                                        <td>4,500P</td>
+                                    </tr>
+                                    <tr>
+                                        <td>지역 아동센터 학습 지도</td>
+                                        <td><span class="badge category-volunteer">봉사</span></td>
+                                        <td>25명</td>
+                                        <td>20명</td>
+                                        <td>80%</td>
+                                        <td>4.6/5.0</td>
+                                        <td>8,000P</td>
+                                    </tr>
+                                    <tr>
+                                        <td>학부생 연구 프로그램</td>
+                                        <td><span class="badge category-academic">학술</span></td>
+                                        <td>15명</td>
+                                        <td>10명</td>
+                                        <td>67%</td>
+                                        <td>4.7/5.0</td>
+                                        <td>5,000P</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="d-flex justify-content-end mt-4">
+                            <button class="btn btn-outline-primary me-2" onclick="exportStatistics()">
+                                <i class="bi bi-download me-1"></i>통계 다운로드
+                            </button>
+                            <button class="btn btn-outline-secondary" onclick="generateReport()">
+                                <i class="bi bi-file-earmark-text me-1"></i>보고서 생성
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Program Modal -->
+    <div class="modal fade" id="addProgramModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-plus-circle me-2"></i>프로그램 등록
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addProgramForm">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label class="form-label">프로그램명 <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="programTitle" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">카테고리 <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="programCategory" required>
+                                        <option value="">선택하세요</option>
+                                        <option value="leadership">리더십</option>
+                                        <option value="creativity">창의성</option>
+                                        <option value="career">진로</option>
+                                        <option value="volunteer">봉사</option>
+                                        <option value="academic">학술</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">시작일 <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="programStartDate" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">종료일 <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="programEndDate" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">모집인원 <span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control" id="programCapacity" min="1" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">마일리지 <span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control" id="programMileage" min="0" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">장소</label>
+                                    <input type="text" class="form-control" id="programLocation">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">담당자 <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="programInstructor" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">프로그램 설명 <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="programDescription" rows="4" required></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">신청 조건</label>
+                            <textarea class="form-control" id="programRequirements" rows="3" placeholder="신청 자격, 선수 조건 등을 입력하세요"></textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">신청 시작일</label>
+                                    <input type="date" class="form-control" id="applicationStartDate">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">신청 마감일</label>
+                                    <input type="date" class="form-control" id="applicationEndDate">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" onclick="addProgram()">등록</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Category Modal -->
+    <div class="modal fade" id="addCategoryModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-tag me-2"></i>카테고리 추가
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addCategoryForm">
+                        <div class="mb-3">
+                            <label class="form-label">카테고리명 <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="categoryName" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">색상 <span class="text-danger">*</span></label>
+                            <input type="color" class="form-control form-control-color" id="categoryColor" value="#3498db" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">설명</label>
+                            <textarea class="form-control" id="categoryDescription" rows="3"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">기본 마일리지</label>
+                            <input type="number" class="form-control" id="categoryMileage" min="0" value="100">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" onclick="addCategory()">추가</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 현재 시간 표시
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('ko-KR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('currentTime').textContent = timeString;
+        }
+
+        // 페이지 로드 시 시간 업데이트 시작
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // 사이드바 토글
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('show');
+        }
+
+        // 로그아웃
+        function logout() {
+            if (confirm('로그아웃 하시겠습니까?')) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // 프로그램 검색
+        function searchPrograms() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const programs = document.querySelectorAll('.program-card');
+            
+            programs.forEach(program => {
+                const title = program.querySelector('.program-title').textContent.toLowerCase();
+                const description = program.querySelector('.program-description').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    program.style.display = 'block';
+                } else {
+                    program.style.display = 'none';
+                }
+            });
+        }
+
+        // 카테고리별 필터링
+        function filterByCategory(category) {
+            const programs = document.querySelectorAll('.program-card');
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            // 버튼 활성화 상태 변경
+            buttons.forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-category="${category}"]`).classList.add('active');
+            
+            programs.forEach(program => {
+                if (category === 'all' || program.dataset.category === category) {
+                    program.style.display = 'block';
+                } else {
+                    program.style.display = 'none';
+                }
+            });
+        }
+
+        // 상태별 필터링
+        function filterByStatus() {
+            const status = document.getElementById('statusFilter').value;
+            const programs = document.querySelectorAll('.program-card');
+            
+            programs.forEach(program => {
+                if (status === 'all' || program.dataset.status === status) {
+                    program.style.display = 'block';
+                } else {
+                    program.style.display = 'none';
+                }
+            });
+        }
+
+        // 프로그램 정렬
+        function sortPrograms() {
+            const sortBy = document.getElementById('sortSelect').value;
+            const programList = document.getElementById('programList');
+            const programs = Array.from(programList.querySelectorAll('.program-card'));
+            
+            programs.sort((a, b) => {
+                switch (sortBy) {
+                    case 'latest':
+                        return parseInt(b.dataset.id) - parseInt(a.dataset.id);
+                    case 'deadline':
+                        // 실제 구현 시 마감일 데이터를 기준으로 정렬
+                        return 0;
+                    case 'popular':
+                        // 실제 구현 시 인기도 데이터를 기준으로 정렬
+                        return 0;
+                    case 'mileage':
+                        // 실제 구현 시 마일리지 데이터를 기준으로 정렬
+                        return 0;
+                    default:
+                        return 0;
+                }
+            });
+            
+            programs.forEach(program => programList.appendChild(program));
+        }
+
+        // 프로그램 상세보기
+        function viewProgramDetail(id) {
+            alert(`프로그램 ${id}의 상세 정보를 표시합니다.`);
+        }
+
+        // 프로그램 승인
+        function approveProgram(id) {
+            if (confirm('이 프로그램을 승인하시겠습니까?')) {
+                alert(`프로그램 ${id}이 승인되었습니다.`);
+                // 실제 구현 시 서버에 승인 요청 전송
+                location.reload();
+            }
+        }
+
+        // 프로그램 거부
+        function rejectProgram(id) {
+            const reason = prompt('거부 사유를 입력하세요:');
+            if (reason) {
+                alert(`프로그램 ${id}이 거부되었습니다.\n사유: ${reason}`);
+                // 실제 구현 시 서버에 거부 요청 전송
+                location.reload();
+            }
+        }
+
+        // 프로그램 수정
+        function editProgram(id) {
+            alert(`프로그램 ${id} 수정 페이지로 이동합니다.`);
+        }
+
+        // 프로그램 삭제
+        function deleteProgram(id) {
+            if (confirm('이 프로그램을 삭제하시겠습니까?')) {
+                alert(`프로그램 ${id}이 삭제되었습니다.`);
+                // 실제 구현 시 서버에 삭제 요청 전송
+                location.reload();
+            }
+        }
+
+        // 신청자 보기
+        function viewApplicants(id) {
+            alert(`프로그램 ${id}의 신청자 목록을 표시합니다.`);
+        }
+
+        // 참여자 보기
+        function viewParticipants(id) {
+            alert(`프로그램 ${id}의 참여자 목록을 표시합니다.`);
+        }
+
+        // 출석 관리
+        function manageAttendance(id) {
+            alert(`프로그램 ${id}의 출석 관리 페이지로 이동합니다.`);
+        }
+
+        // 마일리지 관리
+        function manageMileage(id) {
+            alert(`프로그램 ${id}의 마일리지 관리 페이지로 이동합니다.`);
+        }
+
+        // 결과 보고서 생성
+        function generateReport(id) {
+            alert(`프로그램 ${id}의 결과 보고서를 생성합니다.`);
+        }
+
+        // 프로그램 등록
+        function addProgram() {
+            const form = document.getElementById('addProgramForm');
+            if (form.checkValidity()) {
+                alert('프로그램이 등록되었습니다.');
+                bootstrap.Modal.getInstance(document.getElementById('addProgramModal')).hide();
+                form.reset();
+                // 실제 구현 시 서버에 데이터 전송
+                location.reload();
+            } else {
+                form.reportValidity();
+            }
+        }
+
+        // 카테고리 관리 함수들
+        function editCategory(id) {
+            alert(`카테고리 ${id} 수정 기능을 구현합니다.`);
+        }
+
+        function deleteCategory(id) {
+            if (confirm('이 카테고리를 삭제하시겠습니까?')) {
+                alert(`카테고리 ${id}이 삭제되었습니다.`);
+                location.reload();
+            }
+        }
+
+        function addCategory() {
+            const form = document.getElementById('addCategoryForm');
+            if (form.checkValidity()) {
+                alert('카테고리가 추가되었습니다.');
+                bootstrap.Modal.getInstance(document.getElementById('addCategoryModal')).hide();
+                form.reset();
+                location.reload();
+            } else {
+                form.reportValidity();
+            }
+        }
+
+        // 신청자 관리 함수들
+        function loadApplicants() {
+            const programId = document.getElementById('programSelect').value;
+            const tbody = document.getElementById('applicantsList');
+            
+            if (programId) {
+                // 실제 구현 시 서버에서 데이터 로드
+                tbody.innerHTML = `
+                    <tr>
+                        <td>1</td>
+                        <td>김학생</td>
+                        <td>2021001</td>
+                        <td>컴퓨터공학과</td>
+                        <td>2024.01.15</td>
+                        <td><span class="status-badge status-pending">대기중</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-success me-1" onclick="approveApplicant(1)">승인</button>
+                            <button class="btn btn-sm btn-danger" onclick="rejectApplicant(1)">거부</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>이학생</td>
+                        <td>2021002</td>
+                        <td>경영학과</td>
+                        <td>2024.01.16</td>
+                        <td><span class="status-badge status-approved">승인</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="viewApplicantDetail(2)">상세보기</button>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center py-4">
+                            프로그램을 선택하면 신청자 목록이 표시됩니다.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function approveApplicant(id) {
+            if (confirm('이 신청자를 승인하시겠습니까?')) {
+                alert(`신청자 ${id}이 승인되었습니다.`);
+                loadApplicants();
+            }
+        }
+
+        function rejectApplicant(id) {
+            const reason = prompt('거부 사유를 입력하세요:');
+            if (reason) {
+                alert(`신청자 ${id}이 거부되었습니다.\n사유: ${reason}`);
+                loadApplicants();
+            }
+        }
+
+        function approveAllApplicants() {
+            if (confirm('모든 대기중인 신청자를 승인하시겠습니까?')) {
+                alert('모든 신청자가 승인되었습니다.');
+                loadApplicants();
+            }
+        }
+
+        function exportApplicantsList() {
+            alert('신청자 목록을 Excel 파일로 다운로드합니다.');
+        }
+
+        function sendNotification() {
+            alert('선택된 신청자들에게 알림을 발송합니다.');
+        }
+
+        // 마일리지 관리 함수들
+        function loadMileageProgram() {
+            const programId = document.getElementById('mileageProgramSelect').value;
+            const tbody = document.getElementById('mileageList');
+            
+            if (programId) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td>1</td>
+                        <td>김학생</td>
+                        <td>2021001</td>
+                        <td>컴퓨터공학과</td>
+                        <td>95%</td>
+                        <td>300P</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editMileage(1)">수정</button>
+                            <button class="btn btn-sm btn-success" onclick="confirmMileageForStudent(1)">확정</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>이학생</td>
+                        <td>2021002</td>
+                        <td>경영학과</td>
+                        <td>85%</td>
+                        <td>240P</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="editMileage(2)">수정</button>
+                            <button class="btn btn-sm btn-success" onclick="confirmMileageForStudent(2)">확정</button>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center py-4">
+                            프로그램을 선택하면 참여자 목록이 표시됩니다.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function calculateMileage() {
+            alert('참여율에 따라 마일리지를 자동으로 계산합니다.');
+            loadMileageProgram();
+        }
+
+        function editMileage(id) {
+            const newMileage = prompt('새로운 마일리지를 입력하세요:');
+            if (newMileage && !isNaN(newMileage)) {
+                alert(`학생 ${id}의 마일리지가 ${newMileage}P로 수정되었습니다.`);
+                loadMileageProgram();
+            }
+        }
+
+        function confirmMileageForStudent(id) {
+            if (confirm('이 학생의 마일리지를 확정하시겠습니까?')) {
+                alert(`학생 ${id}의 마일리지가 확정되었습니다.`);
+                loadMileageProgram();
+            }
+        }
+
+        function confirmMileage() {
+            if (confirm('모든 참여자의 마일리지를 확정하시겠습니까?')) {
+                alert('모든 마일리지가 확정되었습니다.');
+                loadMileageProgram();
+            }
+        }
+
+        function exportMileageList() {
+            alert('마일리지 목록을 Excel 파일로 다운로드합니다.');
+        }
+
+        function editMileageSetting(category) {
+            const newMileage = prompt(`${category} 카테고리의 새로운 기본 마일리지를 입력하세요:`);
+            if (newMileage && !isNaN(newMileage)) {
+                alert(`${category} 카테고리의 기본 마일리지가 ${newMileage}P로 설정되었습니다.`);
+                location.reload();
+            }
+        }
+
+        function editMileageRule(id) {
+            alert(`마일리지 규칙 ${id}을 수정합니다.`);
+        }
+
+        // 통계 관련 함수들
+        function exportStatistics() {
+            alert('통계 데이터를 Excel 파일로 다운로드합니다.');
+        }
+
+        function generateReport() {
+            alert('프로그램 운영 보고서를 생성합니다.');
+        }
+    </script>
+</body>
+</html>

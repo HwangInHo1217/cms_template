@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공지사항 - 교육 관리 시스템</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: linear-gradient(135deg, var(--primary-color), #34495e);
+            color: white;
+            z-index: 1000;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-brand {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 0;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .nav-link.active {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .nav-link i {
+            margin-right: 0.75rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        /* Notice Cards */
+        .notice-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+        }
+
+        .notice-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .notice-card.important {
+            border-left-color: var(--danger-color);
+            background: linear-gradient(135deg, #fff, #fff5f5);
+        }
+
+        .notice-card.urgent {
+            border-left-color: var(--warning-color);
+            background: linear-gradient(135deg, #fff, #fffbf0);
+        }
+
+        .notice-card.general {
+            border-left-color: var(--secondary-color);
+        }
+
+        .notice-card.event {
+            border-left-color: var(--success-color);
+            background: linear-gradient(135deg, #fff, #f0fff4);
+        }
+
+        .notice-header {
+            display: flex;
+            justify-content: between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .notice-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .notice-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+        }
+
+        .notice-content {
+            color: #495057;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .notice-footer {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .category-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .badge-important {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .badge-urgent {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .badge-general {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .badge-event {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .badge-new {
+            background-color: var(--danger-color);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            margin-left: 0.5rem;
+        }
+
+        /* Search and Filter */
+        .search-filter-section {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            border-radius: 25px;
+            border: 2px solid #e9ecef;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            border: 2px solid #e9ecef;
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            background: white;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--secondary-color);
+            color: var(--secondary-color);
+        }
+
+        .filter-btn.active {
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: white;
+        }
+
+        /* Pagination */
+        .pagination-custom {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 2rem;
+        }
+
+        .page-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #e9ecef;
+            border-radius: 50%;
+            background: white;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .page-btn:hover {
+            border-color: var(--secondary-color);
+            color: var(--secondary-color);
+        }
+
+        .page-btn.active {
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: white;
+        }
+
+        /* Notice Detail Modal */
+        .notice-detail-modal .modal-content {
+            border-radius: 15px;
+            border: none;
+        }
+
+        .notice-detail-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 15px 15px 0 0;
+            padding: 1.5rem;
+        }
+
+        .notice-detail-body {
+            padding: 2rem;
+        }
+
+        .notice-detail-content {
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: background-color 0.2s ease;
+        }
+
+        .attachment-item:hover {
+            background: #e9ecef;
+        }
+
+        .stats-section {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+
+            .filter-buttons {
+                justify-content: center;
+            }
+
+            .notice-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="sidebar-brand">
+                <i class="bi bi-mortarboard-fill me-2"></i>
+                교육 관리 시스템
+            </a>
+        </div>
+        
+        <div class="sidebar-nav">
+            <div class="nav-item">
+                <a href="index.html" class="nav-link">
+                    <i class="bi bi-house"></i>
+                    메인화면
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="mypage.html" class="nav-link">
+                    <i class="bi bi-person"></i>
+                    마이페이지
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="notice.html" class="nav-link active">
+                    <i class="bi bi-megaphone"></i>
+                    공지사항
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="competency-diagnosis.html" class="nav-link">
+                    <i class="bi bi-clipboard-data"></i>
+                    학생역량진단
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="extracurricular-programs.html" class="nav-link">
+                    <i class="bi bi-calendar-event"></i>
+                    비교과 프로그램
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="counseling.html" class="nav-link">
+                    <i class="bi bi-chat-dots"></i>
+                    상담관리
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="mileage.html" class="nav-link">
+                    <i class="bi bi-star"></i>
+                    마일리지 조회
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="d-flex align-items-center">
+                <button class="btn btn-link d-md-none me-3" onclick="toggleSidebar()">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div>
+                    <i class="bi bi-clock me-1"></i>
+                    <span id="currentTime"></span>
+                </div>
+            </div>
+            
+            <div class="d-flex align-items-center gap-3">
+                <div class="text-end">
+                    <div class="fw-medium">김학생</div>
+                    <small class="text-muted">컴퓨터공학과 3학년</small>
+                </div>
+                
+                <div class="dropdown">
+                    <button class="btn btn-link" data-bs-toggle="dropdown">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="mypage.html">마이페이지</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout()">로그아웃</a></li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="container">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb text-white-50">
+                        <li class="breadcrumb-item"><a href="index.html" class="text-white-50">홈</a></li>
+                        <li class="breadcrumb-item active text-white">공지사항</li>
+                    </ol>
+                </nav>
+                <h1 class="mb-0"><i class="bi bi-megaphone me-2"></i>공지사항</h1>
+                <p class="mb-0 mt-2">중요한 소식과 안내사항을 확인하세요</p>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- Statistics Section -->
+            <div class="stats-section">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="stat-item">
+                            <div class="stat-number">156</div>
+                            <div class="stat-label">전체 공지</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-item">
+                            <div class="stat-number text-danger">8</div>
+                            <div class="stat-label">중요 공지</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-item">
+                            <div class="stat-number text-warning">12</div>
+                            <div class="stat-label">긴급 공지</div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-item">
+                            <div class="stat-number text-success">23</div>
+                            <div class="stat-label">이번 주 신규</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search and Filter Section -->
+            <div class="search-filter-section">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">검색</label>
+                        <div class="search-box">
+                            <i class="bi bi-search search-icon"></i>
+                            <input type="text" class="form-control search-input" id="searchInput" 
+                                   placeholder="제목, 내용으로 검색하세요..." onkeyup="searchNotices()">
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">정렬</label>
+                        <select class="form-select" id="sortSelect" onchange="sortNotices()">
+                            <option value="latest">최신순</option>
+                            <option value="oldest">오래된순</option>
+                            <option value="views">조회수순</option>
+                            <option value="title">제목순</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">표시 개수</label>
+                        <select class="form-select" id="itemsPerPage" onchange="changeItemsPerPage()">
+                            <option value="10">10개씩</option>
+                            <option value="20" selected>20개씩</option>
+                            <option value="50">50개씩</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <label class="form-label fw-bold">카테고리</label>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-category="all" onclick="filterByCategory('all')">
+                            <i class="bi bi-grid me-1"></i>전체
+                        </button>
+                        <button class="filter-btn" data-category="important" onclick="filterByCategory('important')">
+                            <i class="bi bi-exclamation-triangle me-1"></i>중요
+                        </button>
+                        <button class="filter-btn" data-category="urgent" onclick="filterByCategory('urgent')">
+                            <i class="bi bi-lightning me-1"></i>긴급
+                        </button>
+                        <button class="filter-btn" data-category="general" onclick="filterByCategory('general')">
+                            <i class="bi bi-info-circle me-1"></i>일반
+                        </button>
+                        <button class="filter-btn" data-category="event" onclick="filterByCategory('event')">
+                            <i class="bi bi-calendar-event me-1"></i>행사
+                        </button>
+                        <button class="filter-btn" data-category="academic" onclick="filterByCategory('academic')">
+                            <i class="bi bi-book me-1"></i>학사
+                        </button>
+                        <button class="filter-btn" data-category="scholarship" onclick="filterByCategory('scholarship')">
+                            <i class="bi bi-award me-1"></i>장학
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notice List -->
+            <div id="noticeList">
+                <!-- Important Notice -->
+                <div class="notice-card important" data-category="important" data-id="1" onclick="openNoticeDetail(1)">
+                    <div class="notice-header">
+                        <div class="flex-grow-1">
+                            <div class="notice-title">
+                                2024학년도 1학기 수강신청 안내
+                                <span class="badge badge-new">NEW</span>
+                            </div>
+                            <div class="notice-meta">
+                                <span><i class="bi bi-person me-1"></i>학사팀</span>
+                                <span><i class="bi bi-calendar me-1"></i>2024-01-15</span>
+                                <span><i class="bi bi-eye me-1"></i>1,234</span>
+                                <span><i class="bi bi-paperclip me-1"></i>3</span>
+                            </div>
+                        </div>
+                        <span class="category-badge badge-important">중요</span>
+                    </div>
+                    <div class="notice-content">
+                        2024학년도 1학기 수강신청 일정 및 유의사항을 안내드립니다. 수강신청 기간은 2024년 2월 5일부터 2월 9일까지이며, 
+                        학년별로 시간이 다르니 반드시 확인하시기 바랍니다...
+                    </div>
+                    <div class="notice-footer">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-heart me-1"></i>
+                            <span class="me-3">156</span>
+                            <i class="bi bi-chat me-1"></i>
+                            <span>23</span>
+                        </div>
+                        <small class="text-muted">3일 전</small>
+                    </div>
+                </div>
+
+                <!-- Urgent Notice -->
+                <div class="notice-card urgent" data-category="urgent" data-id="2" onclick="openNoticeDetail(2)">
+                    <div class="notice-header">
+                        <div class="flex-grow-1">
+                            <div class="notice-title">
+                                시스템 점검으로 인한 일시 서비스 중단 안내
+                            </div>
+                            <div class="notice-meta">
+                                <span><i class="bi bi-person me-1"></i>전산팀</span>
+                                <span><i class="bi bi-calendar me-1"></i>2024-01-14</span>
+                                <span><i class="bi bi-eye me-1"></i>892</span>
+                            </div>
+                        </div>
+                        <span class="category-badge badge-urgent">긴급</span>
+                    </div>
+                    <div class="notice-content">
+                        시스템 안정성 향상을 위한 정기 점검이 예정되어 있습니다. 점검 시간: 2024년 1월 20일 (토) 02:00 ~ 06:00 (4시간)
+                        점검 중에는 모든 서비스 이용이 불가능합니다...
+                    </div>
+                    <div class="notice-footer">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-heart me-1"></i>
+                            <span class="me-3">89</span>
+                            <i class="bi bi-chat me-1"></i>
+                            <span>12</span>
+                        </div>
+                        <small class="text-muted">4일 전</small>
+                    </div>
+                </div>
+
+                <!-- Event Notice -->
+                <div class="notice-card event" data-category="event" data-id="3" onclick="openNoticeDetail(3)">
+                    <div class="notice-header">
+                        <div class="flex-grow-1">
+                            <div class="notice-title">
+                                2024 창업 아이디어 경진대회 개최 안내
+                            </div>
+                            <div class="notice-meta">
+                                <span><i class="bi bi-person me-1"></i>창업지원센터</span>
+                                <span><i class="bi bi-calendar me-1"></i>2024-01-12</span>
+                                <span><i class="bi bi-eye me-1"></i>567</span>
+                                <span><i class="bi bi-paperclip me-1"></i>2</span>
+                            </div>
+                        </div>
+                        <span class="category-badge badge-event">행사</span>
+                    </div>
+                    <div class="notice-content">
+                        혁신적인 창업 아이디어를 가진 학생들을 위한 경진대회를 개최합니다. 
+                        참가 신청: 2024년 1월 15일 ~ 2월 15일, 대상: 재학생 전체, 상금: 총 500만원...
+                    </div>
+                    <div class="notice-footer">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-heart me-1"></i>
+                            <span class="me-3">234</span>
+                            <i class="bi bi-chat me-1"></i>
+                            <span>45</span>
+                        </div>
+                        <small class="text-muted">6일 전</small>
+                    </div>
+                </div>
+
+                <!-- General Notice -->
+                <div class="notice-card general" data-category="general" data-id="4" onclick="openNoticeDetail(4)">
+                    <div class="notice-header">
+                        <div class="flex-grow-1">
+                            <div class="notice-title">
+                                도서관 이용시간 변경 안내
+                            </div>
+                            <div class="notice-meta">
+                                <span><i class="bi bi-person me-1"></i>도서관</span>
+                                <span><i class="bi bi-calendar me-1"></i>2024-01-10</span>
+                                <span><i class="bi bi-eye me-1"></i>345</span>
+                            </div>
+                        </div>
+                        <span class="category-badge badge-general">일반</span>
+                    </div>
+                    <div class="notice-content">
+                        2024년 1월부터 도서관 이용시간이 변경됩니다. 
+                        평일: 09:00 ~ 22:00, 주말: 09:00 ~ 18:00, 공휴일: 휴관...
+                    </div>
+                    <div class="notice-footer">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-heart me-1"></i>
+                            <span class="me-3">67</span>
+                            <i class="bi bi-chat me-1"></i>
+                            <span>8</span>
+                        </div>
+                        <small class="text-muted">1주 전</small>
+                    </div>
+                </div>
+
+                <!-- Academic Notice -->
+                <div class="notice-card general" data-category="academic" data-id="5" onclick="openNoticeDetail(5)">
+                    <div class="notice-header">
+                        <div class="flex-grow-1">
+                            <div class="notice-title">
+                                2024년 1학기 학사일정 안내
+                            </div>
+                            <div class="notice-meta">
+                                <span><i class="bi bi-person me-1"></i>학사팀</span>
+                                <span><i class="bi bi-calendar me-1"></i>2024-01-08</span>
+                                <span><i class="bi bi-eye me-1"></i>789</span>
+                                <span><i class="bi bi-paperclip me-1"></i>1</span>
+                            </div>
+                        </div>
+                        <span class="category-badge badge-general">학사</span>
+                    </div>
+                    <div class="notice-content">
+                        2024년 1학기 주요 학사일정을 안내드립니다. 
+                        개강: 3월 4일, 중간고사: 4월 22일~26일, 기말고사: 6월 17일~21일...
+                    </div>
+                    <div class="notice-footer">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-heart me-1"></i>
+                            <span class="me-3">123</span>
+                            <i class="bi bi-chat me-1"></i>
+                            <span>15</span>
+                        </div>
+                        <small class="text-muted">1주 전</small>
+                    </div>
+                </div>
+
+                <!-- Scholarship Notice -->
+                <div class="notice-card general" data-category="scholarship" data-id="6" onclick="openNoticeDetail(6)">
+                    <div class="notice-header">
+                        <div class="flex-grow-1">
+                            <div class="notice-title">
+                                2024년 1학기 장학금 신청 안내
+                            </div>
+                            <div class="notice-meta">
+                                <span><i class="bi bi-person me-1"></i>학생지원팀</span>
+                                <span><i class="bi bi-calendar me-1"></i>2024-01-05</span>
+                                <span><i class="bi bi-eye me-1"></i>1,456</span>
+                                <span><i class="bi bi-paperclip me-1"></i>4</span>
+                            </div>
+                        </div>
+                        <span class="category-badge badge-general">장학</span>
+                    </div>
+                    <div class="notice-content">
+                        2024년 1학기 각종 장학금 신청을 받습니다. 
+                        신청 기간: 2024년 1월 15일 ~ 2월 15일, 대상: 재학생 전체, 
+                        성적우수장학금, 봉사장학금, 근로장학금 등...
+                    </div>
+                    <div class="notice-footer">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-heart me-1"></i>
+                            <span class="me-3">456</span>
+                            <i class="bi bi-chat me-1"></i>
+                            <span>78</span>
+                        </div>
+                        <small class="text-muted">2주 전</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-custom">
+                <button class="page-btn" onclick="changePage('prev')">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <button class="page-btn active" onclick="changePage(1)">1</button>
+                <button class="page-btn" onclick="changePage(2)">2</button>
+                <button class="page-btn" onclick="changePage(3)">3</button>
+                <button class="page-btn" onclick="changePage(4)">4</button>
+                <button class="page-btn" onclick="changePage(5)">5</button>
+                <button class="page-btn" onclick="changePage('next')">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notice Detail Modal -->
+    <div class="modal fade notice-detail-modal" id="noticeDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="notice-detail-header">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h4 class="mb-2" id="modalTitle">공지사항 제목</h4>
+                            <div class="d-flex align-items-center gap-3 text-white-50">
+                                <span><i class="bi bi-person me-1"></i><span id="modalAuthor">작성자</span></span>
+                                <span><i class="bi bi-calendar me-1"></i><span id="modalDate">작성일</span></span>
+                                <span><i class="bi bi-eye me-1"></i><span id="modalViews">조회수</span></span>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                </div>
+                <div class="notice-detail-body">
+                    <div class="mb-4">
+                        <span class="category-badge" id="modalCategory">카테고리</span>
+                    </div>
+                    
+                    <div class="notice-detail-content" id="modalContent">
+                        <!-- 공지사항 내용이 여기에 표시됩니다 -->
+                    </div>
+
+                    <div class="mt-4" id="attachmentSection" style="display: none;">
+                        <h6 class="mb-3">
+                            <i class="bi bi-paperclip me-2"></i>첨부파일
+                        </h6>
+                        <div id="attachmentList">
+                            <!-- 첨부파일 목록이 여기에 표시됩니다 -->
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-top">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex gap-3">
+                                <button class="btn btn-outline-primary" onclick="likeNotice()">
+                                    <i class="bi bi-heart me-1"></i>좋아요 <span id="likeCount">0</span>
+                                </button>
+                                <button class="btn btn-outline-secondary" onclick="shareNotice()">
+                                    <i class="bi bi-share me-1"></i>공유
+                                </button>
+                                <button class="btn btn-outline-info" onclick="bookmarkNotice()">
+                                    <i class="bi bi-bookmark me-1"></i>북마크
+                                </button>
+                            </div>
+                            <button class="btn btn-primary" onclick="printNotice()">
+                                <i class="bi bi-printer me-1"></i>인쇄
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 현재 시간 표시
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('ko-KR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('currentTime').textContent = timeString;
+        }
+
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // 사이드바 토글
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('show');
+        }
+
+        // 공지사항 데이터
+        const noticeData = {
+            1: {
+                title: "2024학년도 1학기 수강신청 안내",
+                author: "학사팀",
+                date: "2024-01-15",
+                views: 1234,
+                category: "important",
+                content: `
+                    <h5>2024학년도 1학기 수강신청 안내</h5>
+                    <p>2024학년도 1학기 수강신청 일정 및 유의사항을 안내드립니다.</p>
+                    
+                    <h6>📅 수강신청 일정</h6>
+                    <ul>
+                        <li><strong>1차 수강신청:</strong> 2024년 2월 5일(월) 09:00 ~ 2월 7일(수) 18:00</li>
+                        <li><strong>2차 수강신청:</strong> 2024년 2월 8일(목) 09:00 ~ 2월 9일(금) 18:00</li>
+                        <li><strong>수강신청 변경:</strong> 2024년 3월 4일(월) ~ 3월 8일(금)</li>
+                    </ul>
+
+                    <h6>⚠️ 주요 유의사항</h6>
+                    <ul>
+                        <li>학년별 수강신청 시간이 다르니 반드시 확인하시기 바랍니다.</li>
+                        <li>졸업요건을 반드시 확인하고 수강신청하시기 바랍니다.</li>
+                        <li>수강신청 시스템 접속 집중으로 인한 지연이 발생할 수 있습니다.</li>
+                    </ul>
+
+                    <h6>📞 문의사항</h6>
+                    <p>수강신청 관련 문의사항은 학사팀(02-1234-5678)으로 연락주시기 바랍니다.</p>
+                `,
+                attachments: [
+                    { name: "수강신청_안내문.pdf", size: "2.3MB" },
+                    { name: "졸업요건_체크리스트.xlsx", size: "1.1MB" },
+                    { name: "학년별_수강신청_시간표.pdf", size: "856KB" }
+                ],
+                likes: 156
+            },
+            2: {
+                title: "시스템 점검으로 인한 일시 서비스 중단 안내",
+                author: "전산팀",
+                date: "2024-01-14",
+                views: 892,
+                category: "urgent",
+                content: `
+                    <h5>시스템 점검으로 인한 일시 서비스 중단 안내</h5>
+                    <p>시스템 안정성 향상을 위한 정기 점검을 실시합니다.</p>
+                    
+                    <h6>🔧 점검 일정</h6>
+                    <ul>
+                        <li><strong>점검 일시:</strong> 2024년 1월 20일(토) 02:00 ~ 06:00 (4시간)</li>
+                        <li><strong>영향 범위:</strong> 전체 시스템 (웹사이트, 모바일 앱)</li>
+                    </ul>
+
+                    <h6>⚠️ 서비스 중단 내용</h6>
+                    <ul>
+                        <li>교육 관리 시스템 전체 서비스</li>
+                        <li>수강신청 시스템</li>
+                        <li>성적 조회 시스템</li>
+                        <li>도서관 시스템</li>
+                    </ul>
+
+                    <p><strong>점검 중에는 모든 서비스 이용이 불가능하니 양해 부탁드립니다.</strong></p>
+                `,
+                attachments: [],
+                likes: 89
+            }
+        };
+
+        // 카테고리 필터링
+        function filterByCategory(category) {
+            // 필터 버튼 활성화 상태 변경
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-category="${category}"]`).classList.add('active');
+
+            // 공지사항 필터링
+            const notices = document.querySelectorAll('.notice-card');
+            notices.forEach(notice => {
+                if (category === 'all' || notice.dataset.category === category) {
+                    notice.style.display = 'block';
+                } else {
+                    notice.style.display = 'none';
+                }
+            });
+        }
+
+        // 검색 기능
+        function searchNotices() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const notices = document.querySelectorAll('.notice-card');
+
+            notices.forEach(notice => {
+                const title = notice.querySelector('.notice-title').textContent.toLowerCase();
+                const content = notice.querySelector('.notice-content').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || content.includes(searchTerm)) {
+                    notice.style.display = 'block';
+                } else {
+                    notice.style.display = 'none';
+                }
+            });
+        }
+
+        // 정렬 기능
+        function sortNotices() {
+            const sortBy = document.getElementById('sortSelect').value;
+            const noticeList = document.getElementById('noticeList');
+            const notices = Array.from(noticeList.querySelectorAll('.notice-card'));
+
+            notices.sort((a, b) => {
+                switch(sortBy) {
+                    case 'latest':
+                        return new Date(b.querySelector('.notice-meta span:nth-child(2)').textContent.split(' ')[1]) - 
+                               new Date(a.querySelector('.notice-meta span:nth-child(2)').textContent.split(' ')[1]);
+                    case 'oldest':
+                        return new Date(a.querySelector('.notice-meta span:nth-child(2)').textContent.split(' ')[1]) - 
+                               new Date(b.querySelector('.notice-meta span:nth-child(2)').textContent.split(' ')[1]);
+                    case 'views':
+                        return parseInt(b.querySelector('.notice-meta span:nth-child(3)').textContent) - 
+                               parseInt(a.querySelector('.notice-meta span:nth-child(3)').textContent);
+                    case 'title':
+                        return a.querySelector('.notice-title').textContent.localeCompare(b.querySelector('.notice-title').textContent);
+                    default:
+                        return 0;
+                }
+            });
+
+            // 정렬된 순서로 다시 배치
+            notices.forEach(notice => noticeList.appendChild(notice));
+        }
+
+        // 페이지당 항목 수 변경
+        function changeItemsPerPage() {
+            const itemsPerPage = document.getElementById('itemsPerPage').value;
+            alert(`페이지당 ${itemsPerPage}개씩 표시하도록 설정되었습니다.`);
+        }
+
+        // 페이지 변경
+        function changePage(page) {
+            // 현재 활성 페이지 제거
+            document.querySelectorAll('.page-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            if (page === 'prev' || page === 'next') {
+                // 이전/다음 페이지 로직
+                alert(`${page === 'prev' ? '이전' : '다음'} 페이지로 이동합니다.`);
+            } else {
+                // 특정 페이지로 이동
+                document.querySelector(`[onclick="changePage(${page})"]`).classList.add('active');
+                alert(`${page}페이지로 이동합니다.`);
+            }
+        }
+
+        // 공지사항 상세보기
+        function openNoticeDetail(noticeId) {
+            const notice = noticeData[noticeId];
+            if (!notice) return;
+
+            // 모달 내용 설정
+            document.getElementById('modalTitle').textContent = notice.title;
+            document.getElementById('modalAuthor').textContent = notice.author;
+            document.getElementById('modalDate').textContent = notice.date;
+            document.getElementById('modalViews').textContent = notice.views.toLocaleString();
+            document.getElementById('modalContent').innerHTML = notice.content;
+            document.getElementById('likeCount').textContent = notice.likes;
+
+            // 카테고리 배지 설정
+            const categoryBadge = document.getElementById('modalCategory');
+            categoryBadge.className = 'category-badge';
+            switch(notice.category) {
+                case 'important':
+                    categoryBadge.classList.add('badge-important');
+                    categoryBadge.textContent = '중요';
+                    break;
+                case 'urgent':
+                    categoryBadge.classList.add('badge-urgent');
+                    categoryBadge.textContent = '긴급';
+                    break;
+                case 'event':
+                    categoryBadge.classList.add('badge-event');
+                    categoryBadge.textContent = '행사';
+                    break;
+                default:
+                    categoryBadge.classList.add('badge-general');
+                    categoryBadge.textContent = '일반';
+            }
+
+            // 첨부파일 설정
+            const attachmentSection = document.getElementById('attachmentSection');
+            const attachmentList = document.getElementById('attachmentList');
+            
+            if (notice.attachments && notice.attachments.length > 0) {
+                attachmentSection.style.display = 'block';
+                attachmentList.innerHTML = '';
+                
+                notice.attachments.forEach(file => {
+                    const attachmentItem = document.createElement('div');
+                    attachmentItem.className = 'attachment-item';
+                    attachmentItem.innerHTML = `
+                        <i class="bi bi-file-earmark me-2"></i>
+                        <div class="flex-grow-1">
+                            <div class="fw-medium">${file.name}</div>
+                            <small class="text-muted">${file.size}</small>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary" onclick="downloadFile('${file.name}')">
+                            <i class="bi bi-download"></i>
+                        </button>
+                    `;
+                    attachmentList.appendChild(attachmentItem);
+                });
+            } else {
+                attachmentSection.style.display = 'none';
+            }
+
+            // 조회수 증가 (실제 구현에서는 서버에 요청)
+            const viewElement = document.querySelector(`[data-id="${noticeId}"] .notice-meta span:nth-child(3)`);
+            if (viewElement) {
+                const currentViews = parseInt(viewElement.textContent);
+                viewElement.innerHTML = `<i class="bi bi-eye me-1"></i>${(currentViews + 1).toLocaleString()}`;
+            }
+
+            // 모달 표시
+            const modal = new bootstrap.Modal(document.getElementById('noticeDetailModal'));
+            modal.show();
+        }
+
+        // 파일 다운로드
+        function downloadFile(filename) {
+            alert(`${filename} 파일을 다운로드합니다.`);
+        }
+
+        // 좋아요
+        function likeNotice() {
+            const likeCount = document.getElementById('likeCount');
+            const currentLikes = parseInt(likeCount.textContent);
+            likeCount.textContent = currentLikes + 1;
+            alert('좋아요를 눌렀습니다!');
+        }
+
+        // 공유
+        function shareNotice() {
+            if (navigator.share) {
+                navigator.share({
+                    title: document.getElementById('modalTitle').textContent,
+                    url: window.location.href
+                });
+            } else {
+                // 클립보드에 URL 복사
+                navigator.clipboard.writeText(window.location.href);
+                alert('링크가 클립보드에 복사되었습니다.');
+            }
+        }
+
+        // 북마크
+        function bookmarkNotice() {
+            alert('북마크에 추가되었습니다.');
+        }
+
+        // 인쇄
+        function printNotice() {
+            window.print();
+        }
+
+        // 로그아웃
+        function logout() {
+            if (confirm('로그아웃 하시겠습니까?')) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // 엔터 키로 검색
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchNotices();
+            }
+        });
+
+        // 사이드바 외부 클릭 시 닫기 (모바일)
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const isClickInsideSidebar = sidebar.contains(event.target);
+            const isToggleButton = event.target.closest('.btn-link');
+            
+            if (!isClickInsideSidebar && !isToggleButton && window.innerWidth <= 768) {
+                sidebar.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>

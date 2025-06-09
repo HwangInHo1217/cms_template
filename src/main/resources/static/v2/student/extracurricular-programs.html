@@ -1,0 +1,1989 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>비교과 프로그램 - 교육 관리 시스템</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --info-color: #17a2b8;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: linear-gradient(135deg, var(--primary-color), #34495e);
+            color: white;
+            z-index: 1000;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .sidebar-brand {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.5rem;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 0;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .nav-link.active {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .nav-link i {
+            margin-right: 0.75rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: between;
+            align-items: center;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        /* Program Cards */
+        .program-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .program-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .program-card.featured {
+            border-left-color: var(--warning-color);
+            background: linear-gradient(135deg, #fff, #fffbf0);
+        }
+
+        .program-card.popular {
+            border-left-color: var(--success-color);
+            background: linear-gradient(135deg, #fff, #f0fff4);
+        }
+
+        .program-card.urgent {
+            border-left-color: var(--danger-color);
+            background: linear-gradient(135deg, #fff, #fff5f5);
+        }
+
+        .program-header {
+            display: flex;
+            justify-content: between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .program-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+
+        .program-category {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .category-leadership {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .category-creativity {
+            background-color: var(--info-color);
+            color: white;
+        }
+
+        .category-career {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .category-volunteer {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .category-academic {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .program-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .program-description {
+            color: #495057;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .program-details {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .program-footer {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .mileage-badge {
+            background: linear-gradient(135deg, var(--warning-color), #f7dc6f);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-recruiting {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .status-deadline-soon {
+            background-color: var(--warning-color);
+            color: white;
+        }
+
+        .status-closed {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .status-ongoing {
+            background-color: var(--info-color);
+            color: white;
+        }
+
+        .status-completed {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .filter-btn {
+            border: 2px solid #e9ecef;
+            border-radius: 20px;
+            padding: 0.5rem 1rem;
+            background: white;
+            color: #6c757d;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--secondary-color);
+            color: var(--secondary-color);
+        }
+
+        .filter-btn.active {
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: white;
+        }
+
+        /* Search Box */
+        .search-box {
+            position: relative;
+        }
+
+        .search-input {
+            border-radius: 25px;
+            border: 2px solid #e9ecef;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+
+        /* My Programs Section */
+        .my-programs-overview {
+            background: linear-gradient(135deg, var(--success-color), #58d68d);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        /* Progress Tracking */
+        .progress-item {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .progress-bar-custom {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #e9ecef;
+            overflow: hidden;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.8s ease;
+        }
+
+        .progress-leadership { background: linear-gradient(90deg, #e74c3c, #ec7063); }
+        .progress-creativity { background: linear-gradient(90deg, #17a2b8, #5dade2); }
+        .progress-career { background: linear-gradient(90deg, #27ae60, #58d68d); }
+        .progress-volunteer { background: linear-gradient(90deg, #f39c12, #f7dc6f); }
+
+        /* Mileage Section */
+        .mileage-overview {
+            background: linear-gradient(135deg, var(--warning-color), #f7dc6f);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .mileage-number {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .mileage-history {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .mileage-item {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #e9ecef;
+            transition: background-color 0.2s ease;
+        }
+
+        .mileage-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .mileage-item:last-child {
+            border-bottom: none;
+        }
+
+        .mileage-earned {
+            color: var(--success-color);
+            font-weight: bold;
+        }
+
+        .mileage-used {
+            color: var(--danger-color);
+            font-weight: bold;
+        }
+
+        /* Calendar View */
+        .calendar-container {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: #e9ecef;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .calendar-day {
+            background: white;
+            padding: 0.75rem;
+            min-height: 80px;
+            position: relative;
+        }
+
+        .calendar-day.other-month {
+            background: #f8f9fa;
+            color: #6c757d;
+        }
+
+        .calendar-event {
+            background: var(--secondary-color);
+            color: white;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            margin-bottom: 0.2rem;
+            cursor: pointer;
+        }
+
+        /* Application Modal */
+        .application-modal .modal-content {
+            border-radius: 15px;
+            border: none;
+        }
+
+        .application-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 15px 15px 0 0;
+            padding: 1.5rem;
+        }
+
+        .form-floating {
+            margin-bottom: 1rem;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.show {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-buttons {
+                justify-content: center;
+            }
+
+            .program-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .program-footer {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .calendar-grid {
+                font-size: 0.8rem;
+            }
+
+            .calendar-day {
+                min-height: 60px;
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="sidebar-brand">
+                <i class="bi bi-mortarboard-fill me-2"></i>
+                교육 관리 시스템
+            </a>
+        </div>
+        
+        <div class="sidebar-nav">
+            <div class="nav-item">
+                <a href="index.html" class="nav-link">
+                    <i class="bi bi-house"></i>
+                    메인화면
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="mypage.html" class="nav-link">
+                    <i class="bi bi-person"></i>
+                    마이페이지
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="notice.html" class="nav-link">
+                    <i class="bi bi-megaphone"></i>
+                    공지사항
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="competency-diagnosis.html" class="nav-link">
+                    <i class="bi bi-clipboard-data"></i>
+                    학생역량진단
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="extracurricular-programs.html" class="nav-link active">
+                    <i class="bi bi-calendar-event"></i>
+                    비교과 프로그램
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="counseling.html" class="nav-link">
+                    <i class="bi bi-chat-dots"></i>
+                    상담관리
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="mileage.html" class="nav-link">
+                    <i class="bi bi-star"></i>
+                    마일리지 조회
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <div class="d-flex align-items-center">
+                <button class="btn btn-link d-md-none me-3" onclick="toggleSidebar()">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div>
+                    <i class="bi bi-clock me-1"></i>
+                    <span id="currentTime"></span>
+                </div>
+            </div>
+            
+            <div class="d-flex align-items-center gap-3">
+                <div class="text-end">
+                    <div class="fw-medium">김학생</div>
+                    <small class="text-muted">컴퓨터공학과 3학년</small>
+                </div>
+                
+                <div class="dropdown">
+                    <button class="btn btn-link" data-bs-toggle="dropdown">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="mypage.html">마이페이지</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout()">로그아웃</a></li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="container">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb text-white-50">
+                        <li class="breadcrumb-item"><a href="index.html" class="text-white-50">홈</a></li>
+                        <li class="breadcrumb-item active text-white">비교과 프로그램</li>
+                    </ol>
+                </nav>
+                <h1 class="mb-0"><i class="bi bi-calendar-event me-2"></i>비교과 프로그램</h1>
+                <p class="mb-0 mt-2">다양한 프로그램에 참여하여 역량을 키우고 마일리지를 획득하세요</p>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- Tab Navigation -->
+            <ul class="nav nav-tabs mb-4" id="programTabs">
+                <li class="nav-item">
+                    <a class="nav-link active" data-bs-toggle="tab" href="#programListTab">
+                        <i class="bi bi-list me-1"></i>프로그램 목록
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#myProgramsTab">
+                        <i class="bi bi-person-check me-1"></i>나의 프로그램
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#mileageTab">
+                        <i class="bi bi-star me-1"></i>마일리지 관리
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-bs-toggle="tab" href="#calendarTab">
+                        <i class="bi bi-calendar3 me-1"></i>일정 보기
+                    </a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <!-- Program List Tab -->
+                <div class="tab-pane fade show active" id="programListTab">
+                    <!-- Statistics Overview -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">42</div>
+                            <div class="stat-label">전체 프로그램</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number text-success">18</div>
+                            <div class="stat-label">모집 중</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number text-warning">8</div>
+                            <div class="stat-label">마감 임박</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number text-info">12</div>
+                            <div class="stat-label">진행 중</div>
+                        </div>
+                    </div>
+
+                    <!-- Filter and Search Section -->
+                    <div class="filter-section">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">검색</label>
+                                <div class="search-box">
+                                    <i class="bi bi-search search-icon"></i>
+                                    <input type="text" class="form-control search-input" id="searchInput" 
+                                           placeholder="프로그램명, 내용으로 검색하세요..." onkeyup="searchPrograms()">
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">정렬</label>
+                                <select class="form-select" id="sortSelect" onchange="sortPrograms()">
+                                    <option value="latest">최신순</option>
+                                    <option value="deadline">마감일순</option>
+                                    <option value="popular">인기순</option>
+                                    <option value="mileage">마일리지순</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">상태</label>
+                                <select class="form-select" id="statusFilter" onchange="filterByStatus()">
+                                    <option value="all">전체</option>
+                                    <option value="recruiting">모집중</option>
+                                    <option value="deadline-soon">마감임박</option>
+                                    <option value="ongoing">진행중</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <label class="form-label fw-bold">카테고리</label>
+                            <div class="filter-buttons">
+                                <button class="filter-btn active" data-category="all" onclick="filterByCategory('all')">
+                                    <i class="bi bi-grid me-1"></i>전체
+                                </button>
+                                <button class="filter-btn" data-category="leadership" onclick="filterByCategory('leadership')">
+                                    <i class="bi bi-people me-1"></i>리더십
+                                </button>
+                                <button class="filter-btn" data-category="creativity" onclick="filterByCategory('creativity')">
+                                    <i class="bi bi-lightbulb me-1"></i>창의성
+                                </button>
+                                <button class="filter-btn" data-category="career" onclick="filterByCategory('career')">
+                                    <i class="bi bi-briefcase me-1"></i>진로
+                                </button>
+                                <button class="filter-btn" data-category="volunteer" onclick="filterByCategory('volunteer')">
+                                    <i class="bi bi-heart me-1"></i>봉사
+                                </button>
+                                <button class="filter-btn" data-category="academic" onclick="filterByCategory('academic')">
+                                    <i class="bi bi-book me-1"></i>학술
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Program List -->
+                    <div id="programList">
+                        <!-- Featured Program -->
+                        <div class="program-card featured" data-category="leadership" data-status="recruiting" data-id="1">
+                            <div class="program-header">
+                                <div class="flex-grow-1">
+                                    <div class="program-category category-leadership">리더십</div>
+                                    <div class="program-title">글로벌 리더십 아카데미</div>
+                                    <div class="program-meta">
+                                        <span><i class="bi bi-calendar me-1"></i>2024.02.15 ~ 2024.03.15</span>
+                                        <span><i class="bi bi-people me-1"></i>20명 모집</span>
+                                        <span><i class="bi bi-geo-alt me-1"></i>국제관 세미나실</span>
+                                        <span><i class="bi bi-clock me-1"></i>매주 수요일 18:00-20:00</span>
+                                    </div>
+                                </div>
+                                <span class="status-badge status-recruiting">모집중</span>
+                            </div>
+                            <div class="program-description">
+                                글로벌 시대에 필요한 리더십 역량을 기르는 4주 집중 프로그램입니다. 
+                                국제적 감각과 소통 능력, 팀 리더십을 체계적으로 학습하고 실습할 수 있습니다.
+                            </div>
+                            <div class="program-details">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <strong>신청 마감:</strong> 2024년 2월 10일
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>참가비:</strong> 무료
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>수료 조건:</strong> 80% 이상 출석
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>혜택:</strong> 수료증 발급, 추천서 작성
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="program-footer">
+                                <div class="mileage-badge">
+                                    <i class="bi bi-star-fill"></i>
+                                    <span>200P</span>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-primary btn-sm" onclick="viewProgramDetail(1)">
+                                        <i class="bi bi-eye me-1"></i>상세보기
+                                    </button>
+                                    <button class="btn btn-primary btn-sm" onclick="applyProgram(1)">
+                                        <i class="bi bi-plus-circle me-1"></i>신청하기
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Popular Program -->
+                        <div class="program-card popular" data-category="creativity" data-status="recruiting" data-id="2">
+                            <div class="program-header">
+                                <div class="flex-grow-1">
+                                    <div class="program-category category-creativity">창의성</div>
+                                    <div class="program-title">창의적 사고와 혁신 워크숍</div>
+                                    <div class="program-meta">
+                                        <span><i class="bi bi-calendar me-1"></i>2024.02.20 ~ 2024.02.22</span>
+                                        <span><i class="bi bi-people me-1"></i>30명 모집</span>
+                                        <span><i class="bi bi-geo-alt me-1"></i>창의관 메이커스페이스</span>
+                                        <span><i class="bi bi-clock me-1"></i>3일간 집중 워크숍</span>
+                                    </div>
+                                </div>
+                                <span class="status-badge status-deadline-soon">마감임박</span>
+                            </div>
+                            <div class="program-description">
+                                디자인 씽킹과 창의적 문제해결 기법을 배우는 3일간의 집중 워크숍입니다. 
+                                실제 프로젝트를 통해 아이디어 발상부터 프로토타입 제작까지 경험할 수 있습니다.
+                            </div>
+                            <div class="program-details">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <strong>신청 마감:</strong> 2024년 2월 15일
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>참가비:</strong> 30,000원
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>준비물:</strong> 노트북, 필기구
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>혜택:</strong> 프로토타입 제작비 지원
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="program-footer">
+                                <div class="mileage-badge">
+                                    <i class="bi bi-star-fill"></i>
+                                    <span>150P</span>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-primary btn-sm" onclick="viewProgramDetail(2)">
+                                        <i class="bi bi-eye me-1"></i>상세보기
+                                    </button>
+                                    <button class="btn btn-primary btn-sm" onclick="applyProgram(2)">
+                                        <i class="bi bi-plus-circle me-1"></i>신청하기
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Career Program -->
+                        <div class="program-card" data-category="career" data-status="recruiting" data-id="3">
+                            <div class="program-header">
+                                <div class="flex-grow-1">
+                                    <div class="program-category category-career">진로</div>
+                                    <div class="program-title">IT 기업 멘토링 프로그램</div>
+                                    <div class="program-meta">
+                                        <span><i class="bi bi-calendar me-1"></i>2024.03.01 ~ 2024.05.31</span>
+                                        <span><i class="bi bi-people me-1"></i>15명 모집</span>
+                                        <span><i class="bi bi-geo-alt me-1"></i>온라인/오프라인 병행</span>
+                                        <span><i class="bi bi-clock me-1"></i>월 2회 멘토링</span>
+                                    </div>
+                                </div>
+                                <span class="status-badge status-recruiting">모집중</span>
+                            </div>
+                            <div class="program-description">
+                                현직 IT 기업 임직원과의 1:1 멘토링을 통해 실무 경험을 쌓고 진로를 구체화하는 프로그램입니다. 
+                                포트폴리오 리뷰, 면접 준비, 업계 트렌드 등을 학습할 수 있습니다.
+                            </div>
+                            <div class="program-details">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <strong>신청 마감:</strong> 2024년 2월 25일
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>참가비:</strong> 무료
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>대상:</strong> 컴공과, 전자과 3-4학년
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>혜택:</strong> 인턴십 연계 기회
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="program-footer">
+                                <div class="mileage-badge">
+                                    <i class="bi bi-star-fill"></i>
+                                    <span>300P</span>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-primary btn-sm" onclick="viewProgramDetail(3)">
+                                        <i class="bi bi-eye me-1"></i>상세보기
+                                    </button>
+                                    <button class="btn btn-primary btn-sm" onclick="applyProgram(3)">
+                                        <i class="bi bi-plus-circle me-1"></i>신청하기
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Volunteer Program -->
+                        <div class="program-card" data-category="volunteer" data-status="ongoing" data-id="4">
+                            <div class="program-header">
+                                <div class="flex-grow-1">
+                                    <div class="program-category category-volunteer">봉사</div>
+                                    <div class="program-title">지역 아동센터 학습 지도</div>
+                                    <div class="program-meta">
+                                        <span><i class="bi bi-calendar me-1"></i>2024.01.15 ~ 2024.06.30</span>
+                                        <span><i class="bi bi-people me-1"></i>상시 모집</span>
+                                        <span><i class="bi bi-geo-alt me-1"></i>인근 지역 아동센터</span>
+                                        <span><i class="bi bi-clock me-1"></i>주 1회 2시간</span>
+                                    </div>
+                                </div>
+                                <span class="status-badge status-ongoing">진행중</span>
+                            </div>
+                            <div class="program-description">
+                                지역 아동센터에서 초등학생들의 학습을 도와주는 봉사활동입니다. 
+                                교육 재능기부를 통해 사회에 기여하고 교육 경험을 쌓을 수 있습니다.
+                            </div>
+                            <div class="program-details">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <strong>신청:</strong> 상시 접수
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>참가비:</strong> 무료
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>최소 기간:</strong> 1개월 이상
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>혜택:</strong> 봉사활동 확인서
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="program-footer">
+                                <div class="mileage-badge">
+                                    <i class="bi bi-star-fill"></i>
+                                    <span>시간당 20P</span>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-primary btn-sm" onclick="viewProgramDetail(4)">
+                                        <i class="bi bi-eye me-1"></i>상세보기
+                                    </button>
+                                    <button class="btn btn-success btn-sm" onclick="applyProgram(4)">
+                                        <i class="bi bi-plus-circle me-1"></i>참여하기
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Academic Program -->
+                        <div class="program-card" data-category="academic" data-status="recruiting" data-id="5">
+                            <div class="program-header">
+                                <div class="flex-grow-1">
+                                    <div class="program-category category-academic">학술</div>
+                                    <div class="program-title">학부생 연구 프로그램</div>
+                                    <div class="program-meta">
+                                        <span><i class="bi bi-calendar me-1"></i>2024.03.01 ~ 2024.11.30</span>
+                                        <span><i class="bi bi-people me-1"></i>10명 모집</span>
+                                        <span><i class="bi bi-geo-alt me-1"></i>각 학과 연구실</span>
+                                        <span><i class="bi bi-clock me-1"></i>주 10시간 이상</span>
+                                    </div>
+                                </div>
+                                <span class="status-badge status-recruiting">모집중</span>
+                            </div>
+                            <div class="program-description">
+                                교수님과 함께 실제 연구 프로젝트에 참여하여 학술 연구 경험을 쌓는 프로그램입니다. 
+                                논문 작성, 학회 발표 등의 기회를 제공합니다.
+                            </div>
+                            <div class="program-details">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <strong>신청 마감:</strong> 2024년 2월 28일
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>지원금:</strong> 월 50만원
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>자격:</strong> 학점 3.5 이상
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>혜택:</strong> 논문 공저자 기회
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="program-footer">
+                                <div class="mileage-badge">
+                                    <i class="bi bi-star-fill"></i>
+                                    <span>500P</span>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-outline-primary btn-sm" onclick="viewProgramDetail(5)">
+                                        <i class="bi bi-eye me-1"></i>상세보기
+                                    </button>
+                                    <button class="btn btn-primary btn-sm" onclick="applyProgram(5)">
+                                        <i class="bi bi-plus-circle me-1"></i>신청하기
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Load More Button -->
+                    <div class="text-center mt-4">
+                        <button class="btn btn-outline-primary" onclick="loadMorePrograms()">
+                            <i class="bi bi-arrow-down me-1"></i>더 많은 프로그램 보기
+                        </button>
+                    </div>
+                </div>
+
+                <!-- My Programs Tab -->
+                <div class="tab-pane fade" id="myProgramsTab">
+                    <!-- Overview -->
+                    <div class="my-programs-overview">
+                        <h3 class="mb-3">나의 프로그램 현황</h3>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="h2 mb-0">8</div>
+                                <div>참여 프로그램</div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="h2 mb-0">5</div>
+                                <div>완료 프로그램</div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="h2 mb-0">2</div>
+                                <div>진행 중</div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="h2 mb-0">1,250P</div>
+                                <div>획득 마일리지</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Tracking -->
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="progress-item">
+                                <div class="progress-header">
+                                    <h6 class="mb-0">글로벌 리더십 아카데미</h6>
+                                    <span class="badge bg-primary">진행중</span>
+                                </div>
+                                <div class="progress-bar-custom">
+                                    <div class="progress-fill progress-leadership" style="width: 75%"></div>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <small class="text-muted">3/4주차 완료</small>
+                                    <small class="text-muted">출석률: 100%</small>
+                                </div>
+                                <div class="mt-2">
+                                    <button class="btn btn-sm btn-outline-primary me-2" onclick="viewProgress(1)">
+                                        <i class="bi bi-graph-up me-1"></i>진도 확인
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-success" onclick="submitAssignment(1)">
+                                        <i class="bi bi-file-earmark-text me-1"></i>과제 제출
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="progress-item">
+                                <div class="progress-header">
+                                    <h6 class="mb-0">지역 아동센터 학습 지도</h6>
+                                    <span class="badge bg-success">진행중</span>
+                                </div>
+                                <div class="progress-bar-custom">
+                                    <div class="progress-fill progress-volunteer" style="width: 60%"></div>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <small class="text-muted">24/40시간 완료</small>
+                                    <small class="text-muted">480P 획득</small>
+                                </div>
+                                <div class="mt-2">
+                                    <button class="btn btn-sm btn-outline-primary me-2" onclick="viewProgress(2)">
+                                        <i class="bi bi-graph-up me-1"></i>활동 기록
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-info" onclick="scheduleActivity(2)">
+                                        <i class="bi bi-calendar-plus me-1"></i>일정 등록
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Completed Programs -->
+                    <div class="progress-item">
+                        <h5 class="mb-3">
+                            <i class="bi bi-check-circle text-success me-2"></i>완료한 프로그램
+                        </h5>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title">창의적 사고 워크숍</h6>
+                                        <p class="card-text small">2023년 2학기 참여</p>
+                                        <div class="mb-2">
+                                            <span class="badge bg-info">창의성</span>
+                                            <span class="badge bg-success">+150P</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-success">수료 완료</small>
+                                            <button class="btn btn-sm btn-outline-primary" onclick="viewCertificate(1)">
+                                                <i class="bi bi-award"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title">기업 인턴십 프로그램</h6>
+                                        <p class="card-text small">2023년 여름방학 참여</p>
+                                        <div class="mb-2">
+                                            <span class="badge bg-warning">진로</span>
+                                            <span class="badge bg-success">+400P</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-success">수료 완료</small>
+                                            <button class="btn btn-sm btn-outline-primary" onclick="viewCertificate(2)">
+                                                <i class="bi bi-award"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title">학술 논문 작성 세미나</h6>
+                                        <p class="card-text small">2023년 1학기 참여</p>
+                                        <div class="mb-2">
+                                            <span class="badge bg-dark">학술</span>
+                                            <span class="badge bg-success">+200P</span>
+                                        </div>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <small class="text-success">수료 완료</small>
+                                            <button class="btn btn-sm btn-outline-primary" onclick="viewCertificate(3)">
+                                                <i class="bi bi-award"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recommendations -->
+                    <div class="progress-item">
+                        <h5 class="mb-3">
+                            <i class="bi bi-lightbulb text-warning me-2"></i>추천 프로그램
+                        </h5>
+                        <p class="text-muted mb-3">참여 이력과 역량 진단 결과를 바탕으로 추천드립니다.</p>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card border-primary">
+                                    <div class="card-body">
+                                        <h6 class="card-title">문제해결 챌린지</h6>
+                                        <p class="card-text small">창의역량 향상을 위한 추천 프로그램</p>
+                                        <div class="mb-2">
+                                            <span class="badge bg-info">문제해결</span>
+                                            <span class="badge bg-success">+180P</span>
+                                        </div>
+                                        <small class="text-primary">추천 이유: 창의역량 개선 필요</small>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button class="btn btn-sm btn-primary w-100" onclick="applyProgram(6)">
+                                            신청하기
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="card border-success">
+                                    <div class="card-body">
+                                        <h6 class="card-title">팀 프로젝트 리더십</h6>
+                                        <p class="card-text small">리더십 역량 강화 프로그램</p>
+                                        <div class="mb-2">
+                                            <span class="badge bg-danger">리더십</span>
+                                            <span class="badge bg-success">+250P</span>
+                                        </div>
+                                        <small class="text-success">추천 이유: 리더십 강점 활용</small>
+                                    </div>
+                                    <div class="card-footer">
+                                        <button class="btn btn-sm btn-success w-100" onclick="applyProgram(7)">
+                                            신청하기
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mileage Tab -->
+                <div class="tab-pane fade" id="mileageTab">
+                    <!-- Mileage Overview -->
+                    <div class="mileage-overview">
+                        <h3 class="mb-3">보유 마일리지</h3>
+                        <div class="mileage-number">1,250</div>
+                        <p class="mb-0">전체 학생 중 상위 15% 수준</p>
+                    </div>
+
+                    <!-- Mileage Statistics -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number text-success">2,150</div>
+                            <div class="stat-label">총 획득 마일리지</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number text-danger">900</div>
+                            <div class="stat-label">총 사용 마일리지</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number text-info">8</div>
+                            <div class="stat-label">참여 프로그램 수</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number text-warning">15</div>
+                            <div class="stat-label">전체 순위</div>
+                        </div>
+                    </div>
+
+                    <!-- Mileage History -->
+                    <div class="mileage-history">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h5 class="mb-0">
+                                <i class="bi bi-clock-history me-2"></i>마일리지 내역
+                            </h5>
+                            <div class="d-flex gap-2">
+                                <select class="form-select" style="width: auto;" id="mileageFilter">
+                                    <option value="all">전체</option>
+                                    <option value="earned">획득</option>
+                                    <option value="used">사용</option>
+                                </select>
+                                <button class="btn btn-outline-primary" onclick="exportMileageHistory()">
+                                    <i class="bi bi-download"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="mileageHistoryList">
+                            <div class="mileage-item">
+                                <div>
+                                    <div class="fw-medium">글로벌 리더십 아카데미 참여</div>
+                                    <small class="text-muted">2024-01-20 14:30</small>
+                                </div>
+                                <div class="text-end">
+                                    <div class="mileage-earned">+200P</div>
+                                    <small class="text-muted">잔액: 1,250P</small>
+                                </div>
+                            </div>
+
+                            <div class="mileage-item">
+                                <div>
+                                    <div class="fw-medium">도서 구매 (프로그래밍 서적)</div>
+                                    <small class="text-muted">2024-01-18 16:45</small>
+                                </div>
+                                <div class="text-end">
+                                    <div class="mileage-used">-150P</div>
+                                    <small class="text-muted">잔액: 1,050P</small>
+                                </div>
+                            </div>
+
+                            <div class="mileage-item">
+                                <div>
+                                    <div class="fw-medium">창의적 사고 워크숍 완료</div>
+                                    <small class="text-muted">2024-01-15 18:00</small>
+                                </div>
+                                <div class="text-end">
+                                    <div class="mileage-earned">+150P</div>
+                                    <small class="text-muted">잔액: 1,200P</small>
+                                </div>
+                            </div>
+
+                            <div class="mileage-item">
+                                <div>
+                                    <div class="fw-medium">봉사활동 (8시간)</div>
+                                    <small class="text-muted">2024-01-12 20:00</small>
+                                </div>
+                                <div class="text-end">
+                                    <div class="mileage-earned">+160P</div>
+                                    <small class="text-muted">잔액: 1,050P</small>
+                                </div>
+                            </div>
+
+                            <div class="mileage-item">
+                                <div>
+                                    <div class="fw-medium">카페테리아 식사권 구매</div>
+                                    <small class="text-muted">2024-01-10 12:30</small>
+                                </div>
+                                <div class="text-end">
+                                    <div class="mileage-used">-100P</div>
+                                    <small class="text-muted">잔액: 890P</small>
+                                </div>
+                            </div>
+
+                            <div class="mileage-item">
+                                <div>
+                                    <div class="fw-medium">학술 세미나 참석</div>
+                                    <small class="text-muted">2024-01-08 14:00</small>
+                                </div>
+                                <div class="text-end">
+                                    <div class="mileage-earned">+80P</div>
+                                    <small class="text-muted">잔액: 990P</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button class="btn btn-outline-primary" onclick="loadMoreMileageHistory()">
+                                <i class="bi bi-arrow-down me-1"></i>더 보기
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Mileage Store -->
+                    <div class="mileage-history">
+                        <h5 class="mb-3">
+                            <i class="bi bi-shop me-2"></i>마일리지 상점
+                        </h5>
+                        
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-book text-primary" style="font-size: 2rem;"></i>
+                                        <h6 class="mt-2">전공 도서</h6>
+                                        <p class="text-muted small">최신 전공 서적 구매</p>
+                                        <div class="h5 text-warning">150P</div>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="purchaseItem('book')">
+                                            구매하기
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-cup-hot text-warning" style="font-size: 2rem;"></i>
+                                        <h6 class="mt-2">카페 쿠폰</h6>
+                                        <p class="text-muted small">교내 카페 음료 쿠폰</p>
+                                        <div class="h5 text-warning">50P</div>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="purchaseItem('cafe')">
+                                            구매하기
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <i class="bi bi-gift text-success" style="font-size: 2rem;"></i>
+                                        <h6 class="mt-2">문화상품권</h6>
+                                        <p class="text-muted small">1만원 문화상품권</p>
+                                        <div class="h5 text-warning">500P</div>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="purchaseItem('gift')">
+                                            구매하기
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calendar Tab -->
+                <div class="tab-pane fade" id="calendarTab">
+                    <!-- Calendar Container -->
+                    <div class="calendar-container">
+                        <div class="calendar-header">
+                            <h5 class="mb-0">
+                                <i class="bi bi-calendar3 me-2"></i>2024년 2월
+                            </h5>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-primary btn-sm" onclick="previousMonth()">
+                                    <i class="bi bi-chevron-left"></i>
+                                </button>
+                                <button class="btn btn-outline-primary btn-sm" onclick="nextMonth()">
+                                    <i class="bi bi-chevron-right"></i>
+                                </button>
+                                <button class="btn btn-primary btn-sm" onclick="goToToday()">
+                                    <i class="bi bi-calendar-check me-1"></i>오늘
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="calendar-grid">
+                            <!-- Calendar Header -->
+                            <div class="calendar-day fw-bold text-center bg-light">일</div>
+                            <div class="calendar-day fw-bold text-center bg-light">월</div>
+                            <div class="calendar-day fw-bold text-center bg-light">화</div>
+                            <div class="calendar-day fw-bold text-center bg-light">수</div>
+                            <div class="calendar-day fw-bold text-center bg-light">목</div>
+                            <div class="calendar-day fw-bold text-center bg-light">금</div>
+                            <div class="calendar-day fw-bold text-center bg-light">토</div>
+
+                            <!-- Calendar Days -->
+                            <div class="calendar-day other-month">28</div>
+                            <div class="calendar-day other-month">29</div>
+                            <div class="calendar-day other-month">30</div>
+                            <div class="calendar-day other-month">31</div>
+                            <div class="calendar-day">1</div>
+                            <div class="calendar-day">2</div>
+                            <div class="calendar-day">3</div>
+
+                            <div class="calendar-day">4</div>
+                            <div class="calendar-day">5</div>
+                            <div class="calendar-day">6</div>
+                            <div class="calendar-day">7</div>
+                            <div class="calendar-day">8</div>
+                            <div class="calendar-day">9</div>
+                            <div class="calendar-day">10
+                                <div class="calendar-event" onclick="viewEventDetail(1)">
+                                    리더십 아카데미 마감
+                                </div>
+                            </div>
+
+                            <div class="calendar-day">11</div>
+                            <div class="calendar-day">12</div>
+                            <div class="calendar-day">13</div>
+                            <div class="calendar-day">14</div>
+                            <div class="calendar-day">15
+                                <div class="calendar-event" onclick="viewEventDetail(2)">
+                                    창의 워크숍 마감
+                                </div>
+                            </div>
+                            <div class="calendar-day">16</div>
+                            <div class="calendar-day">17</div>
+
+                            <div class="calendar-day">18</div>
+                            <div class="calendar-day">19</div>
+                            <div class="calendar-day">20
+                                <div class="calendar-event" onclick="viewEventDetail(3)">
+                                    창의 워크숍 시작
+                                </div>
+                            </div>
+                            <div class="calendar-day">21</div>
+                            <div class="calendar-day">22
+                                <div class="calendar-event" onclick="viewEventDetail(4)">
+                                    창의 워크숍 종료
+                                </div>
+                            </div>
+                            <div class="calendar-day">23</div>
+                            <div class="calendar-day">24</div>
+
+                            <div class="calendar-day">25
+                                <div class="calendar-event" onclick="viewEventDetail(5)">
+                                    IT 멘토링 마감
+                                </div>
+                            </div>
+                            <div class="calendar-day">26</div>
+                            <div class="calendar-day">27</div>
+                            <div class="calendar-day">28</div>
+                            <div class="calendar-day">29</div>
+                            <div class="calendar-day other-month">1</div>
+                            <div class="calendar-day other-month">2</div>
+                        </div>
+                    </div>
+
+                    <!-- Upcoming Events -->
+                    <div class="mileage-history">
+                        <h5 class="mb-3">
+                            <i class="bi bi-calendar-event me-2"></i>다가오는 일정
+                        </h5>
+                        
+                        <div class="mileage-item">
+                            <div>
+                                <div class="fw-medium">글로벌 리더십 아카데미 신청 마감</div>
+                                <small class="text-muted">2024-02-10 (토) 23:59</small>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-danger">D-3</span>
+                            </div>
+                        </div>
+
+                        <div class="mileage-item">
+                            <div>
+                                <div class="fw-medium">창의적 사고 워크숍 신청 마감</div>
+                                <small class="text-muted">2024-02-15 (목) 18:00</small>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-warning">D-8</span>
+                            </div>
+                        </div>
+
+                        <div class="mileage-item">
+                            <div>
+                                <div class="fw-medium">창의적 사고 워크숍 시작</div>
+                                <small class="text-muted">2024-02-20 (화) 09:00</small>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-info">D-13</span>
+                            </div>
+                        </div>
+
+                        <div class="mileage-item">
+                            <div>
+                                <div class="fw-medium">IT 기업 멘토링 신청 마감</div>
+                                <small class="text-muted">2024-02-25 (일) 23:59</small>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-secondary">D-18</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Program Application Modal -->
+    <div class="modal fade application-modal" id="applicationModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="application-header">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h4 class="mb-2" id="modalProgramTitle">프로그램 신청</h4>
+                            <p class="mb-0 text-white-50" id="modalProgramInfo">프로그램 정보</p>
+                        </div>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="applicationForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="applicantName" value="김학생" readonly>
+                                    <label for="applicantName">이름</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="applicantId" value="2024001234" readonly>
+                                    <label for="applicantId">학번</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="applicantDept" value="컴퓨터공학과" readonly>
+                                    <label for="applicantDept">학과</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="email" class="form-control" id="applicantEmail" value="student@university.ac.kr" required>
+                                    <label for="applicantEmail">이메일</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-floating">
+                            <input type="tel" class="form-control" id="applicantPhone" value="010-1234-5678" required>
+                            <label for="applicantPhone">연락처</label>
+                        </div>
+
+                        <div class="form-floating">
+                            <textarea class="form-control" id="applicationReason" style="height: 120px" placeholder="신청 동기를 입력하세요" required></textarea>
+                            <label for="applicationReason">신청 동기</label>
+                        </div>
+
+                        <div class="form-floating">
+                            <textarea class="form-control" id="expectations" style="height: 100px" placeholder="프로그램을 통해 얻고자 하는 것을 입력하세요"></textarea>
+                            <label for="expectations">기대 효과</label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                            <label class="form-check-label" for="agreeTerms">
+                                개인정보 수집 및 이용에 동의합니다. <a href="#" class="text-primary">약관 보기</a>
+                            </label>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="agreeNotification">
+                            <label class="form-check-label" for="agreeNotification">
+                                프로그램 관련 알림을 받겠습니다.
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x me-1"></i>취소
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="submitApplication()">
+                        <i class="bi bi-check-circle me-1"></i>신청 완료
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Program Detail Modal -->
+    <div class="modal fade" id="programDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="detailModalTitle">프로그램 상세 정보</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="programDetailContent">
+                        <!-- 프로그램 상세 내용이 여기에 표시됩니다 -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="button" class="btn btn-primary" id="detailApplyBtn">신청하기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 현재 시간 표시
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleString('ko-KR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('currentTime').textContent = timeString;
+        }
+
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        // 사이드바 토글
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('show');
+        }
+
+        // 프로그램 데이터
+        const programData = {
+            1: {
+                title: "글로벌 리더십 아카데미",
+                category: "리더십",
+                description: "글로벌 시대에 필요한 리더십 역량을 기르는 4주 집중 프로그램",
+                period: "2024.02.15 ~ 2024.03.15",
+                location: "국제관 세미나실",
+                capacity: 20,
+                mileage: 200,
+                instructor: "김교수 외 3명",
+                curriculum: [
+                    "1주차: 글로벌 리더십의 이해",
+                    "2주차: 문화 간 소통과 협상",
+                    "3주차: 팀 빌딩과 갈등 관리",
+                    "4주차: 리더십 실습과 발표"
+                ],
+                requirements: "재학생 전체, 영어 기초 회화 가능자",
+                benefits: "수료증 발급, 추천서 작성 지원, 해외 연수 프로그램 우선 선발"
+            },
+            2: {
+                title: "창의적 사고와 혁신 워크숍",
+                category: "창의성",
+                description: "디자인 씽킹과 창의적 문제해결 기법을 배우는 3일간의 집중 워크숍",
+                period: "2024.02.20 ~ 2024.02.22",
+                location: "창의관 메이커스페이스",
+                capacity: 30,
+                mileage: 150,
+                instructor: "박박사 외 2명",
+                curriculum: [
+                    "1일차: 디자인 씽킹 기초와 공감하기",
+                    "2일차: 아이디어 발상과 프로토타이핑",
+                    "3일차: 테스트와 개선, 최종 발표"
+                ],
+                requirements: "전 학년, 창의적 사고에 관심 있는 학생",
+                benefits: "프로토타입 제작비 지원, 창업 경진대회 참가 자격"
+            }
+        };
+
+        // 카테고리 필터링
+        function filterByCategory(category) {
+            // 필터 버튼 활성화 상태 변경
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-category="${category}"]`).classList.add('active');
+
+            // 프로그램 필터링
+            const programs = document.querySelectorAll('.program-card');
+            programs.forEach(program => {
+                if (category === 'all' || program.dataset.category === category) {
+                    program.style.display = 'block';
+                } else {
+                    program.style.display = 'none';
+                }
+            });
+        }
+
+        // 상태별 필터링
+        function filterByStatus() {
+            const status = document.getElementById('statusFilter').value;
+            const programs = document.querySelectorAll('.program-card');
+            
+            programs.forEach(program => {
+                if (status === 'all' || program.dataset.status === status) {
+                    program.style.display = 'block';
+                } else {
+                    program.style.display = 'none';
+                }
+            });
+        }
+
+        // 검색 기능
+        function searchPrograms() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const programs = document.querySelectorAll('.program-card');
+
+            programs.forEach(program => {
+                const title = program.querySelector('.program-title').textContent.toLowerCase();
+                const description = program.querySelector('.program-description').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    program.style.display = 'block';
+                } else {
+                    program.style.display = 'none';
+                }
+            });
+        }
+
+        // 정렬 기능
+        function sortPrograms() {
+            const sortBy = document.getElementById('sortSelect').value;
+            const programList = document.getElementById('programList');
+            const programs = Array.from(programList.querySelectorAll('.program-card'));
+
+            programs.sort((a, b) => {
+                switch(sortBy) {
+                    case 'latest':
+                        return parseInt(b.dataset.id) - parseInt(a.dataset.id);
+                    case 'deadline':
+                        // 실제로는 마감일 데이터를 기준으로 정렬
+                        return Math.random() - 0.5;
+                    case 'popular':
+                        // 실제로는 인기도 데이터를 기준으로 정렬
+                        return Math.random() - 0.5;
+                    case 'mileage':
+                        const mileageA = parseInt(a.querySelector('.mileage-badge span').textContent);
+                        const mileageB = parseInt(b.querySelector('.mileage-badge span').textContent);
+                        return mileageB - mileageA;
+                    default:
+                        return 0;
+                }
+            });
+
+            // 정렬된 순서로 다시 배치
+            programs.forEach(program => programList.appendChild(program));
+        }
+
+        // 프로그램 상세보기
+        function viewProgramDetail(programId) {
+            const program = programData[programId];
+            if (!program) {
+                alert('프로그램 정보를 찾을 수 없습니다.');
+                return;
+            }
+
+            document.getElementById('detailModalTitle').textContent = program.title;
+            
+            const detailContent = `
+                <div class="row">
+                    <div class="col-md-8">
+                        <h6>프로그램 개요</h6>
+                        <p>${program.description}</p>
+                        
+                        <h6>커리큘럼</h6>
+                        <ul>
+                            ${program.curriculum.map(item => `<li>${item}</li>`).join('')}
+                        </ul>
+                        
+                        <h6>참가 자격</h6>
+                        <p>${program.requirements}</p>
+                        
+                        <h6>혜택</h6>
+                        <p>${program.benefits}</p>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6>프로그램 정보</h6>
+                                <hr>
+                                <p><strong>기간:</strong> ${program.period}</p>
+                                <p><strong>장소:</strong> ${program.location}</p>
+                                <p><strong>모집인원:</strong> ${program.capacity}명</p>
+                                <p><strong>강사:</strong> ${program.instructor}</p>
+                                <p><strong>마일리지:</strong> <span class="text-warning">${program.mileage}P</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('programDetailContent').innerHTML = detailContent;
+            document.getElementById('detailApplyBtn').onclick = () => applyProgram(programId);
+            
+            const modal = new bootstrap.Modal(document.getElementById('programDetailModal'));
+            modal.show();
+        }
+
+        // 프로그램 신청
+        function applyProgram(programId) {
+            const program = programData[programId];
+            if (program) {
+                document.getElementById('modalProgramTitle').textContent = program.title;
+                document.getElementById('modalProgramInfo').textContent = `${program.category} • ${program.mileage}P`;
+            }
+            
+            const modal = new bootstrap.Modal(document.getElementById('applicationModal'));
+            modal.show();
+        }
+
+        // 신청서 제출
+        function submitApplication() {
+            const form = document.getElementById('applicationForm');
+            const formData = new FormData(form);
+            
+            // 필수 항목 체크
+            if (!document.getElementById('agreeTerms').checked) {
+                alert('개인정보 수집 및 이용에 동의해주세요.');
+                return;
+            }
+            
+            if (!document.getElementById('applicationReason').value.trim()) {
+                alert('신청 동기를 입력해주세요.');
+                return;
+            }
+            
+            // 실제 구현에서는 서버로 데이터 전송
+            alert('프로그램 신청이 완료되었습니다. 승인 결과는 이메일로 안내드립니다.');
+            
+            // 모달 닫기
+            bootstrap.Modal.getInstance(document.getElementById('applicationModal')).hide();
+        }
+
+        // 더 많은 프로그램 로드
+        function loadMorePrograms() {
+            alert('더 많은 프로그램을 불러옵니다.');
+        }
+
+        // 진도 확인
+        function viewProgress(programId) {
+            alert('프로그램 진도를 확인합니다.');
+        }
+
+        // 과제 제출
+        function submitAssignment(programId) {
+            alert('과제 제출 페이지로 이동합니다.');
+        }
+
+        // 활동 일정 등록
+        function scheduleActivity(programId) {
+            alert('활동 일정을 등록합니다.');
+        }
+
+        // 수료증 보기
+        function viewCertificate(programId) {
+            alert('수료증을 확인합니다.');
+        }
+
+        // 마일리지 내역 더 보기
+        function loadMoreMileageHistory() {
+            alert('더 많은 마일리지 내역을 불러옵니다.');
+        }
+
+        // 마일리지 내역 내보내기
+        function exportMileageHistory() {
+            alert('마일리지 내역을 Excel 파일로 다운로드합니다.');
+        }
+
+        // 마일리지 상점 구매
+        function purchaseItem(itemType) {
+            const items = {
+                book: { name: '전공 도서', price: 150 },
+                cafe: { name: '카페 쿠폰', price: 50 },
+                gift: { name: '문화상품권', price: 500 }
+            };
+            
+            const item = items[itemType];
+            if (confirm(`${item.name}을(를) ${item.price}P로 구매하시겠습니까?`)) {
+                alert('구매가 완료되었습니다.');
+            }
+        }
+
+        // 캘린더 네비게이션
+        function previousMonth() {
+            alert('이전 달로 이동합니다.');
+        }
+
+        function nextMonth() {
+            alert('다음 달로 이동합니다.');
+        }
+
+        function goToToday() {
+            alert('오늘 날짜로 이동합니다.');
+        }
+
+        // 이벤트 상세보기
+        function viewEventDetail(eventId) {
+            alert('일정 상세 정보를 확인합니다.');
+        }
+
+        // 로그아웃
+        function logout() {
+            if (confirm('로그아웃 하시겠습니까?')) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // 엔터 키로 검색
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchPrograms();
+            }
+        });
+
+        // 사이드바 외부 클릭 시 닫기 (모바일)
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const isClickInsideSidebar = sidebar.contains(event.target);
+            const isToggleButton = event.target.closest('.btn-link');
+            
+            if (!isClickInsideSidebar && !isToggleButton && window.innerWidth <= 768) {
+                sidebar.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>

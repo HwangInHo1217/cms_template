@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>공지사항</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .main-header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+        }
+        
+        .filter-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .notice-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .notice-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .notice-card.important {
+            border-left-color: #dc3545;
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe6e6 100%);
+        }
+        
+        .notice-card.urgent {
+            border-left-color: #fd7e14;
+            background: linear-gradient(135deg, #fff8f0 0%, #ffebcc 100%);
+        }
+        
+        .notice-card.general {
+            border-left-color: #0d6efd;
+            background: linear-gradient(135deg, #f8fbff 0%, #e3f2fd 100%);
+        }
+        
+        .notice-card.event {
+            border-left-color: #198754;
+            background: linear-gradient(135deg, #f8fff9 0%, #e8f5e8 100%);
+        }
+        
+        .notice-header {
+            display: flex;
+            justify-content: between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .notice-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            line-height: 1.4;
+        }
+        
+        .notice-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        
+        .notice-content {
+            color: #495057;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .notice-content.preview {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .notice-footer {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .category-badge {
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+        
+        .badge-important {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .badge-urgent {
+            background: #fd7e14;
+            color: white;
+        }
+        
+        .badge-general {
+            background: #0d6efd;
+            color: white;
+        }
+        
+        .badge-event {
+            background: #198754;
+            color: white;
+        }
+        
+        .new-badge {
+            background: #ff6b6b;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-left: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        .attachment-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #28a745;
+            font-size: 0.85rem;
+        }
+        
+        .view-count {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+        
+        .search-highlight {
+            background-color: #fff3cd;
+            padding: 0.1rem 0.2rem;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+        
+        .pagination-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+        }
+        
+        @media (max-width: 768px) {
+            .notice-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .notice-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .notice-footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .category-badge {
+                position: static;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 헤더 -->
+    <div class="main-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1 class="text-white mb-0">
+                        <i class="bi bi-megaphone"></i> 공지사항
+                    </h1>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <button class="btn btn-outline-light" onclick="goBack()">
+                        <i class="bi bi-arrow-left"></i> 뒤로가기
+                    </button>
+                    <button class="btn btn-outline-light ms-2" onclick="refreshNotices()">
+                        <i class="bi bi-arrow-clockwise"></i> 새로고침
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <!-- 필터 섹션 -->
+                <div class="filter-section">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">검색</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="searchInput" placeholder="제목, 내용 검색">
+                                <button class="btn btn-outline-secondary" onclick="searchNotices()">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">분류</label>
+                            <select class="form-select" id="categoryFilter" onchange="filterNotices()">
+                                <option value="all">전체</option>
+                                <option value="important">중요</option>
+                                <option value="urgent">긴급</option>
+                                <option value="general">일반</option>
+                                <option value="event">행사</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">상태</label>
+                            <select class="form-select" id="readFilter" onchange="filterNotices()">
+                                <option value="all">전체</option>
+                                <option value="unread">읽지 않음</option>
+                                <option value="read">읽음</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">기간</label>
+                            <select class="form-select" id="periodFilter" onchange="filterNotices()">
+                                <option value="all">전체</option>
+                                <option value="today">오늘</option>
+                                <option value="week">이번 주</option>
+                                <option value="month">이번 달</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label">정렬</label>
+                            <select class="form-select" id="sortFilter" onchange="filterNotices()">
+                                <option value="latest">최신순</option>
+                                <option value="oldest">오래된순</option>
+                                <option value="views">조회순</option>
+                                <option value="important">중요도순</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 공지사항 목록 -->
+                <div id="noticeList">
+                    <!-- 공지사항이 여기에 동적으로 추가됩니다 -->
+                </div>
+
+                <!-- 페이지네이션 -->
+                <div class="pagination-container">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <span class="text-muted">
+                                총 <span id="totalNotices">0</span>개의 공지사항
+                            </span>
+                        </div>
+                        <div class="col-md-6">
+                            <nav>
+                                <ul class="pagination pagination-sm justify-content-end mb-0" id="pagination">
+                                    <!-- 페이지네이션이 여기에 동적으로 추가됩니다 -->
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 공지사항 상세 모달 -->
+    <div class="modal fade" id="noticeModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">공지사항</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <span id="modalCategory" class="category-badge"></span>
+                        <h4 id="modalNoticeTitle" class="mt-2"></h4>
+                    </div>
+                    <div class="notice-meta mb-3">
+                        <div class="meta-item">
+                            <i class="bi bi-person"></i>
+                            <span id="modalAuthor"></span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="bi bi-calendar"></i>
+                            <span id="modalDate"></span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="bi bi-eye"></i>
+                            <span id="modalViews"></span>
+                        </div>
+                    </div>
+                    <div id="modalContent" class="notice-content"></div>
+                    <div id="modalAttachments" class="mt-3"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="button" class="btn btn-primary" onclick="markAsImportant()">
+                        <i class="bi bi-star"></i> 중요 표시
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 공지사항 데이터
+        let notices = [
+            {
+                id: 1,
+                title: "2024년 1학기 핵심역량 진단 실시 안내",
+                content: "2024년 1학기 핵심역량 진단을 다음과 같이 실시합니다.\n\n■ 진단 기간: 2024년 4월 1일 ~ 4월 30일\n■ 진단 대상: 전체 재학생\n■ 진단 방법: 온라인 진단 시스템\n■ 소요 시간: 약 15-20분\n\n모든 학생은 반드시 기간 내에 진단을 완료해주시기 바랍니다. 진단 결과는 개인별 맞춤 상담 및 학습 지원에 활용됩니다.",
+                category: "important",
+                author: "교무처",
+                date: "2024-04-01",
+                views: 1250,
+                isRead: false,
+                isNew: true,
+                attachments: [
+                    { name: "핵심역량진단_안내문.pdf", size: "1.2MB" }
+                ]
+            },
+            {
+                id: 2,
+                title: "시스템 점검으로 인한 일시 서비스 중단 안내",
+                content: "핵심역량 진단 시스템의 안정적인 서비스 제공을 위해 시스템 점검을 실시합니다.\n\n■ 점검 일시: 2024년 4월 15일(월) 02:00 ~ 06:00 (4시간)\n■ 점검 내용: 서버 업그레이드 및 보안 패치\n■ 영향 범위: 핵심역량 진단 시스템 전체\n\n점검 시간 동안에는 시스템 접속이 불가능하니 이용에 참고하시기 바랍니다.",
+                category: "urgent",
+                author: "전산팀",
+                date: "2024-04-10",
+                views: 890,
+                isRead: true,
+                isNew: false,
+                attachments: []
+            },
+            {
+                id: 3,
+                title: "2024년 상반기 학생 상담 프로그램 신청 안내",
+                content: "학생들의 진로 및 학업 고민 해결을 위한 상담 프로그램을 운영합니다.\n\n■ 신청 기간: 2024년 4월 5일 ~ 4월 20일\n■ 상담 기간: 2024년 4월 25일 ~ 6월 30일\n■ 상담 방법: 대면 상담 / 온라인 상담\n■ 신청 방법: 학생포털 > 상담신청\n\n전문 상담사와의 1:1 상담을 통해 개인별 맞춤 지도를 받으실 수 있습니다.",
+                category: "general",
+                author: "학생상담센터",
+                date: "2024-04-05",
+                views: 567,
+                isRead: false,
+                isNew: true,
+                attachments: [
+                    { name: "상담프로그램_신청서.hwp", size: "850KB" }
+                ]
+            },
+            {
+                id: 4,
+                title: "2024 대학 축제 '청춘, 꿈을 그리다' 개최 안내",
+                content: "2024년 대학 축제를 다음과 같이 개최합니다.\n\n■ 행사명: 청춘, 꿈을 그리다\n■ 일시: 2024년 5월 15일(수) ~ 5월 17일(금)\n■ 장소: 대학 캠퍼스 일원\n■ 주요 프로그램: 가수 공연, 동아리 공연, 푸드트럭, 체험부스\n\n많은 학생들의 참여와 관심 부탁드립니다.",
+                category: "event",
+                author: "학생회",
+                date: "2024-04-08",
+                views: 2340,
+                isRead: true,
+                isNew: false,
+                attachments: [
+                    { name: "축제_포스터.jpg", size: "2.1MB" },
+                    { name: "축제_프로그램.pdf", size: "1.8MB" }
+                ]
+            },
+            {
+                id: 5,
+                title: "도서관 이용시간 변경 안내",
+                content: "중간고사 기간 도서관 이용시간을 다음과 같이 연장 운영합니다.\n\n■ 기간: 2024년 4월 20일 ~ 5월 3일\n■ 평일: 08:00 ~ 24:00 (기존 22:00)\n■ 주말: 09:00 ~ 22:00 (기존 18:00)\n\n학생들의 학습 편의를 위해 열람실 좌석도 추가 개방합니다.",
+                category: "general",
+                author: "도서관",
+                date: "2024-04-12",
+                views: 445,
+                isRead: false,
+                isNew: true,
+                attachments: []
+            },
+            {
+                id: 6,
+                title: "2024년 1학기 장학금 신청 안내",
+                content: "2024년 1학기 각종 장학금 신청을 받습니다.\n\n■ 신청 기간: 2024년 4월 1일 ~ 4월 30일\n■ 신청 방법: 학생포털 > 장학금 신청\n■ 장학금 종류: 성적우수, 가계곤란, 봉사활동 등\n■ 문의: 학생처 장학팀 (02-1234-5678)\n\n자세한 내용은 첨부파일을 참고하시기 바랍니다.",
+                category: "important",
+                author: "학생처",
+                date: "2024-03-28",
+                views: 1890,
+                isRead: true,
+                isNew: false,
+                attachments: [
+                    { name: "장학금_신청안내.pdf", size: "1.5MB" },
+                    { name: "장학금_신청서.hwp", size: "650KB" }
+                ]
+            }
+        ];
+
+        let filteredNotices = [...notices];
+        let currentPage = 1;
+        let pageSize = 5;
+        let readNotices = new Set([2, 4, 6]); // 읽은 공지사항 ID
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            renderNotices();
+            updateStats();
+            updatePagination();
+            
+            // 검색 입력 이벤트
+            document.getElementById('searchInput').addEventListener('input', debounce(searchNotices, 300));
+        });
+
+        // 공지사항 목록 렌더링
+        function renderNotices() {
+            const container = document.getElementById('noticeList');
+            container.innerHTML = '';
+
+            const startIndex = (currentPage - 1) * pageSize;
+            const endIndex = startIndex + pageSize;
+            const pageNotices = filteredNotices.slice(startIndex, endIndex);
+
+            if (pageNotices.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="bi bi-inbox"></i>
+                        <h5>공지사항이 없습니다</h5>
+                        <p>검색 조건을 변경해보세요.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            pageNotices.forEach(notice => {
+                const card = createNoticeCard(notice);
+                container.appendChild(card);
+            });
+
+            updateTotalCount();
+        }
+
+        // 공지사항 카드 생성
+        function createNoticeCard(notice) {
+            const div = document.createElement('div');
+            div.className = `notice-card ${notice.category}`;
+            div.onclick = () => openNoticeModal(notice.id);
+
+            const categoryInfo = getCategoryInfo(notice.category);
+            const isUnread = !readNotices.has(notice.id);
+            
+            const attachmentHtml = notice.attachments.length > 0 ? 
+                `<div class="attachment-info">
+                    <i class="bi bi-paperclip"></i>
+                    <span>${notice.attachments.length}개 첨부파일</span>
+                </div>` : '';
+
+            div.innerHTML = `
+                <div class="category-badge ${categoryInfo.badgeClass}">
+                    ${categoryInfo.text}
+                </div>
+                
+                <div class="notice-header">
+                    <div class="flex-grow-1">
+                        <div class="notice-title">
+                            ${highlightSearchTerm(notice.title)}
+                            ${notice.isNew ? '<span class="new-badge">NEW</span>' : ''}
+                            ${isUnread ? '<i class="bi bi-circle-fill text-primary ms-2" style="font-size: 0.5rem;"></i>' : ''}
+                        </div>
+                        <div class="notice-meta">
+                            <div class="meta-item">
+                                <i class="bi bi-person"></i>
+                                <span>${notice.author}</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="bi bi-calendar"></i>
+                                <span>${formatDate(notice.date)}</span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="bi bi-eye"></i>
+                                <span>${notice.views.toLocaleString()}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="notice-content preview">
+                    ${highlightSearchTerm(notice.content)}
+                </div>
+                
+                <div class="notice-footer">
+                    <div class="d-flex align-items-center gap-3">
+                        ${attachmentHtml}
+                    </div>
+                    <div class="view-count">
+                        <i class="bi bi-arrow-right-circle"></i>
+                        <span>자세히 보기</span>
+                    </div>
+                </div>
+            `;
+
+            return div;
+        }
+
+        // 카테고리 정보 반환
+        function getCategoryInfo(category) {
+            const categoryMap = {
+                'important': { text: '중요', badgeClass: 'badge-important' },
+                'urgent': { text: '긴급', badgeClass: 'badge-urgent' },
+                'general': { text: '일반', badgeClass: 'badge-general' },
+                'event': { text: '행사', badgeClass: 'badge-event' }
+            };
+            return categoryMap[category];
+        }
+
+        // 날짜 포맷
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffTime = now - date;
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays === 0) {
+                return '오늘';
+            } else if (diffDays === 1) {
+                return '어제';
+            } else if (diffDays < 7) {
+                return `${diffDays}일 전`;
+            } else {
+                return date.toLocaleDateString('ko-KR');
+            }
+        }
+
+        // 검색어 하이라이트
+        function highlightSearchTerm(text) {
+            const searchTerm = document.getElementById('searchInput').value.trim();
+            if (!searchTerm) return text;
+
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            return text.replace(regex, '<span class="search-highlight">$1</span>');
+        }
+
+        // 통계 업데이트
+        function updateStats() {
+            const unreadCount = notices.filter(n => !readNotices.has(n.id)).length;
+            const readCount = readNotices.size;
+            const thisWeekCount = notices.filter(n => {
+                const noticeDate = new Date(n.date);
+                const weekAgo = new Date();
+                weekAgo.setDate(weekAgo.getDate() - 7);
+                return noticeDate >= weekAgo;
+            }).length;
+            
+            // Statistics are now handled by separate components
+        }
+
+        // 총 개수 업데이트
+        function updateTotalCount() {
+            document.getElementById('totalNotices').textContent = filteredNotices.length;
+        }
+
+        // 공지사항 검색
+        function searchNotices() {
+            applyFilters();
+        }
+
+        // 필터 적용
+        function filterNotices() {
+            applyFilters();
+        }
+
+        // 모든 필터 적용
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const readFilter = document.getElementById('readFilter').value;
+            const periodFilter = document.getElementById('periodFilter').value;
+            const sortFilter = document.getElementById('sortFilter').value;
+
+            filteredNotices = notices.filter(notice => {
+                const matchesSearch = !searchTerm || 
+                    notice.title.toLowerCase().includes(searchTerm) ||
+                    notice.content.toLowerCase().includes(searchTerm);
+
+                const matchesCategory = categoryFilter === 'all' || notice.category === categoryFilter;
+                
+                const isRead = readNotices.has(notice.id);
+                const matchesRead = readFilter === 'all' || 
+                    (readFilter === 'read' && isRead) ||
+                    (readFilter === 'unread' && !isRead);
+
+                const matchesPeriod = checkPeriodFilter(notice.date, periodFilter);
+
+                return matchesSearch && matchesCategory && matchesRead && matchesPeriod;
+            });
+
+            // 정렬 적용
+            applySorting(sortFilter);
+
+            currentPage = 1;
+            renderNotices();
+            updatePagination();
+        }
+
+        // 기간 필터 체크
+        function checkPeriodFilter(noticeDate, filter) {
+            if (filter === 'all') return true;
+
+            const date = new Date(noticeDate);
+            const now = new Date();
+
+            switch (filter) {
+                case 'today':
+                    return date.toDateString() === now.toDateString();
+                case 'week':
+                    const weekAgo = new Date();
+                    weekAgo.setDate(weekAgo.getDate() - 7);
+                    return date >= weekAgo;
+                case 'month':
+                    const monthAgo = new Date();
+                    monthAgo.setMonth(monthAgo.getMonth() - 1);
+                    return date >= monthAgo;
+                default:
+                    return true;
+            }
+        }
+
+        // 정렬 적용
+        function applySorting(sortType) {
+            switch (sortType) {
+                case 'latest':
+                    filteredNotices.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    break;
+                case 'oldest':
+                    filteredNotices.sort((a, b) => new Date(a.date) - new Date(b.date));
+                    break;
+                case 'views':
+                    filteredNotices.sort((a, b) => b.views - a.views);
+                    break;
+                case 'important':
+                    const priority = { important: 4, urgent: 3, event: 2, general: 1 };
+                    filteredNotices.sort((a, b) => priority[b.category] - priority[a.category]);
+                    break;
+            }
+        }
+
+        // 페이지네이션 업데이트
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredNotices.length / pageSize);
+            const pagination = document.getElementById('pagination');
+            
+            pagination.innerHTML = '';
+            
+            if (totalPages <= 1) return;
+            
+            // 이전 버튼
+            const prevLi = document.createElement('li');
+            prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+            prevLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage - 1})">이전</a>`;
+            pagination.appendChild(prevLi);
+            
+            // 페이지 번호
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, currentPage + 2);
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const li = document.createElement('li');
+                li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                li.innerHTML = `<a class="page-link" href="#" onclick="changePage(${i})">${i}</a>`;
+                pagination.appendChild(li);
+            }
+            
+            // 다음 버튼
+            const nextLi = document.createElement('li');
+            nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+            nextLi.innerHTML = `<a class="page-link" href="#" onclick="changePage(${currentPage + 1})">다음</a>`;
+            pagination.appendChild(nextLi);
+        }
+
+        // 페이지 변경
+        function changePage(page) {
+            const totalPages = Math.ceil(filteredNotices.length / pageSize);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                renderNotices();
+                updatePagination();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // 공지사항 상세 모달 열기
+        function openNoticeModal(id) {
+            const notice = notices.find(n => n.id === id);
+            if (!notice) return;
+
+            // 읽음 처리
+            if (!readNotices.has(id)) {
+                readNotices.add(id);
+                notice.views += 1;
+                updateStats();
+                renderNotices(); // 읽음 표시 업데이트
+            }
+
+            const categoryInfo = getCategoryInfo(notice.category);
+            
+            document.getElementById('modalCategory').className = `category-badge ${categoryInfo.badgeClass}`;
+            document.getElementById('modalCategory').textContent = categoryInfo.text;
+            document.getElementById('modalNoticeTitle').textContent = notice.title;
+            document.getElementById('modalAuthor').textContent = notice.author;
+            document.getElementById('modalDate').textContent = formatDate(notice.date);
+            document.getElementById('modalViews').textContent = `조회 ${notice.views.toLocaleString()}회`;
+            document.getElementById('modalContent').innerHTML = notice.content.replace(/\n/g, '<br>');
+
+            // 첨부파일 표시
+            const attachmentsContainer = document.getElementById('modalAttachments');
+            if (notice.attachments.length > 0) {
+                const attachmentsHtml = notice.attachments.map(file => 
+                    `<div class="d-flex align-items-center justify-content-between p-2 border rounded mb-2">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-file-earmark me-2"></i>
+                            <span>${file.name}</span>
+                            <small class="text-muted ms-2">(${file.size})</small>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary" onclick="downloadFile('${file.name}')">
+                            <i class="bi bi-download"></i> 다운로드
+                        </button>
+                    </div>`
+                ).join('');
+                attachmentsContainer.innerHTML = `<h6>첨부파일</h6>${attachmentsHtml}`;
+            } else {
+                attachmentsContainer.innerHTML = '';
+            }
+
+            new bootstrap.Modal(document.getElementById('noticeModal')).show();
+        }
+
+        // 파일 다운로드
+        function downloadFile(filename) {
+            alert(`"${filename}" 파일을 다운로드합니다.`);
+        }
+
+        // 중요 표시
+        function markAsImportant() {
+            alert('중요 공지사항으로 표시되었습니다.');
+        }
+
+        // 뒤로가기
+        function goBack() {
+            window.history.back();
+        }
+
+        // 새로고침
+        function refreshNotices() {
+            location.reload();
+        }
+
+        // 디바운스 함수
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+    </script>
+</body>
+</html>

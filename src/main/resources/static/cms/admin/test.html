@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>교육 관리 시스템</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            color: var(--primary-color) !important;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        .feature-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .btn-custom {
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .section-title {
+            position: relative;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--primary-color);
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: var(--secondary-color);
+        }
+
+        .login-modal .modal-content {
+            border-radius: 15px;
+            border: none;
+        }
+
+        .login-form {
+            padding: 2rem;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 12px 15px;
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        .user-type-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .user-type-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #dee2e6;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-type-btn.active {
+            border-color: var(--secondary-color);
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .dashboard-section {
+            display: none;
+            padding: 2rem 0;
+        }
+
+        .dashboard-section.active {
+            display: block;
+        }
+
+        .function-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 2rem;
+        }
+
+        .function-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .function-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .function-card h5 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .sub-functions {
+            display: none;
+            margin-top: 1rem;
+        }
+
+        .sub-functions.active {
+            display: block;
+        }
+
+        .sub-function-item {
+            background: #f8f9fa;
+            padding: 8px 12px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .sub-function-item:hover {
+            background: var(--secondary-color);
+            color: white;
+        }
+
+        .breadcrumb {
+            background: none;
+            padding: 0;
+            margin-bottom: 1rem;
+        }
+
+        .content-area {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-top: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, var(--secondary-color), #5dade2);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .stats-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 50px 0;
+            }
+            
+            .feature-icon {
+                font-size: 2rem;
+            }
+            
+            .function-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="#" onclick="showHome()">
+                <i class="bi bi-mortarboard-fill me-2"></i>교육 관리 시스템
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showHome()">홈</a>
+                    </li>
+                    <li class="nav-item">
+                        <button class="btn btn-outline-primary btn-custom ms-2" onclick="showLoginModal()">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>로그인
+                        </button>
+                    </li>
+                    <li class="nav-item" id="logoutBtn" style="display: none;">
+                        <button class="btn btn-outline-danger btn-custom ms-2" onclick="logout()">
+                            <i class="bi bi-box-arrow-right me-1"></i>로그아웃
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Home Section -->
+    <div id="homeSection">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="container">
+                <h1 class="display-4 fw-bold mb-4">교육 관리 시스템에 오신 것을 환영합니다</h1>
+                <p class="lead mb-4">학생, 교직원, 관리자를 위한 통합 교육 관리 플랫폼</p>
+                <button class="btn btn-light btn-lg btn-custom" onclick="showLoginModal()">
+                    시작하기 <i class="bi bi-arrow-right ms-2"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="py-5">
+            <div class="container">
+                <h2 class="section-title">주요 기능</h2>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="card feature-card h-100">
+                            <div class="card-body text-center">
+                                <i class="bi bi-person-circle feature-icon text-primary"></i>
+                                <h4>학생 포털</h4>
+                                <p class="text-muted">게시판, 상담, 마일리지, 비교과 프로그램 등 학생 전용 서비스</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card feature-card h-100">
+                            <div class="card-body text-center">
+                                <i class="bi bi-people-fill feature-icon text-success"></i>
+                                <h4>교직원 관리</h4>
+                                <p class="text-muted">학생 관리, 상담 관리, 프로그램 운영 등 교직원 업무 지원</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card feature-card h-100">
+                            <div class="card-body text-center">
+                                <i class="bi bi-gear-fill feature-icon text-warning"></i>
+                                <h4>시스템 관리</h4>
+                                <p class="text-muted">사용자 관리, 권한 설정, 시스템 설정 등 관리자 기능</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal fade login-modal" id="loginModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title">로그인</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="login-form" onsubmit="handleLogin(event)">
+                        <div class="user-type-selector">
+                            <div class="user-type-btn active" data-type="student">
+                                <i class="bi bi-person-circle d-block mb-1"></i>
+                                학생
+                            </div>
+                            <div class="user-type-btn" data-type="faculty">
+                                <i class="bi bi-people-fill d-block mb-1"></i>
+                                교직원
+                            </div>
+                            <div class="user-type-btn" data-type="admin">
+                                <i class="bi bi-gear-fill d-block mb-1"></i>
+                                관리자
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="userId" class="form-label">아이디</label>
+                            <input type="text" class="form-control" id="userId" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">비밀번호</label>
+                            <input type="password" class="form-control" id="password" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 btn-custom">로그인</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Sections -->
+    <!-- Student Dashboard -->
+    <div id="studentDashboard" class="dashboard-section">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#" onclick="showHome()">홈</a></li>
+                    <li class="breadcrumb-item active">학생 포털</li>
+                </ol>
+            </nav>
+            
+            <h2 class="section-title">학생 포털</h2>
+            
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number">15</div>
+                        <div>새 공지사항</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number">3</div>
+                        <div>예정된 상담</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number">1,250</div>
+                        <div>보유 마일리지</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number">8</div>
+                        <div>참여 프로그램</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="function-grid">
+                <div class="function-card" onclick="toggleSubFunctions('board')">
+                    <i class="bi bi-clipboard-data feature-icon text-primary"></i>
+                    <h5>게시판</h5>
+                    <div class="sub-functions" id="board">
+                        <div class="sub-function-item" onclick="showContent('전체공지', '전체 공지사항을 확인할 수 있습니다.')">전체공지</div>
+                        <div class="sub-function-item" onclick="showContent('전체 공지 보기', '모든 공지사항 목록을 표시합니다.')">전체 공지 보기</div>
+                        <div class="sub-function-item" onclick="showContent('게시물 검색/열람', '게시물을 검색하고 열람할 수 있습니다.')">게시물 검색/열람</div>
+                        <div class="sub-function-item" onclick="showContent('QnA', '질문과 답변을 등록하고 확인할 수 있습니다.')">QnA</div>
+                        <div class="sub-function-item" onclick="showContent('질문 작성/열람', '새로운 질문을 작성하거나 기존 질문을 확인할 수 있습니다.')">질문 작성/열람</div>
+                        <div class="sub-function-item" onclick="showContent('FAQ 열람', '자주 묻는 질문과 답변을 확인할 수 있습니다.')">FAQ 열람</div>
+                    </div>
+                </div>
+
+                <div class="function-card" onclick="toggleSubFunctions('assessment')">
+                    <i class="bi bi-clipboard-check feature-icon text-success"></i>
+                    <h5>핵심역량진단</h5>
+                    <div class="sub-functions" id="assessment">
+                        <div class="sub-function-item" onclick="showContent('핵심역량진단사', '핵심역량 진단을 실시할 수 있습니다.')">핵심역량진단사</div>
+                        <div class="sub-function-item" onclick="showContent('진단 검사', '역량 진단 검사를 수행합니다.')">진단 검사</div>
+                        <div class="sub-function-item" onclick="showContent('진단결과', '진단 결과를 확인할 수 있습니다.')">진단결과</div>
+                        <div class="sub-function-item" onclick="showContent('진단 결과 열람', '과거 진단 결과를 열람할 수 있습니다.')">진단 결과 열람</div>
+                        <div class="sub-function-item" onclick="showContent('추천 활동', '진단 결과에 따른 추천 활동을 확인할 수 있습니다.')">추천 활동</div>
+                    </div>
+                </div>
+
+                <div class="function-card" onclick="toggleSubFunctions('counseling')">
+                    <i class="bi bi-chat-dots feature-icon text-info"></i>
+                    <h5>상담</h5>
+                    <div class="sub-functions" id="counseling">
+                        <div class="sub-function-item" onclick="showContent('상담 예약', '상담 예약을 신청할 수 있습니다.')">상담 예약</div>
+                        <div class="sub-function-item" onclick="showContent('예약 신청/변경/취소', '상담 예약을 신청, 변경, 취소할 수 있습니다.')">예약 신청/변경/취소</div>
+                        <div class="sub-function-item" onclick="showContent('상담사 정보 보기', '상담사 정보를 확인할 수 있습니다.')">상담사 정보 보기</div>
+                        <div class="sub-function-item" onclick="showContent('상담 결과 조회', '상담 결과를 조회할 수 있습니다.')">상담 결과 조회</div>
+                    </div>
+                </div>
+
+                <div class="function-card" onclick="toggleSubFunctions('mileage')">
+                    <i class="bi bi-star feature-icon text-warning"></i>
+                    <h5>마일리지</h5>
+                    <div class="sub-functions" id="mileage">
+                        <div class="sub-function-item" onclick="showContent('마일리지 조회', '보유 마일리지를 조회할 수 있습니다.')">마일리지 조회</div>
+                        <div class="sub-function-item" onclick="showContent('마일리지 누적현황', '마일리지 누적 현황을 확인할 수 있습니다.')">마일리지 누적현황</div>
+                        <div class="sub-function-item" onclick="showContent('활동별 적립내역', '활동별 마일리지 적립 내역을 확인할 수 있습니다.')">활동별 적립내역</div>
+                        <div class="sub-function-item" onclick="showContent('장학금 신청', '마일리지를 활용한 장학금을 신청할 수 있습니다.')">장학금 신청</div>
+                        <div class="sub-function-item" onclick="showContent('장학 신청 이력', '장학금 신청 이력을 확인할 수 있습니다.')">장학 신청 이력</div>
+                    </div>
+                </div>
+
+                <div class="function-card" onclick="toggleSubFunctions('program')">
+                    <i class="bi bi-calendar-event feature-icon text-danger"></i>
+                    <h5>비교과프로그램</h5>
+                    <div class="sub-functions" id="program">
+                        <div class="sub-function-item" onclick="showContent('프로그램 조회/신청', '비교과 프로그램을 조회하고 신청할 수 있습니다.')">프로그램 조회/신청</div>
+                        <div class="sub-function-item" onclick="showContent('참여 내역', '참여한 프로그램 내역을 확인할 수 있습니다.')">참여 내역</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-area" id="contentArea" style="display: none;">
+                <h4 id="contentTitle"></h4>
+                <p id="contentDescription"></p>
+                <div id="contentDetails"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Faculty Dashboard -->
+    <div id="facultyDashboard" class="dashboard-section">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#" onclick="showHome()">홈</a></li>
+                    <li class="breadcrumb-item active">교직원 포털</li>
+                </ol>
+            </nav>
+            
+            <h2 class="section-title">교직원 포털</h2>
+            
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number">45</div>
+                        <div>관리 학생 수</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number">12</div>
+                        <div>예정된 상담</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number">8</div>
+                        <div>운영 프로그램</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number">23</div>
+                        <div>미처리 업무</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="function-grid">
+                <div class="function-card" onclick="toggleSubFunctions('boardMgmt')">
+                    <i class="bi bi-clipboard-data feature-icon text-primary"></i>
+                    <h5>게시판관리</h5>
+                    <div class="sub-functions" id="boardMgmt">
+                        <div class="sub-function-item" onclick="showContent('공지사항', '공지사항을 관리할 수 있습니다.')">공지사항</div>
+                        <div class="sub-function-item" onclick="showContent('QnA', '학생 질문에 답변할 수 있습니다.')">QnA</div>
+                        <div class="sub-function-item" onclick="showContent('FAQ', 'FAQ를 관리할 수 있습니다.')">FAQ</div>
+                    </div>
+                </div>
+
+                <div class="function-card" onclick="toggleSubFunctions('assessmentMgmt')">
+                    <i class="bi bi-clipboard-check feature-icon text-success"></i>
+                    <h5>진단관리</h5>
+                    <div class="sub-functions" id="assessmentMgmt">
+                        <div class="sub-function-item" onclick="showContent('핵심역량관리', '핵심역량 항목을 관리할 수 있습니다.')">핵심역량관리</div>
+                        <div class="sub-function-item" onclick="showContent('핵심역량진단관리', '진단 도구를 관리할 수 있습니다.')">핵심역량진단관리</div>
+                        <div class="sub-function-item" onclick="showContent('학위역량정보관리', '학위별 역량 정보를 관리할 수 있습니다.')">학위역량정보관리</div>
+                        <div class="sub-function-item" onclick="showContent('진단문항관리', '진단 문항을 관리할 수 있습니다.')">진단문항관리</div>
+                        <div class="sub-function-item" onclick="showContent('진단결과통계', '진단 결과 통계를 확인할 수 있습니다.')">진단결과통계</div>
+                    </div>
+                </div>
+
+                <div class="function-card" onclick="toggleSubFunctions('counselingMgmt')">
+                    <i class="bi bi-chat-dots feature-icon text-info"></i>
+                    <h5>상담관리</h5>
+                    <div class="sub-functions" id="counselingMgmt">
+                        <div class="sub-function-item" onclick="showContent('상담예약관리', '상담 예약을 관리할 수 있습니다.')">상담예약관리</div>
+                        <div class="sub-function-item" onclick="showContent('상담일정관리', '상담 일정을 관리할 수 있습니다.')">상담일정관리</div>
+                        <div class="sub-function-item" onclick="showContent('상담결과관리', '상담 결과를 관리할 수 있습니다.')">상담결과관리</div>
+                        <div class="sub-function-item" onclick="showContent('상담 통계', '상담 통계를 확인할 수 있습니다.')">상담 통계</div>
+                    </div>
+                </div>
+
+                <div class="function-card" onclick="toggleSubFunctions('mileageMgmt')">
+                    <i class="bi bi-star feature-icon text-warning"></i>
+                    <h5>마일리지관리</h5>
+                    <div class="sub-functions" id="mileageMgmt">
+                        <div class="sub-function-item" onclick="showContent('마일리지 기준설정', '마일리지 기준을 설정할 수 있습니다.')">마일리지 기준설정</div>
+                        <div class="sub-function-item" onclick="showContent('마일리지 지급관리', '마일리지 지급을 관리할 수 있습니다.')">마일리지 지급관리</div>
+                        <div class="sub-function-item" onclick="showContent('장학금 신청관리', '장학금 신청을 관리할 수 있습니다.')">장학금 신청관리</div>
+                        <div class="sub-function-item" onclick="showContent('장학신청검토', '장학금 신청을 검토할 수 있습니다.')">장학신청검토</div>
+                        <div class="sub-function-item" onclick="showContent('장학금 지급관리', '장학금 지급을 관리할 수 있습니다.')">장학금 지급관리</div>
+                        <div class="sub-function-item" onclick="showContent('지급내역관리/통계', '지급 내역과 통계를 관리할 수 있습니다.')">지급내역관리/통계</div>
+                    </div>
+                </div>
+
+                <div class="function-card" onclick="toggleSubFunctions('programMgmt')">
+                    <i class="bi bi-calendar-event feature-icon text-danger"></i>
+                    <h5>비교과관리</h5>
+                    <div class="sub-functions" id="programMgmt">
+                        <div class="sub-function-item" onclick="showContent('프로그램 관리', '비교과 프로그램을 관리할 수 있습니다.')">프로그램 관리</div>
+                        <div class="sub-function-item" onclick="showContent('프로그램 등록/관리', '새로운 프로그램을 등록하고 관리할 수 있습니다.')">프로그램 등록/관리</div>
+                        <div class="sub-function-item" onclick="showContent('참여자관리/수료처리', '참여자를 관리하고 수료 처리할 수 있습니다.')">참여자관리/수료처리</div>
+                        <div class="sub-function-item" onclick="showContent('참여자마일리지 지급', '참여자에게 마일리지를 지급할 수 있습니다.')">참여자마일리지 지급</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-area" id="facultyContentArea" style="display: none;">
+                <h4 id="facultyContentTitle"></h4>
+                <p id="facultyContentDescription"></p>
+                <div id="facultyContentDetails"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="dashboard-section">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#" onclick="showHome()">홈</a></li>
+                    <li class="breadcrumb-item active">관리자 포털</li>
+                </ol>
+            </nav>
+            
+            <h2 class="section-title">관리자 포털</h2>
+            
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number">1,234</div>
+                        <div>전체 학생 수</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number">89</div>
+                        <div>전체 교직원 수</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number">15</div>
+                        <div>활성 프로그램</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number">98.5%</div>
+                        <div>시스템 가동률</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="function-grid">
+                <div class="function-card" onclick="toggleSubFunctions('studentMgmt')">
+                    <i class="bi bi-person-circle feature-icon text-primary"></i>
+                    <h5>학생관리</h5>
+                    <div class="sub-functions" id="studentMgmt">
+                        <div class="sub-function-item" onclick="showContent('계정생성/비활성화', '학생 계정을 생성하거나 비활성화할 수 있습니다.')">계정생성/비활성화</div>
+                        <div class="sub-function-item" onclick="showContent('권한 부여', '학생에게 권한을 부여할 수 있습니다.')">권한 부여</div>
+                    </div>
+                </div>
+
+                <div class="function-card" onclick="toggleSubFunctions('facultyMgmtAdmin')">
+                    <i class="bi bi-people-fill feature-icon text-success"></i>
+                    <h5>교직원관리</h5>
+                    <div class="sub-functions" id="facultyMgmtAdmin">
+                        <div class="sub-function-item" onclick="showContent('계정생성/비활성화', '교직원 계정을 생성하거나 비활성화할 수 있습니다.')">계정생성/비활성화</div>
+                        <div class="sub-function-item" onclick="showContent('권한 부여', '교직원에게 권한을 부여할 수 있습니다.')">권한 부여</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-area" id="adminContentArea" style="display: none;">
+                <h4 id="adminContentTitle"></h4>
+                <p id="adminContentDescription"></p>
+                <div id="adminContentDetails"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Global variables
+        let currentUser = null;
+        let currentUserType = 'student';
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeUserTypeSelector();
+            showHome();
+        });
+
+        // User type selector functionality
+        function initializeUserTypeSelector() {
+            const userTypeBtns = document.querySelectorAll('.user-type-btn');
+            userTypeBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    userTypeBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentUserType = this.dataset.type;
+                });
+            });
+        }
+
+        // Show login modal
+        function showLoginModal() {
+            const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
+            loginModal.show();
+        }
+
+        // Handle login
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const userId = document.getElementById('userId').value;
+            const password = document.getElementById('password').value;
+            
+            // Simple validation (in real app, this would be server-side)
+            if (userId && password) {
+                currentUser = {
+                    id: userId,
+                    type: currentUserType
+                };
+                
+                // Hide login modal
+                const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                loginModal.hide();
+                
+                // Show appropriate dashboard
+                showDashboard(currentUserType);
+                
+                // Update navigation
+                document.querySelector('button[onclick="showLoginModal()"]').style.display = 'none';
+                document.getElementById('logoutBtn').style.display = 'block';
+                
+                // Show success message
+                showAlert('로그인 성공!', 'success');
+            } else {
+                showAlert('아이디와 비밀번호를 입력해주세요.', 'danger');
+            }
+        }
+
+        // Logout
+        function logout() {
+            currentUser = null;
+            showHome();
+            document.querySelector('button[onclick="showLoginModal()"]').style.display = 'block';
+            document.getElementById('logoutBtn').style.display = 'none';
+            showAlert('로그아웃되었습니다.', 'info');
+        }
+
+        // Show home section
+        function showHome() {
+            document.getElementById('homeSection').style.display = 'block';
+            document.querySelectorAll('.dashboard-section').forEach(section => {
+                section.classList.remove('active');
+            });
+        }
+
+        // Show dashboard based on user type
+        function showDashboard(userType) {
+            document.getElementById('homeSection').style.display = 'none';
+            document.querySelectorAll('.dashboard-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            const dashboardId = userType + 'Dashboard';
+            document.getElementById(dashboardId).classList.add('active');
+        }
+
+        // Toggle sub-functions
+        function toggleSubFunctions(functionId) {
+            const subFunctions = document.getElementById(functionId);
+            const isActive = subFunctions.classList.contains('active');
+            
+            // Close all sub-functions
+            document.querySelectorAll('.sub-functions').forEach(sf => {
+                sf.classList.remove('active');
+            });
+            
+            // Toggle current sub-function
+            if (!isActive) {
+                subFunctions.classList.add('active');
+            }
+        }
+
+        // Show content
+        function showContent(title, description) {
+            const contentAreas = ['contentArea', 'facultyContentArea', 'adminContentArea'];
+            
+            contentAreas.forEach(areaId => {
+                const area = document.getElementById(areaId);
+                if (area && area.closest('.dashboard-section').classList.contains('active')) {
+                    area.style.display = 'block';
+                    
+                    const titleElement = area.querySelector('h4');
+                    const descElement = area.querySelector('p');
+                    const detailsElement = area.querySelector('#' + areaId.replace('Area', 'Details'));
+                    
+                    if (titleElement) titleElement.textContent = title;
+                    if (descElement) descElement.textContent = description;
+                    
+                    // Add sample content based on function
+                    if (detailsElement) {
+                        detailsElement.innerHTML = generateSampleContent(title);
+                    }
+                }
+            });
+        }
+
+        // Generate sample content
+        function generateSampleContent(title) {
+            const sampleContents = {
+                '전체공지': `
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>번호</th>
+                                    <th>제목</th>
+                                    <th>작성자</th>
+                                    <th>작성일</th>
+                                    <th>조회수</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>2024학년도 1학기 수강신청 안내</td>
+                                    <td>학사관리팀</td>
+                                    <td>2024-01-15</td>
+                                    <td>1,234</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>도서관 이용시간 변경 안내</td>
+                                    <td>도서관</td>
+                                    <td>2024-01-10</td>
+                                    <td>856</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                `,
+                '상담 예약': `
+                    <form class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">상담 유형</label>
+                            <select class="form-select">
+                                <option>학업 상담</option>
+                                <option>진로 상담</option>
+                                <option>심리 상담</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">희망 날짜</label>
+                            <input type="date" class="form-control">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">상담 내용</label>
+                            <textarea class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary">예약 신청</button>
+                        </div>
+                    </form>
+                `,
+                '마일리지 조회': `
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h3 class="text-primary">1,250점</h3>
+                                    <p class="text-muted">현재 보유 마일리지</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body text-center">
+                                    <h3 class="text-success">2,450점</h3>
+                                    <p class="text-muted">누적 획득 마일리지</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <h5>최근 마일리지 내역</h5>
+                        <div class="list-group">
+                            <div class="list-group-item d-flex justify-content-between">
+                                <span>비교과 프로그램 참여</span>
+                                <span class="text-success">+100점</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between">
+                                <span>봉사활동 참여</span>
+                                <span class="text-success">+50점</span>
+                            </div>
+                        </div>
+                    </div>
+                `
+            };
+            
+            return sampleContents[title] || `
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    ${title} 기능이 준비 중입니다.
+                </div>
+            `;
+        }
+
+        // Show alert
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 3000);
+        }
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Add loading animation for buttons
+        document.addEventListener('click', function(e) {
+            if (e.target.matches('button[type="submit"]')) {
+                const btn = e.target;
+                const originalText = btn.textContent;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>처리중...';
+                btn.disabled = true;
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.disabled = false;
+                }, 1000);
+            }
+        });
+    </script>
+</body>
+</html>

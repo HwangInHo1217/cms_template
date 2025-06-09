@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>교직원 메인 - 교육 관리 시스템</title>
+    <title>관리자 메인 - 교육 관리 시스템</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
     <style>
@@ -13,6 +13,7 @@
             --success-color: #27ae60;
             --warning-color: #f39c12;
             --danger-color: #e74c3c;
+            --admin-color: #c0392b;
             --sidebar-width: 280px;
         }
 
@@ -28,7 +29,7 @@
             left: 0;
             height: 100vh;
             width: var(--sidebar-width);
-            background: linear-gradient(135deg, #8e44ad, #9b59b6);
+            background: linear-gradient(135deg, var(--admin-color), #e74c3c);
             color: white;
             z-index: 1000;
             overflow-y: auto;
@@ -112,7 +113,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: #8e44ad;
+            background: var(--admin-color);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -141,8 +142,17 @@
             margin-bottom: 1.5rem;
         }
 
-        .stats-card {
-            background: linear-gradient(135deg, #8e44ad, #bb8fce);
+        .admin-stats-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+            border-left: 5px solid var(--admin-color);
+        }
+
+        .system-status-card {
+            background: linear-gradient(135deg, var(--admin-color), #e74c3c);
             color: white;
             border-radius: 15px;
             padding: 1.5rem;
@@ -150,17 +160,8 @@
             margin-bottom: 1rem;
         }
 
-        .faculty-stats-card {
-            background: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin-bottom: 1rem;
-            border-left: 5px solid #8e44ad;
-        }
-
         .quick-action-btn {
-            background: linear-gradient(135deg, #8e44ad, #bb8fce);
+            background: linear-gradient(135deg, var(--admin-color), #e74c3c);
             color: white;
             border: none;
             border-radius: 10px;
@@ -179,30 +180,40 @@
             color: white;
         }
 
-        .task-item {
+        .alert-item {
             padding: 1rem;
             border-bottom: 1px solid #e9ecef;
             transition: background-color 0.2s ease;
         }
 
-        .task-item:hover {
+        .alert-item:hover {
             background-color: #f8f9fa;
         }
 
-        .task-item:last-child {
+        .alert-item:last-child {
             border-bottom: none;
         }
 
-        .priority-high {
+        .alert-critical {
             border-left: 4px solid var(--danger-color);
         }
 
-        .priority-medium {
+        .alert-warning {
             border-left: 4px solid var(--warning-color);
         }
 
-        .priority-low {
-            border-left: 4px solid var(--success-color);
+        .alert-info {
+            border-left: 4px solid var(--secondary-color);
+        }
+
+        .chart-container {
+            height: 300px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
         }
 
         /* Responsive */
@@ -226,17 +237,17 @@
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <a href="#" class="sidebar-brand">
-                <i class="bi bi-mortarboard-fill me-2"></i>
+                <i class="bi bi-shield-check me-2"></i>
                 교육 관리 시스템
             </a>
-            <small class="text-white-50">교직원 모드</small>
+            <small class="text-white-50">최고관리자 모드</small>
         </div>
         
         <div class="sidebar-nav">
             <div class="nav-item">
-                <a href="faculty-index.html" class="nav-link active">
-                    <i class="bi bi-house"></i>
-                    메인화면
+                <a href="admin-index.html" class="nav-link active">
+                    <i class="bi bi-speedometer2"></i>
+                    대시보드
                 </a>
             </div>
             
@@ -247,50 +258,75 @@
                 </a>
             </div>
             
-            <div class="nav-item">
-                <a href="notice.html" class="nav-link">
-                    <i class="bi bi-megaphone"></i>
-                    공지사항
-                </a>
-            </div>
-            
-            <!-- 교직원 전용 메뉴 -->
+            <!-- 관리자 전용 메뉴 -->
             <div class="nav-item mt-3" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
-                <small class="text-white-50 px-3">교직원 업무</small>
+                <small class="text-white-50 px-3">시스템 관리</small>
             </div>
             
             <div class="nav-item">
-                <a href="faculty-diagnosis-management.html" class="nav-link">
-                    <i class="bi bi-clipboard-data"></i>
-                    진단 관리
+                <a href="admin-users.html" class="nav-link">
+                    <i class="bi bi-people"></i>
+                    사용자/조직 관리
                 </a>
             </div>
             
             <div class="nav-item">
-                <a href="faculty-counseling-management.html" class="nav-link">
-                    <i class="bi bi-chat-dots"></i>
-                    상담 관리
+                <a href="admin-competency.html" class="nav-link">
+                    <i class="bi bi-graph-up"></i>
+                    학생역량진단 관리
                 </a>
             </div>
             
             <div class="nav-item">
-                <a href="faculty-program-management.html" class="nav-link">
-                    <i class="bi bi-calendar-event"></i>
+                <a href="admin-programs.html" class="nav-link">
+                    <i class="bi bi-calendar-check"></i>
                     비교과 프로그램 관리
                 </a>
             </div>
             
             <div class="nav-item">
-                <a href="faculty-mileage-management.html" class="nav-link">
-                    <i class="bi bi-star"></i>
+                <a href="admin-counseling.html" class="nav-link">
+                    <i class="bi bi-chat-square-dots"></i>
+                    상담 관리
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="admin-mileage.html" class="nav-link">
+                    <i class="bi bi-award"></i>
                     마일리지 관리
                 </a>
             </div>
             
             <div class="nav-item">
-                <a href="faculty-board-management.html" class="nav-link">
+                <a href="admin-notice.html" class="nav-link">
                     <i class="bi bi-clipboard-plus"></i>
-                    게시판 관리
+                    공지사항 관리
+                </a>
+            </div>
+            
+            <div class="nav-item mt-3" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem;">
+                <small class="text-white-50 px-3">시스템 설정</small>
+            </div>
+            
+            <div class="nav-item">
+                <a href="admin-settings.html" class="nav-link">
+                    <i class="bi bi-gear"></i>
+                    시스템 설정
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="admin-logs.html" class="nav-link">
+                    <i class="bi bi-file-text"></i>
+                    시스템 로그
+                </a>
+            </div>
+            
+            <div class="nav-item">
+                <a href="admin-backup.html" class="nav-link">
+                    <i class="bi bi-cloud-download"></i>
+                    백업/복원
                 </a>
             </div>
         </div>
@@ -312,12 +348,12 @@
             
             <div class="header-user">
                 <div class="user-avatar">
-                    <i class="bi bi-person"></i>
+                    <i class="bi bi-shield-check"></i>
                 </div>
                 
                 <div>
-                    <div class="fw-medium">김교수</div>
-                    <small class="text-muted">컴퓨터공학과 • 교수</small>
+                    <div class="fw-medium">관리자</div>
+                    <small class="text-muted">시스템 관리자</small>
                 </div>
                 
                 <div class="dropdown">
@@ -326,6 +362,7 @@
                     </button>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="mypage.html">마이페이지</a></li>
+                        <li><a class="dropdown-item" href="admin-settings.html">시스템 설정</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="#" onclick="logout()">로그아웃</a></li>
                     </ul>
@@ -339,62 +376,98 @@
             <div class="row mb-4">
                 <div class="col-12">
                     <div class="dashboard-card">
-                        <h2 class="mb-3">안녕하세요, 김교수님! 👨‍🏫</h2>
-                        <p class="text-muted mb-0">오늘도 학생들을 위한 교육 활동에 힘써주셔서 감사합니다. 새로운 업무와 일정을 확인해보세요.</p>
+                        <h2 class="mb-3">시스템 관리 대시보드 🛡️</h2>
+                        <p class="text-muted mb-0">교육 관리 시스템의 전체 현황을 모니터링하고 관리하세요. 시스템 상태와 사용자 활동을 실시간으로 확인할 수 있습니다.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Stats Cards -->
+            <!-- System Status Cards -->
             <div class="row mb-4">
                 <div class="col-lg-3 col-md-6">
-                    <div class="faculty-stats-card">
+                    <div class="system-status-card">
+                        <div class="h4 mb-0">정상</div>
+                        <div>시스템 상태</div>
+                        <i class="bi bi-check-circle h1 mt-2"></i>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="system-status-card" style="background: linear-gradient(135deg, var(--success-color), #58d68d);">
+                        <div class="h4 mb-0">98.5%</div>
+                        <div>시스템 가동률</div>
+                        <i class="bi bi-graph-up h1 mt-2"></i>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="system-status-card" style="background: linear-gradient(135deg, var(--warning-color), #f7dc6f);">
+                        <div class="h4 mb-0">1,247</div>
+                        <div>활성 사용자</div>
+                        <i class="bi bi-people h1 mt-2"></i>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="system-status-card" style="background: linear-gradient(135deg, #9b59b6, #bb8fce);">
+                        <div class="h4 mb-0">15.2GB</div>
+                        <div>데이터 사용량</div>
+                        <i class="bi bi-hdd h1 mt-2"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Overview -->
+            <div class="row mb-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="admin-stats-card">
                         <div class="d-flex align-items-center">
                             <div class="bg-primary rounded-circle p-3 me-3">
                                 <i class="bi bi-people text-white"></i>
                             </div>
                             <div>
-                                <div class="h4 mb-0">156</div>
-                                <div class="text-muted">담당 학생</div>
+                                <div class="h4 mb-0">1,247</div>
+                                <div class="text-muted">총 사용자</div>
+                                <small class="text-success">+12 이번 주</small>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <div class="faculty-stats-card">
+                    <div class="admin-stats-card">
                         <div class="d-flex align-items-center">
                             <div class="bg-success rounded-circle p-3 me-3">
-                                <i class="bi bi-chat-dots text-white"></i>
+                                <i class="bi bi-calendar-event text-white"></i>
                             </div>
                             <div>
-                                <div class="h4 mb-0">8</div>
-                                <div class="text-muted">예정된 상담</div>
+                                <div class="h4 mb-0">45</div>
+                                <div class="text-muted">활성 프로그램</div>
+                                <small class="text-success">+3 이번 달</small>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <div class="faculty-stats-card">
+                    <div class="admin-stats-card">
                         <div class="d-flex align-items-center">
                             <div class="bg-warning rounded-circle p-3 me-3">
                                 <i class="bi bi-clipboard-data text-white"></i>
                             </div>
                             <div>
-                                <div class="h4 mb-0">23</div>
-                                <div class="text-muted">진단 대기</div>
+                                <div class="h4 mb-0">892</div>
+                                <div class="text-muted">완료된 진단</div>
+                                <small class="text-success">+156 이번 주</small>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-lg-3 col-md-6">
-                    <div class="faculty-stats-card">
+                    <div class="admin-stats-card">
                         <div class="d-flex align-items-center">
                             <div class="bg-info rounded-circle p-3 me-3">
-                                <i class="bi bi-calendar-event text-white"></i>
+                                <i class="bi bi-chat-dots text-white"></i>
                             </div>
                             <div>
-                                <div class="h4 mb-0">5</div>
-                                <div class="text-muted">운영 프로그램</div>
+                                <div class="h4 mb-0">234</div>
+                                <div class="text-muted">상담 세션</div>
+                                <small class="text-success">+28 이번 주</small>
                             </div>
                         </div>
                     </div>
@@ -407,43 +480,43 @@
                     <div class="widget-card">
                         <h5 class="mb-3">
                             <i class="bi bi-lightning me-2"></i>
-                            빠른 작업
+                            빠른 관리 작업
                         </h5>
                         <div class="row">
                             <div class="col-lg-2 col-md-4 col-6">
-                                <a href="faculty-diagnosis-management.html" class="quick-action-btn">
-                                    <i class="bi bi-clipboard-data h4 mb-2"></i>
-                                    <span>진단 관리</span>
+                                <a href="admin-users.html" class="quick-action-btn">
+                                    <i class="bi bi-person-plus h4 mb-2"></i>
+                                    <span>사용자 추가</span>
                                 </a>
                             </div>
                             <div class="col-lg-2 col-md-4 col-6">
-                                <a href="faculty-counseling-management.html" class="quick-action-btn">
-                                    <i class="bi bi-chat-dots h4 mb-2"></i>
-                                    <span>상담 예약</span>
-                                </a>
-                            </div>
-                            <div class="col-lg-2 col-md-4 col-6">
-                                <a href="faculty-program-management.html" class="quick-action-btn">
+                                <a href="admin-programs.html" class="quick-action-btn">
                                     <i class="bi bi-calendar-plus h4 mb-2"></i>
-                                    <span>프로그램 등록</span>
+                                    <span>프로그램 승인</span>
                                 </a>
                             </div>
                             <div class="col-lg-2 col-md-4 col-6">
-                                <a href="faculty-mileage-management.html" class="quick-action-btn">
-                                    <i class="bi bi-star h4 mb-2"></i>
-                                    <span>마일리지 관리</span>
-                                </a>
-                            </div>
-                            <div class="col-lg-2 col-md-4 col-6">
-                                <a href="faculty-board-management.html" class="quick-action-btn">
+                                <a href="admin-notice.html" class="quick-action-btn">
                                     <i class="bi bi-megaphone h4 mb-2"></i>
-                                    <span>공지사항 작성</span>
+                                    <span>공지사항 발송</span>
                                 </a>
                             </div>
                             <div class="col-lg-2 col-md-4 col-6">
-                                <a href="#" onclick="generateReport()" class="quick-action-btn">
-                                    <i class="bi bi-file-earmark-text h4 mb-2"></i>
-                                    <span>보고서 생성</span>
+                                <a href="admin-backup.html" class="quick-action-btn">
+                                    <i class="bi bi-cloud-download h4 mb-2"></i>
+                                    <span>백업 실행</span>
+                                </a>
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-6">
+                                <a href="admin-logs.html" class="quick-action-btn">
+                                    <i class="bi bi-file-text h4 mb-2"></i>
+                                    <span>로그 확인</span>
+                                </a>
+                            </div>
+                            <div class="col-lg-2 col-md-4 col-6">
+                                <a href="#" onclick="generateSystemReport()" class="quick-action-btn">
+                                    <i class="bi bi-graph-up h4 mb-2"></i>
+                                    <span>시스템 리포트</span>
                                 </a>
                             </div>
                         </div>
@@ -453,119 +526,113 @@
 
             <!-- Main Widgets -->
             <div class="row">
-                <!-- 오늘의 할 일 -->
+                <!-- 시스템 알림 -->
                 <div class="col-lg-6">
                     <div class="widget-card">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="mb-0">
-                                <i class="bi bi-check-square me-2"></i>
-                                오늘의 할 일
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                시스템 알림
                             </h5>
-                            <span class="badge bg-primary">5개</span>
+                            <span class="badge bg-danger">3개</span>
                         </div>
                         
-                        <div class="task-item priority-high">
+                        <div class="alert-item alert-critical">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <div class="d-flex align-items-center mb-1">
-                                        <span class="badge bg-danger me-2">긴급</span>
-                                        <h6 class="mb-0">학생 상담 - 김학생</h6>
+                                        <i class="bi bi-exclamation-triangle text-danger me-2"></i>
+                                        <h6 class="mb-0">디스크 용량 부족</h6>
                                     </div>
-                                    <p class="text-muted mb-1 small">진로 상담 및 학업 지도</p>
-                                    <small class="text-muted">
-                                        <i class="bi bi-clock me-1"></i>14:00 - 15:00
-                                    </small>
+                                    <p class="text-muted mb-1 small">시스템 디스크 사용률이 85%를 초과했습니다.</p>
+                                    <small class="text-muted">5분 전</small>
                                 </div>
-                                <button class="btn btn-sm btn-outline-success" onclick="completeTask(1)">
-                                    완료
+                                <button class="btn btn-sm btn-outline-danger" onclick="handleAlert('disk')">
+                                    처리
                                 </button>
                             </div>
                         </div>
                         
-                        <div class="task-item priority-medium">
+                        <div class="alert-item alert-warning">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <div class="d-flex align-items-center mb-1">
-                                        <span class="badge bg-warning me-2">보통</span>
-                                        <h6 class="mb-0">진단 결과 검토</h6>
+                                        <i class="bi bi-clock text-warning me-2"></i>
+                                        <h6 class="mb-0">백업 지연</h6>
                                     </div>
-                                    <p class="text-muted mb-1 small">3학년 학생들 역량진단 결과 분석</p>
-                                    <small class="text-muted">
-                                        <i class="bi bi-calendar me-1"></i>오늘 마감
-                                    </small>
+                                    <p class="text-muted mb-1 small">정기 백업이 예정 시간보다 지연되고 있습니다.</p>
+                                    <small class="text-muted">30분 전</small>
                                 </div>
-                                <button class="btn btn-sm btn-outline-success" onclick="completeTask(2)">
-                                    완료
+                                <button class="btn btn-sm btn-outline-warning" onclick="handleAlert('backup')">
+                                    확인
                                 </button>
                             </div>
                         </div>
                         
-                        <div class="task-item priority-low">
+                        <div class="alert-item alert-info">
                             <div class="d-flex justify-content-between align-items-start">
                                 <div class="flex-grow-1">
                                     <div class="d-flex align-items-center mb-1">
-                                        <span class="badge bg-success me-2">낮음</span>
-                                        <h6 class="mb-0">프로그램 계획서 작성</h6>
+                                        <i class="bi bi-info-circle text-info me-2"></i>
+                                        <h6 class="mb-0">시스템 업데이트 가능</h6>
                                     </div>
-                                    <p class="text-muted mb-1 small">2024년 1학기 비교과 프로그램 계획</p>
-                                    <small class="text-muted">
-                                        <i class="bi bi-calendar me-1"></i>내일 마감
-                                    </small>
+                                    <p class="text-muted mb-1 small">새로운 시스템 업데이트가 있습니다.</p>
+                                    <small class="text-muted">2시간 전</small>
                                 </div>
-                                <button class="btn btn-sm btn-outline-success" onclick="completeTask(3)">
-                                    완료
+                                <button class="btn btn-sm btn-outline-info" onclick="handleAlert('update')">
+                                    업데이트
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 최근 활동 -->
+                <!-- 사용자 활동 -->
                 <div class="col-lg-6">
                     <div class="widget-card">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <h5 class="mb-0">
                                 <i class="bi bi-activity me-2"></i>
-                                최근 활동
+                                실시간 사용자 활동
                             </h5>
-                            <a href="#" class="btn btn-sm btn-outline-primary">전체보기</a>
+                            <a href="admin-logs.html" class="btn btn-sm btn-outline-primary">상세보기</a>
                         </div>
                         
-                        <div class="task-item">
+                        <div class="alert-item">
                             <div class="d-flex align-items-start">
                                 <div class="bg-success rounded-circle p-2 me-3" style="width: 40px; height: 40px;">
-                                    <i class="bi bi-check text-white"></i>
+                                    <i class="bi bi-person-plus text-white"></i>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <h6 class="mb-1">상담 완료</h6>
-                                    <p class="text-muted mb-1 small">이학습 학생과의 학업 상담을 완료했습니다.</p>
-                                    <small class="text-muted">30분 전</small>
+                                    <h6 class="mb-1">새 사용자 등록</h6>
+                                    <p class="text-muted mb-1 small">김신입 학생이 시스템에 등록되었습니다.</p>
+                                    <small class="text-muted">방금 전</small>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="task-item">
+                        <div class="alert-item">
                             <div class="d-flex align-items-start">
                                 <div class="bg-primary rounded-circle p-2 me-3" style="width: 40px; height: 40px;">
-                                    <i class="bi bi-plus text-white"></i>
+                                    <i class="bi bi-calendar-plus text-white"></i>
                                 </div>
                                 <div class="flex-grow-1">
                                     <h6 class="mb-1">프로그램 등록</h6>
-                                    <p class="text-muted mb-1 small">'창업 아이디어 경진대회' 프로그램을 등록했습니다.</p>
-                                    <small class="text-muted">2시간 전</small>
+                                    <p class="text-muted mb-1 small">새로운 비교과 프로그램이 등록되었습니다.</p>
+                                    <small class="text-muted">10분 전</small>
                                 </div>
                             </div>
                         </div>
                         
-                        <div class="task-item">
+                        <div class="alert-item">
                             <div class="d-flex align-items-start">
                                 <div class="bg-warning rounded-circle p-2 me-3" style="width: 40px; height: 40px;">
-                                    <i class="bi bi-star text-white"></i>
+                                    <i class="bi bi-shield-exclamation text-white"></i>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <h6 class="mb-1">마일리지 지급</h6>
-                                    <p class="text-muted mb-1 small">봉사활동 참여 학생들에게 마일리지를 지급했습니다.</p>
-                                    <small class="text-muted">어제</small>
+                                    <h6 class="mb-1">권한 변경</h6>
+                                    <p class="text-muted mb-1 small">이교수님의 권한이 수정되었습니다.</p>
+                                    <small class="text-muted">1시간 전</small>
                                 </div>
                             </div>
                         </div>
@@ -573,88 +640,67 @@
                 </div>
             </div>
 
-            <!-- 상담 일정 및 알림 -->
+            <!-- 통계 차트 및 승인 대기 -->
             <div class="row">
                 <div class="col-lg-8">
                     <div class="widget-card">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="mb-0">
-                                <i class="bi bi-calendar-week me-2"></i>
-                                이번 주 상담 일정
-                            </h5>
-                            <a href="faculty-counseling-management.html" class="btn btn-sm btn-outline-primary">일정 관리</a>
-                        </div>
-                        
-                        <div class="table-responsive">
-                            <table class="table table-hover">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>날짜</th>
-                                        <th>시간</th>
-                                        <th>학생</th>
-                                        <th>상담 유형</th>
-                                        <th>상태</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>1월 25일 (목)</td>
-                                        <td>14:00</td>
-                                        <td>김학생 (컴공3)</td>
-                                        <td>진로 상담</td>
-                                        <td><span class="badge bg-warning">예정</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>1월 26일 (금)</td>
-                                        <td>10:00</td>
-                                        <td>이학습 (경영2)</td>
-                                        <td>학업 상담</td>
-                                        <td><span class="badge bg-warning">예정</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>1월 26일 (금)</td>
-                                        <td>15:00</td>
-                                        <td>박성실 (영문4)</td>
-                                        <td>취업 상담</td>
-                                        <td><span class="badge bg-warning">예정</span></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <h5 class="mb-3">
+                            <i class="bi bi-graph-up me-2"></i>
+                            시스템 사용 통계
+                        </h5>
+                        <div class="chart-container">
+                            <div class="text-center">
+                                <div class="alert alert-info">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    실제 구현 시 Chart.js 등의 라이브러리를 사용하여 차트를 표시합니다.
+                                </div>
+                                <span class="text-muted">월별 사용자 활동 및 시스템 성능 차트 영역</span>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="col-lg-4">
                     <div class="widget-card">
-                        <h6 class="card-title">중요 알림</h6>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h6 class="mb-0">승인 대기</h6>
+                            <span class="badge bg-warning">7개</span>
+                        </div>
+                        
                         <div class="list-group list-group-flush">
                             <div class="list-group-item px-0 py-2">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-exclamation-triangle text-warning me-2"></i>
+                                <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <div class="small">진단 결과 검토 필요</div>
-                                        <div class="text-muted" style="font-size: 0.8rem;">23명의 학생 결과 대기중</div>
+                                        <div class="small fw-medium">프로그램 승인</div>
+                                        <div class="text-muted" style="font-size: 0.8rem;">창업 경진대회</div>
                                     </div>
+                                    <button class="btn btn-sm btn-outline-success" onclick="approveItem('program', 1)">
+                                        승인
+                                    </button>
                                 </div>
                             </div>
                             
                             <div class="list-group-item px-0 py-2">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-calendar-event text-info me-2"></i>
+                                <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <div class="small">프로그램 신청 마감</div>
-                                        <div class="text-muted" style="font-size: 0.8rem;">창업 경진대회 - 3일 남음</div>
+                                        <div class="small fw-medium">사용자 권한</div>
+                                        <div class="text-muted" style="font-size: 0.8rem;">박교수 - 관리자 권한</div>
                                     </div>
+                                    <button class="btn btn-sm btn-outline-success" onclick="approveItem('permission', 1)">
+                                        승인
+                                    </button>
                                 </div>
                             </div>
                             
                             <div class="list-group-item px-0 py-2">
-                                <div class="d-flex align-items-center">
-                                    <i class="bi bi-bell text-primary me-2"></i>
+                                <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <div class="small">새로운 상담 신청</div>
-                                        <div class="text-muted" style="font-size: 0.8rem;">최근 2건의 상담 신청</div>
+                                        <div class="small fw-medium">공지사항 발송</div>
+                                        <div class="text-muted" style="font-size: 0.8rem;">전체 학생 대상</div>
                                     </div>
+                                    <button class="btn btn-sm btn-outline-success" onclick="approveItem('notice', 1)">
+                                        승인
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -690,16 +736,34 @@
             sidebar.classList.toggle('show');
         }
 
-        // 할 일 완료
-        function completeTask(id) {
-            if (confirm('이 작업을 완료하시겠습니까?')) {
-                alert('작업이 완료되었습니다.');
+        // 알림 처리
+        function handleAlert(type) {
+            switch(type) {
+                case 'disk':
+                    alert('디스크 정리 작업을 시작합니다.');
+                    break;
+                case 'disk':
+                    alert('디스크 정리 작업을 시작합니다.');
+                    break;
+                case 'backup':
+                    alert('백업 작업을 다시 시작합니다.');
+                    break;
+                case 'update':
+                    alert('시스템 업데이트 페이지로 이동합니다.');
+                    break;
             }
         }
 
-        // 보고서 생성
-        function generateReport() {
-            alert('보고서 생성 페이지로 이동합니다.');
+        // 승인 처리
+        function approveItem(type, id) {
+            if (confirm(`이 ${type}을(를) 승인하시겠습니까?`)) {
+                alert('승인이 완료되었습니다.');
+            }
+        }
+
+        // 시스템 리포트 생성
+        function generateSystemReport() {
+            alert('시스템 리포트를 생성합니다.');
         }
 
         // 로그아웃
